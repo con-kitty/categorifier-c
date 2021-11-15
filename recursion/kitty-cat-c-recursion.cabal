@@ -1,0 +1,48 @@
+cabal-version:  2.4
+
+name:           kitty-cat-c-recursion
+version:        0.1
+description:    A recursion library for kitty-cat's CExpr backend.
+homepage:       https://github.com/kitty-dog/kitty-cat-c#readme
+bug-reports:    https://github.com/kitty-dog/kitty-cat-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1
+
+source-repository head
+  type: git
+  location: https://github.com/kitty-dog/kitty-cat-c
+
+library
+  exposed-modules:
+      Kitty.Higher
+      Kitty.Recursion
+  other-modules:
+      Paths_kitty_cat_c_recursion
+  autogen-modules:
+      Paths_kitty_cat_c_recursion
+  ghc-options: -Wall
+  build-depends:
+      barbies >=2.0.1.0 && <2.1
+    , base >=4.14 && <4.15
+    , deepseq >=1.4.4.0 && <1.5
+    , hashable >=1.3.0.0 && <1.5
+    , yaya >=0.3.2.0 && <0.4
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
