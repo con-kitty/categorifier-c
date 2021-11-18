@@ -1,2 +1,3 @@
 packages:
+  ./kitty-cat-c.cabal
   ./recursion/kitty-cat-c-recursion.cabal

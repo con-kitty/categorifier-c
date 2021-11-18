@@ -1,0 +1,45 @@
+cabal-version:  2.4
+
+name:           kitty-cat-c
+version:        0.1
+description:    kitty-cat's CExpr backend.
+homepage:       https://github.com/kitty-dog/kitty-cat-c#readme
+bug-reports:    https://github.com/kitty-dog/kitty-cat-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1
+
+source-repository head
+  type: git
+  location: https://github.com/kitty-dog/kitty-cat-c
+
+library
+  exposed-modules:
+      Kitty.CExpr.Cat.TargetOb
+  other-modules:
+      Paths_kitty_cat_c
+  autogen-modules:
+      Paths_kitty_cat_c
+  ghc-options: -Wall
+  build-depends:
+      adjunctions >=4.4 && <5
+    , base >=4.14 && <4.15
+    , either >=5.0.1.1 && <6
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
