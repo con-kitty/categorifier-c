@@ -24,6 +24,15 @@ library
       Kitty.HK2.Unit
       Kitty.Lens
       Kitty.Lens.Rules
+      Kitty.Prim
+      Kitty.Prim.ArrayCount
+      Kitty.Prim.ArrayLens
+      Kitty.Prim.ArrayName
+      Kitty.Prim.ArrayVec
+      Kitty.Prim.Base
+      Kitty.Prim.ConstArrays
+      Kitty.Prim.Helpers
+      Kitty.Prim.Patterns
       Kitty.TypeUtils.Lists
   other-modules:
       Paths_kitty_cat_c
@@ -34,15 +43,24 @@ library
       adjunctions >=4.4 && <5
     , barbies >=2.0.1.0 && <2.1
     , base >=4.14 && <4.15
+    , casing >=0.1.4.1 && <0.2
     , deepseq >=1.4.4.0 && <1.5
     , either >=5.0.1.1 && <6
+    -- TODO: support fin-0.2
+    , fin >=0.1.1 && <0.2
     , generic-accessors >=0.7.1.0 && <0.8
+    , generic-deriving >=1.13.1 && <1.15
     , hashable >=1.3.0.0 && <1.5
     , lens >=4.19.2 && <6
     , serialise >=0.2.3.0 && <0.3
+    , tagged >=0.8.6 && <0.9
     , template-haskell >=2.16.0.0 && <2.19
+    , text >=1.2.3.2 && <1.3
     , transformers >=0.5.6.2 && <0.7
+    , vector >=0.12.1.2 && <0.13
     , QuickCheck >=2.13.2 && <3
+    , kitty-cat-c-show
+    , kitty-cat-client
   default-language: Haskell2010
   default-extensions:
       InstanceSigs

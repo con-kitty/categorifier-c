@@ -1,3 +1,39 @@
+source-repository-package
+  type: git
+  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
+  tag: 02be556b16f3b4533d5821b00415a49841b2ffdd
+  subdir: client
+
+source-repository-package
+  type: git
+  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
+  tag: 02be556b16f3b4533d5821b00415a49841b2ffdd
+  subdir: common
+
+source-repository-package
+  type: git
+  location: git://github.com/con-kitty/concat.git
+  tag: d770559e99aac57c14d45c4458acf022281e74a1
+  subdir: classes
+
+source-repository-package
+  type: git
+  location: git://github.com/con-kitty/concat.git
+  tag: d770559e99aac57c14d45c4458acf022281e74a1
+  subdir: inline
+
+source-repository-package
+  type: git
+  location: git://github.com/con-kitty/concat.git
+  tag: d770559e99aac57c14d45c4458acf022281e74a1
+  subdir: known
+
+source-repository-package
+  type: git
+  location: git://github.com/con-kitty/concat.git
+  tag: d770559e99aac57c14d45c4458acf022281e74a1
+  subdir: satisfy
+
 packages:
   ./kitty-cat-c.cabal
   ./recursion/kitty-cat-c-recursion.cabal
