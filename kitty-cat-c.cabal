@@ -39,6 +39,7 @@ library
       Kitty.KTypes.TotalOrder
       Kitty.Lens
       Kitty.Lens.Rules
+      Kitty.Nat.Operators
       Kitty.Prim
       Kitty.Prim.ArrayCount
       Kitty.Prim.ArrayLens
