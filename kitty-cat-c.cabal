@@ -22,6 +22,8 @@ library
       Kitty.HK2
       Kitty.HK2.Const
       Kitty.HK2.Unit
+      Kitty.Lens
+      Kitty.Lens.Rules
       Kitty.TypeUtils.Lists
   other-modules:
       Paths_kitty_cat_c
@@ -38,6 +40,7 @@ library
     , hashable >=1.3.0.0 && <1.5
     , lens >=4.19.2 && <6
     , serialise >=0.2.3.0 && <0.3
+    , template-haskell >=2.16.0.0 && <2.19
     , transformers >=0.5.6.2 && <0.7
     , QuickCheck >=2.13.2 && <3
   default-language: Haskell2010
