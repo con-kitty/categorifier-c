@@ -16,7 +16,9 @@ library
   exposed-modules:
       Kitty.Barbies
       Kitty.CExpr.Cat.TargetOb
+      Kitty.CTypes.ArrayLengths
       Kitty.CTypes.KTypeRep
+      Kitty.CTypes.ToArrays
       Kitty.CTypes.Traverse
       Kitty.CTypes.Types
       Kitty.HK1
@@ -67,6 +69,7 @@ library
     , generic-deriving >=1.13.1 && <1.15
     , hashable >=1.3.0.0 && <1.5
     , lens >=4.19.2 && <6
+    , primitive >=0.7.1.0 && <0.8
     , serialise >=0.2.3.0 && <0.3
     , tagged >=0.8.6 && <0.9
     , template-haskell >=2.16.0.0 && <2.19
