@@ -16,6 +16,9 @@ library
   exposed-modules:
       Kitty.Barbies
       Kitty.CExpr.Cat.TargetOb
+      Kitty.CTypes.KTypeRep
+      Kitty.CTypes.Traverse
+      Kitty.CTypes.Types
       Kitty.HK1
       Kitty.HK1.Identity
       Kitty.HK1.Unit
@@ -53,7 +56,9 @@ library
       adjunctions >=4.4 && <5
     , barbies >=2.0.1.0 && <2.1
     , base >=4.14 && <4.15
+    , bytestring >=0.10.10.0 && <0.12
     , casing >=0.1.4.1 && <0.2
+    , containers >=0.6.2.1 && <0.7
     , deepseq >=1.4.4.0 && <1.5
     , either >=5.0.1.1 && <6
     -- TODO: support fin-0.2
@@ -69,9 +74,12 @@ library
     , transformers >=0.5.6.2 && <0.7
     , unordered-containers >=0.2.13.0 && <0.3
     , vector >=0.12.1.2 && <0.13
+    , PyF >=0.9.0.2 && <0.11
     , QuickCheck >=2.13.2 && <3
+    , kitty-cat-c-recursion
     , kitty-cat-c-show
     , kitty-cat-client
+    , kitty-cat-common
   default-language: Haskell2010
   default-extensions:
       InstanceSigs
