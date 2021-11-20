@@ -15,6 +15,7 @@ source-repository head
 library
   exposed-modules:
       Kitty.CExpr.Cat.TargetOb
+      Kitty.TypeUtils.Lists
   other-modules:
       Paths_kitty_cat_c
   autogen-modules:
