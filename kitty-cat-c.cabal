@@ -3,14 +3,14 @@ cabal-version:  2.4
 name:           kitty-cat-c
 version:        0.1
 description:    kitty-cat's CExpr backend.
-homepage:       https://github.com/kitty-dog/kitty-cat-c#readme
-bug-reports:    https://github.com/kitty-dog/kitty-cat-c/issues
+homepage:       https://github.com/con-kitty/kitty-cat-c#readme
+bug-reports:    https://github.com/con-kitty/kitty-cat-c/issues
 build-type:     Simple
 tested-with:    GHC==8.10.1
 
 source-repository head
   type: git
-  location: https://github.com/kitty-dog/kitty-cat-c
+  location: https://github.com/con-kitty/kitty-cat-c
 
 library
   exposed-modules:
