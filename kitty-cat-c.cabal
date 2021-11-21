@@ -49,6 +49,7 @@ library
       Kitty.HK2.Const
       Kitty.HK2.Unit
       Kitty.KTypes.BooleanLogic
+      Kitty.KTypes.CExpr.Generate
       Kitty.KTypes.Conditional
       Kitty.KTypes.Equality
       Kitty.KTypes.FromIntegral
