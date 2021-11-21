@@ -40,8 +40,10 @@ library
       Kitty.KTypes.IEEE
       Kitty.KTypes.KBits
       Kitty.KTypes.KDivisible
+      Kitty.KTypes.KEnum
       Kitty.KTypes.KLiteral
       Kitty.KTypes.Round
+      Kitty.KTypes.SwitchCase
       Kitty.KTypes.TotalOrder
       Kitty.Lens
       Kitty.Lens.Rules
