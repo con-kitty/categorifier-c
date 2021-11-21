@@ -21,8 +21,10 @@ library
       Kitty.CTypes.CGeneric.Plugin
       Kitty.CTypes.GArrays
       Kitty.CTypes.KTypeRep
+      Kitty.CTypes.Instances
       Kitty.CTypes.Render
       Kitty.CTypes.ToArrays
+      Kitty.CTypes.ToCxxType
       Kitty.CTypes.Traverse
       Kitty.CTypes.Types
       Kitty.HK1
@@ -90,6 +92,7 @@ library
     , kitty-cat-c-show
     , kitty-cat-client
     , kitty-cat-common
+    , kitty-cat-duoids
   default-language: Haskell2010
   default-extensions:
       InstanceSigs

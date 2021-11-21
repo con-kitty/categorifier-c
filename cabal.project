@@ -1,14 +1,20 @@
 source-repository-package
   type: git
   location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 02be556b16f3b4533d5821b00415a49841b2ffdd
+  tag: b8d62f40f5e7b09dad21a9b1e8605ee2083e1395
   subdir: client
 
 source-repository-package
   type: git
   location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 02be556b16f3b4533d5821b00415a49841b2ffdd
+  tag: b8d62f40f5e7b09dad21a9b1e8605ee2083e1395
   subdir: common
+
+source-repository-package
+  type: git
+  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
+  tag: b8d62f40f5e7b09dad21a9b1e8605ee2083e1395
+  subdir: duoids
 
 source-repository-package
   type: git
