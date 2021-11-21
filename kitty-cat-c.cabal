@@ -37,6 +37,7 @@ library
       Kitty.KTypes.Conditional
       Kitty.KTypes.Equality
       Kitty.KTypes.FromIntegral
+      Kitty.KTypes.Function
       Kitty.KTypes.IEEE
       Kitty.KTypes.KBits
       Kitty.KTypes.KDivisible
