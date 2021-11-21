@@ -31,6 +31,9 @@ library
       Kitty.CTypes.ToCxxType
       Kitty.CTypes.Traverse
       Kitty.CTypes.Types
+      Kitty.Graph
+      Kitty.Graph.Fold
+      Kitty.Graph.Reify
       Kitty.HK1
       Kitty.HK1.Identity
       Kitty.HK1.Unit
