@@ -16,6 +16,9 @@ library
   exposed-modules:
       Kitty.Barbies
       Kitty.CExpr.Cat.TargetOb
+      Kitty.CExpr.Types
+      Kitty.CExpr.Types.Core
+      Kitty.CExpr.Types.Operations
       Kitty.CTypes.ArrayLengths
       Kitty.CTypes.CGeneric.Class
       Kitty.CTypes.CGeneric.Plugin
