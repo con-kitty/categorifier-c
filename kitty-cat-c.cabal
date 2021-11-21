@@ -16,6 +16,7 @@ library
   exposed-modules:
       Kitty.Barbies
       Kitty.CExpr.Cat.TargetOb
+      Kitty.CExpr.FunctionCall
       Kitty.CExpr.Types
       Kitty.CExpr.Types.Core
       Kitty.CExpr.Types.Operations
