@@ -15,8 +15,16 @@ source-repository head
 library
   exposed-modules:
       Kitty.Barbies
+      Kitty.CExpr.C
+      Kitty.CExpr.C.Assignment
+      Kitty.CExpr.C.Operations
+      Kitty.CExpr.C.Pretty
       Kitty.CExpr.Cat.TargetOb
+      Kitty.CExpr.File
+      Kitty.CExpr.Function
       Kitty.CExpr.FunctionCall
+      Kitty.CExpr.IO
+      Kitty.CExpr.Normalize
       Kitty.CExpr.Types
       Kitty.CExpr.Types.Core
       Kitty.CExpr.Types.Operations
@@ -80,13 +88,16 @@ library
     , casing >=0.1.4.1 && <0.2
     , containers >=0.6.2.1 && <0.7
     , deepseq >=1.4.4.0 && <1.5
+    , dlist >=0.8.0.8 && <2
     , either >=5.0.1.1 && <6
+    , extra >=1.7.8 && <2
     -- TODO: support fin-0.2
     , fin >=0.1.1 && <0.2
     , generic-accessors >=0.7.1.0 && <0.8
     , generic-deriving >=1.13.1 && <1.15
     , hashable >=1.3.0.0 && <1.5
     , lens >=4.19.2 && <6
+    , prettyprinter >=1.6.2 && <1.8
     , primitive >=0.7.1.0 && <0.8
     , serialise >=0.2.3.0 && <0.3
     , tagged >=0.8.6 && <0.9
