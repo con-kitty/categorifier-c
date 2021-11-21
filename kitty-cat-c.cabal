@@ -18,6 +18,7 @@ library
       Kitty.CExpr.Cat.TargetOb
       Kitty.CTypes.ArrayLengths
       Kitty.CTypes.CGeneric.Class
+      Kitty.CTypes.CGeneric.Plugin
       Kitty.CTypes.GArrays
       Kitty.CTypes.KTypeRep
       Kitty.CTypes.Render
