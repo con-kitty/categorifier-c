@@ -100,8 +100,6 @@ import GHC.Generics
 import qualified GHC.Generics as G
 import GHC.TypeLits (Symbol)
 import Kitty.CExpr.Cat.TargetOb (TargetOb, TargetObTC1)
-import Kitty.HK1 (Identity1, Unit0)
-import Kitty.HK2 (ConstHK2)
 import qualified Kitty.KTypes.KBits as KBits
 import Kitty.Nat.Operators (type (+), type (-))
 import Prelude hiding (Enum)
@@ -1201,12 +1199,6 @@ instance CGeneric (a, b, c, d, e, f, g) where
         (a, b, c, d, e, f, g)
 
 instance Generic (Compose f g a) => CGeneric (Compose f g a)
-
-instance CGeneric (ConstHK2 a x unusedF)
-
-instance CGeneric (Identity1 a f)
-
-instance CGeneric (Unit0 a)
 
 -- | This is a one-off instance designed to support generic traversals of fixed-size vectors.
 instance CGeneric (Vec n elem) where

@@ -42,12 +42,6 @@ library
       Kitty.Graph
       Kitty.Graph.Fold
       Kitty.Graph.Reify
-      Kitty.HK1
-      Kitty.HK1.Identity
-      Kitty.HK1.Unit
-      Kitty.HK2
-      Kitty.HK2.Const
-      Kitty.HK2.Unit
       Kitty.KTypes.BooleanLogic
       Kitty.KTypes.CExpr.Generate
       Kitty.KTypes.Conditional

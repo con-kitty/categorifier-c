@@ -63,8 +63,6 @@ import Kitty.CTypes.Types
     oneLevelCxxArrayToMaybeCArray,
   )
 import qualified Kitty.Common.IO.Exception as Exception
-import Kitty.HK1 (Identity1 (..), Unit0 (..))
-import Kitty.HK2 (ConstHK2 (..), Unit2 (..))
 import Kitty.Recursion (hembed)
 import PyF (fmt)
 
@@ -345,15 +343,8 @@ makeTupleNormalCon elements = case NE.nonEmpty (zip infiniteTupleFieldNames elem
         "Tuple{length elements}" : fmap renderCType elements
 
 ------------------------- Higher-kinded types -------------------------
-instance SupportsKBits f => ToCxxType f (Unit0 a) where
-  toCxxType = toCxxType . void
-  {-# INLINEABLE toCxxType #-}
 
 instance SupportsKBits f => ToCxxType f (Barbies.Unit f) where
-  toCxxType = toCxxType . void
-  {-# INLINEABLE toCxxType #-}
-
-instance SupportsKBits f => ToCxxType f (Unit2 x f) where
   toCxxType = toCxxType . void
   {-# INLINEABLE toCxxType #-}
 
@@ -361,12 +352,6 @@ instance SupportsKBits f => ToCxxType f (Unit2 x f) where
 -- This is because they are never applied!
 instance (SupportsKBits f, ToCxxType f a) => ToCxxType f (Const a (unusedF :: Type -> Type)) where
   toCxxType = toCxxType . fmap getConst
-  {-# INLINEABLE toCxxType #-}
-
--- | Notice that @f@ and @unusedF@ are different.
--- This is because they are never applied!
-instance (SupportsKBits f, ToCxxType f a) => ToCxxType f (ConstHK2 a x unusedF) where
-  toCxxType = toCxxType . fmap getConstHK2
   {-# INLINEABLE toCxxType #-}
 
 -------------------------- Third-party types ----------------------
@@ -406,10 +391,6 @@ instance
 
 instance ToCxxType f (a (b f)) => ToCxxType f (Compose a b f) where
   toCxxType = toCxxType . fmap getCompose
-  {-# INLINEABLE toCxxType #-}
-
-instance ToCxxType f (f a) => ToCxxType f (Identity1 a f) where
-  toCxxType = toCxxType . fmap getIdentity1
   {-# INLINEABLE toCxxType #-}
 
 instance (Typeable a, ToCxxType f a) => ToCxxType f (Maybe a)

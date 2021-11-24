@@ -36,8 +36,6 @@ import GHC.Generics (K1 (..), M1 (..), U1 (..), (:*:) (..), (:+:) (..))
 import Kitty.CTypes.CGeneric.Class (CGeneric)
 import qualified Kitty.CTypes.CGeneric.Class as CG
 import Kitty.Common.IO.Exception (Exception)
-import Kitty.HK1 (Identity1, Unit0)
-import Kitty.HK2 (ConstHK2)
 import Kitty.KTypes.KLiteral (KLiteral (..))
 import Kitty.Prim
   ( ArrayCount (..),
@@ -274,16 +272,10 @@ instance
 
 instance GArrays f (g (h a)) => GArrays f (Compose g h a)
 
-instance GArrays f a => GArrays f (ConstHK2 a x unusedF)
-
 instance GArrays f a => GArrays f (Identity a)
-
-instance GArrays f (f a) => GArrays f (Identity1 a f)
 
 instance GArrays f a => GArrays f (Maybe a)
 
 instance GArrays f (Barbies.Unit f)
-
-instance (Foldable f, KLiteral f Word8) => GArrays f (Unit0 a)
 
 instance (GArrays f a, Nat.SNatI k) => GArrays f (Vec k a)

@@ -30,11 +30,11 @@
 -- === Note on higher kinds
 --
 -- 'Prim' and 'Arrays' have kind @(Type -> Type) -> Type@ -- the @f@ type argument has kind @Type ->
--- Type@ like a normal list (@[]@) or 'Data.Vector.Vector'.  The "Kitty.HK1" library exists to make
+-- Type@ like a normal list (@[]@) or 'Data.Vector.Vector'.  The @Kitty.HK1@ library exists to make
 -- structures with this kind easy to work with safely, via analogues to the standard library classes
 -- like 'Functor' and 'Traversable'.  Programs dealing with these higher-kinded types can cause
 -- extra trouble when it comes to type inference and type checking.  If you're doing any work with
--- these types, you may want to read through the docs for "Kitty.HK1" first, both to familiarize
+-- these types, you may want to read through the docs for @Kitty.HK1@ first, both to familiarize
 -- yourself with the API (the analogy to standard classes is not perfect) and also to see various
 -- notes about type inference and how to work around type errors or restrictions of the interface to
 -- higher-kinded operations.
