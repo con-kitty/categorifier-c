@@ -56,7 +56,6 @@ library
       Kitty.KTypes.Round
       Kitty.KTypes.SwitchCase
       Kitty.KTypes.TotalOrder
-      Kitty.Lens
       Kitty.Lens.Rules
       Kitty.Nat.Operators
       Kitty.PolyVec
