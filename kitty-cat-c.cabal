@@ -53,6 +53,7 @@ library
       Kitty.KTypes.KDivisible
       Kitty.KTypes.KEnum
       Kitty.KTypes.KLiteral
+      Kitty.KTypes.Libm
       Kitty.KTypes.Round
       Kitty.KTypes.SwitchCase
       Kitty.KTypes.TotalOrder
