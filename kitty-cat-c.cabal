@@ -19,6 +19,7 @@ library
       Kitty.CExpr.C.Assignment
       Kitty.CExpr.C.Operations
       Kitty.CExpr.C.Pretty
+      Kitty.CExpr.Cat
       Kitty.CExpr.Cat.TargetOb
       Kitty.CExpr.File
       Kitty.CExpr.Function
@@ -74,7 +75,11 @@ library
       Paths_kitty_cat_c
   autogen-modules:
       Paths_kitty_cat_c
-  ghc-options: -Wall
+  ghc-options:
+      -O0
+      -fexpose-all-unfoldings
+      -fno-omit-interface-pragmas
+      -Wall
   build-depends:
       adjunctions >=4.4 && <5
     , barbies >=2.0.1.0 && <2.1
@@ -104,8 +109,12 @@ library
     , vector >=0.12.1.2 && <0.13
     , PyF >=0.9.0.2 && <0.11
     , QuickCheck >=2.13.2 && <3
+    , concat-classes
     , kitty-cat-c-recursion
     , kitty-cat-c-show
+    , kitty-cat-category
+    , kitty-cat-category-kitty
+    , kitty-cat-category-unconcat
     , kitty-cat-client
     , kitty-cat-common
     , kitty-cat-duoids
