@@ -36,6 +36,11 @@ source-repository-package
 
 source-repository-package
   type: git
+  location: git://github.com/cmk/connections.git
+  tag: 4d4c393475d60285dafe3301cf26e2f5244d9c46
+
+source-repository-package
+  type: git
   location: git://github.com/con-kitty/concat.git
   tag: d770559e99aac57c14d45c4458acf022281e74a1
   subdir: classes

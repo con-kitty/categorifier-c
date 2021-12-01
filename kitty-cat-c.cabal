@@ -44,6 +44,7 @@ library
       Kitty.Graph.Fold
       Kitty.Graph.Reify
       Kitty.KTypes.BooleanLogic
+      Kitty.KTypes.C
       Kitty.KTypes.CExpr.Generate
       Kitty.KTypes.Conditional
       Kitty.KTypes.Equality
@@ -82,6 +83,7 @@ library
       -Wall
   build-depends:
       adjunctions >=4.4 && <5
+    , aeson >=1.5.4.1 && <3
     , barbies >=2.0.1.0 && <2.1
     , base >=4.14 && <4.15
     , bytestring >=0.10.10.0 && <0.12
@@ -109,7 +111,9 @@ library
     , vector >=0.12.1.2 && <0.13
     , PyF >=0.9.0.2 && <0.11
     , QuickCheck >=2.13.2 && <3
+    -- Below are source-repository-packages
     , concat-classes
+    , connections
     , kitty-cat-c-recursion
     , kitty-cat-c-show
     , kitty-cat-category
