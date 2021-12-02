@@ -30,6 +30,7 @@ library
       Kitty.CExpr.Types.Core
       Kitty.CExpr.Types.Operations
       Kitty.CTypes.ArrayLengths
+      Kitty.CTypes.CGeneric
       Kitty.CTypes.CGeneric.Class
       Kitty.CTypes.CGeneric.Plugin
       Kitty.CTypes.GArrays
