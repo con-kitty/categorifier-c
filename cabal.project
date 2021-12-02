@@ -63,6 +63,39 @@ source-repository-package
   tag: d770559e99aac57c14d45c4458acf022281e74a1
   subdir: satisfy
 
+constraints:
+    adjunctions >=4.4 && <5
+  , aeson >=1.5.4.1 && <3
+  , barbies >=2.0.1.0 && <2.1
+  , base >=4.14 && <4.15
+  , bytestring >=0.10.10.0 && <0.12
+  , casing >=0.1.4.1 && <0.2
+  , constraints >=0.12 && <0.14
+  , containers >=0.6.2.1 && <0.7
+  , deepseq >=1.4.4.0 && <1.5
+  , dlist >=0.8.0.8 && <2
+  , either >=5.0.1.1 && <6
+  , extra >=1.7.8 && <2
+  -- TODO: support fin-0.2
+  , fin >=0.1.1 && <0.2
+  , generic-accessors >=0.7.1.0 && <0.8
+  , generic-deriving >=1.13.1 && <1.15
+  -- TODO: support hashable-1.4
+  , hashable >=1.3.0.0 && <1.4
+  , lens >=4.19.2 && <6
+  , prettyprinter >=1.6.2 && <1.8
+  , primitive >=0.7.1.0 && <0.8
+  , serialise >=0.2.3.0 && <0.3
+  , tagged >=0.8.6 && <0.9
+  , template-haskell >=2.16.0.0 && <2.19
+  , text >=1.2.3.2 && <1.3
+  , transformers >=0.5.6.2 && <0.7
+  , unordered-containers >=0.2.13.0 && <0.3
+  , vec >=0.3 && <0.5
+  , vector >=0.12.1.2 && <0.13
+  , PyF >=0.9.0.2 && <0.11
+  , QuickCheck >=2.13.2 && <3
+
 packages:
   ./kitty-cat-c.cabal
   ./recursion/kitty-cat-c-recursion.cabal
