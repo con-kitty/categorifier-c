@@ -119,11 +119,11 @@ library
     , kitty-cat-c-recursion
     , kitty-cat-c-show
     , kitty-cat-category
-    , kitty-cat-category-kitty
-    , kitty-cat-category-unconcat
     , kitty-cat-client
     , kitty-cat-common
     , kitty-cat-duoids
+    , kitty-cat-kitty-category
+    , kitty-cat-unconcat-category
   default-language: Haskell2010
   default-extensions:
       InstanceSigs

@@ -87,7 +87,23 @@ import Kitty.CExpr.Types (CExprTypeLens)
 import Kitty.CExpr.Types.Core (CExpr, CExprF (..))
 import qualified Kitty.CExpr.Types.Operations as Op
 import Kitty.CTypes.CGeneric.Plugin (Vectorizable (..))
-import Kitty.Cat.Category
+import Kitty.Common.IO.Exception (Exception, impureThrow)
+import Kitty.KTypes.BooleanLogic (KAnd (..))
+import Kitty.KTypes.Equality (KEq (..))
+import Kitty.KTypes.Function
+  ( Callee (..),
+    IsFunCall,
+    KVariadicDevecAndApply,
+    KVariadicVectorizeFunctionInputs,
+    kForeignFunctionCall,
+    kFunctionCall,
+  )
+import Kitty.KTypes.KDivisible (kDiv, kMod)
+import qualified Kitty.KTypes.SwitchCase as SwitchCase
+import Kitty.KTypes.TotalOrder (KOrd (..), kMaximum, kMinimum)
+import Kitty.Plugin.Category (ForeignFunCallCat (..), ReferenceCat (..), RepCat (..))
+import Kitty.Plugin.Client (HasRep (..))
+import Kitty.Plugin.Kitty
   ( ApplicativeCat (..),
     BindableCat (..),
     FixedCat (..),
@@ -106,26 +122,10 @@ import Kitty.Cat.Category
     TranscendentalCat (..),
     TraversableCat (..),
   )
-import Kitty.Common.IO.Exception (Exception, impureThrow)
-import Kitty.KTypes.BooleanLogic (KAnd (..))
-import Kitty.KTypes.Equality (KEq (..))
-import Kitty.KTypes.Function
-  ( Callee (..),
-    IsFunCall,
-    KVariadicDevecAndApply,
-    KVariadicVectorizeFunctionInputs,
-    kForeignFunctionCall,
-    kFunctionCall,
-  )
-import Kitty.KTypes.KDivisible (kDiv, kMod)
-import qualified Kitty.KTypes.SwitchCase as SwitchCase
-import Kitty.KTypes.TotalOrder (KOrd (..), kMaximum, kMinimum)
-import Kitty.Plugin.Category (ForeignFunCallCat (..), ReferenceCat (..), RepCat (..))
-import Kitty.Plugin.Client (HasRep (..))
+import qualified Kitty.Plugin.UnconCat as UnconCat
 import Kitty.PolyVec (PolyVec)
 import Kitty.Prim (PrimAny, PrimFractional, PrimGADT (..), PrimIntegral, PrimNum, primGADT)
 import Kitty.Recursion (hembed)
-import qualified Kitty.UnconCat
 import Prelude hiding (and, const, curry, id, not, pred, uncurry, (.))
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -204,31 +204,31 @@ instance
   where
   ffcall = (cat .) . uncurry (kForeignFunctionCall (Proxy @CExpr))
 
--- * ConCat & Kitty.Cat.Category instances
+-- * "ConCat.Category" & "Kitty.Plugin.Kitty" instances
 
 instance Category Cat where
-  id = Kitty.UnconCat.id
-  (.) = (Kitty.UnconCat..)
+  id = UnconCat.id
+  (.) = (UnconCat..)
 
 instance ProductCat Cat where
-  exl = Kitty.UnconCat.exl
-  exr = Kitty.UnconCat.exr
-  dup = Kitty.UnconCat.dup
+  exl = UnconCat.exl
+  exr = UnconCat.exr
+  dup = UnconCat.dup
 
 instance CoproductCat Cat where
-  inl = Kitty.UnconCat.inl
-  inr = Kitty.UnconCat.inr
-  jam = Kitty.UnconCat.jam
+  inl = UnconCat.inl
+  inr = UnconCat.inr
+  jam = UnconCat.jam
 
 instance MonoidalPCat Cat where
-  (***) = (Kitty.UnconCat.***)
+  (***) = (UnconCat.***)
 
 instance MonoidalSCat Cat where
   f +++ g = cat $ bimap (lowerCat f) (lowerCat g)
 
 instance ClosedCat Cat where
-  apply = Kitty.UnconCat.apply
-  curry = Kitty.UnconCat.curry
+  apply = UnconCat.apply
+  curry = UnconCat.curry
 
 instance AssociativePCat Cat
 
@@ -333,7 +333,7 @@ instance
 instance {-# OVERLAPPABLE #-} (TargetOb1 f, Applicative f) => PointedCat Cat f a where
   pointC = cat $ toTargetOb1 @f (Proxy @a) . pure
 
-instance (r ~ Rep a, Vectorizable (TargetOb r) (TargetOb a)) => RepCat Cat a r where
+instance (HasRep a, r ~ Rep a, Vectorizable (TargetOb r) (TargetOb a)) => RepCat Cat a r where
   reprC = cat unmakeVectorizable
   abstC = cat makeVectorizable
 
@@ -655,27 +655,27 @@ instance Exception (TargetOb a) => BottomCat Cat (a :: Type) (b :: Type) where
 
 ------------------------------------------------------------------------------
 
--- * Kitty.UnconCat instances
+-- * "UnconCat" instances
 
-instance Kitty.UnconCat.Category Cat where
+instance UnconCat.Category Cat where
   id = Cat id
   Cat f . Cat g = Cat (f . g)
 
-instance Kitty.UnconCat.AssociativePCat Cat
+instance UnconCat.AssociativePCat Cat
 
-instance Kitty.UnconCat.ClosedCat Cat where
+instance UnconCat.ClosedCat Cat where
   apply = cat $ uncurry ($)
   curry = cat . curry . lowerCat
 
-instance Kitty.UnconCat.CoproductCat Cat where
+instance UnconCat.CoproductCat Cat where
   inl = cat Left
   inr = cat Right
   jam = cat fromEither
 
-instance Kitty.UnconCat.MonoidalPCat Cat where
+instance UnconCat.MonoidalPCat Cat where
   f *** g = cat $ bimap (lowerCat f) (lowerCat g)
 
-instance Kitty.UnconCat.ProductCat Cat where
+instance UnconCat.ProductCat Cat where
   exl = cat fst
   exr = cat snd
   dup = Cat $ uncurry zipTargetObW . dupe
@@ -893,38 +893,38 @@ instance Exception NotSupported
   Cat b c ->
   Cat a b ->
   Cat a c
-(.$) = (Kitty.UnconCat..)
+(.$) = (UnconCat..)
 
 applyCat :: forall a b. Cat (a -> b, a) b
-applyCat = Kitty.UnconCat.apply
+applyCat = UnconCat.apply
 
 curryCat ::
   forall (a :: Type) (b :: Type) (c :: Type).
   Cat (a, b) c ->
   Cat a (b -> c)
-curryCat = Kitty.UnconCat.curry
+curryCat = UnconCat.curry
 
 uncurryCat ::
   forall (a :: Type) (b :: Type) (c :: Type).
   Cat a (b -> c) ->
   Cat (a, b) c
-uncurryCat = Kitty.UnconCat.uncurry
+uncurryCat = UnconCat.uncurry
 
 (&&&$) ::
   forall (a :: Type) (b :: Type) (c :: Type).
   Cat a b ->
   Cat a c ->
   Cat a (b, c)
-(&&&$) = (Kitty.UnconCat.&&&)
+(&&&$) = (UnconCat.&&&)
 
 exlCat :: forall a b. Cat (a, b) a
-exlCat = Kitty.UnconCat.exl
+exlCat = UnconCat.exl
 
 exrCat :: forall a b. Cat (a, b) b
-exrCat = Kitty.UnconCat.exr
+exrCat = UnconCat.exr
 
 apply2Cat :: forall (x :: Type) a b. Cat x (a -> b) -> Cat x a -> Cat x b
-apply2Cat = Kitty.UnconCat.apply2
+apply2Cat = UnconCat.apply2
 
 compose2Cat :: forall (x :: Type) b c a. Cat x (b -> c) -> Cat x (a -> b) -> Cat x (a -> c)
-compose2Cat = Kitty.UnconCat.compose2
+compose2Cat = UnconCat.compose2
