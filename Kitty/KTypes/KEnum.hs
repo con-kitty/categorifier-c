@@ -1,11 +1,11 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- | Treat 'Word8's as 'Enum's.
 module Kitty.KTypes.KEnum
   ( KEnum (..),
-    toKEnum,
   )
 where
 
@@ -21,21 +21,21 @@ import Kitty.CTypes.ToCxxType (ToCxxType (..))
 import Kitty.CTypes.Types (CEnum (..), CTypeF (..), CxxType (..))
 import Kitty.KTypes.BooleanLogic (KAnd)
 import Kitty.KTypes.Equality (KEq (..))
-import Kitty.KTypes.KLiteral (KLiteral, kliteral)
 import Kitty.KTypes.TotalOrder (KOrd (..))
-import Kitty.Plugin.Client (deriveHasRep)
+import qualified Kitty.Plugin.Client as Client
 import PyF (fmt)
 
--- | newtype wrapper around Word8 with functions for treating it as its phantom type
--- TODO(greg): if we define this as:
---   newtype KEnum a f = KEnum (f Word8)
--- then do all our troubles go away?
+-- | Newtype wrapper around Word8 with functions for treating it as its phantom type.
+--
+--  __TODO__(greg): if we define this as @newtype `KEnum` a f = `KEnum` (f `Word8`)@ then do all our
+--                  troubles go away?
 newtype KEnum f a = KEnum (f Word8) deriving (Generic)
 
 -- | Convert a 'KEnum' to a 'CEnum' by first creating a @'CEnum' 'Proxy'@ to get the type right, and
--- then converting the 'Proxy' to a 'Functor' container type by taking the 'KEnum's 'Word8' and
--- putting it into the @'CEnum' 'Proxy'@.
--- TODO(greg): define 'toKEnum and 'fromKEnum in terms of this function.
+--   then converting the 'Proxy' to a 'Functor' container type by taking the 'KEnum's 'Word8' and
+--   putting it into the @'CEnum' 'Proxy'@.
+--
+--  __TODO__(greg): define 'toKEnum and 'fromKEnum in terms of this function.
 kenumToCEnum :: forall f g a. (ToCxxType f a, Functor g) => g (KEnum f a) -> CEnum (Compose g f)
 kenumToCEnum =
   let enumCxxType :: CEnum (Compose Proxy f)
@@ -62,9 +62,17 @@ instance
   where
   toCxxType = CxxTypeCType . CTypeEnum . kenumToCEnum
 
-deriveHasRep ''KEnum
+instance (Client.HasRep a, (f Word8, b) ~ Client.Rep a, Monoid b) => Client.HasRep (KEnum f a) where
+  type Rep (KEnum f a) = Client.Rep a
+  abst = KEnum . fst
+  repr (KEnum w) = (w, mempty)
 
-type instance TargetOb (KEnum f a) = KEnum (TargetObTC1 f) a
+-- instance (Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b) => Client.HasRep (KEnum f a) where
+--   type Rep (KEnum f a) = (f Word8, b)
+--   abst = KEnum . fst
+--   repr (KEnum w) = (w, mempty)
+
+type instance TargetOb (KEnum f a) = KEnum (TargetObTC1 f) (TargetOb a)
 
 instance (KAnd f, KEq f (f Word8)) => KEq f (KEnum f a) where
   KEnum x .== KEnum y = x .== y
@@ -83,34 +91,3 @@ instance (KOrd f (f Word8)) => KOrd f (KEnum f a) where
   kMin (KEnum x) (KEnum y) = KEnum $ kMin x y
 
   kMax (KEnum x) (KEnum y) = KEnum $ kMax x y
-
--- | convert enum to 'KEnum'
-toKEnum ::
-  forall f a.
-  (Bounded a, Enum a, Eq a, KLiteral f Word8) =>
-  a ->
-  KEnum f a
-toKEnum x = either error (KEnum . kliteral) $ toIndex allEnums
-  where
-    allEnums :: [a]
-    allEnums = enumFrom minBound
-    maxK :: Word8
-    maxK = maxBound
-    toIndex :: [a] -> Either String Word8
-    toIndex =
-      maybe
-        (Left "enum doesn't match anything in enumFrom minBound")
-        ( \i ->
-            if i >= fromIntegral maxK
-              then Left $ "enum too big (" <> show maxK <> ")"
-              else pure $ fromIntegral i
-        )
-        . elemIndex' x
-
-    -- See https://kitty-hawk.atlassian.net/browse/SW-3503
-    elemIndex' e = go (0 :: Int)
-      where
-        go idx (y : ys)
-          | y == e = pure idx
-          | otherwise = go (idx + 1) ys
-        go _idx [] = Nothing

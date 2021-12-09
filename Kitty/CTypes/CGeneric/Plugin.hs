@@ -134,7 +134,7 @@ class Vectorizable a v where
 
 -- | The default, when possible is just to go back to the underlying type. However, this doesn't
 --   work if there's a `Kitty.CExpr.Types.Core.CExpr` / `Kitty.KTypes.C.C` mismatch.
-instance {-# OVERLAPPABLE #-} (Client.HasRep b, a ~ Client.Rep b) => Vectorizable a b where
+instance {-# OVERLAPPABLE #-} (Client.HasRep a, r ~ Client.Rep a) => Vectorizable r a where
   makeVectorizable = Client.abst
   unmakeVectorizable = Client.repr
 

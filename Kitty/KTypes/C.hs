@@ -10,8 +10,8 @@
 module Kitty.KTypes.C
   ( C (..),
     fromKEnum,
+    toKEnum,
     unCBool,
-    (!!?),
     IndexOutOfBounds,
 
     -- * TODO(greg/peddie): move this elsewhere after the great untangling of kitty protos.
@@ -74,14 +74,14 @@ import Kitty.KTypes.Function (KForeignFunctionCall (..), KFunCall (..))
 import Kitty.KTypes.IEEE (KConvertFloat (..), KIsInfinite (..), KIsNaN (..), fpZeroComparison)
 import Kitty.KTypes.KBits (KBits (..))
 import Kitty.KTypes.KDivisible (KDivisible (..))
-import Kitty.KTypes.KEnum (KEnum (..), toKEnum)
+import Kitty.KTypes.KEnum (KEnum (..))
 import Kitty.KTypes.KLiteral (KLiteral (..))
 import qualified Kitty.KTypes.Libm as Libm
 import Kitty.KTypes.Round (KRound (..), safeRound)
 import qualified Kitty.KTypes.SwitchCase as SwitchCase
 import Kitty.KTypes.TotalOrder (KOrd (..))
 import Kitty.Plugin.Category (NativeCat (..))
-import Kitty.Plugin.Client (deriveHasRep)
+import qualified Kitty.Plugin.Client as Client
 import Kitty.Plugin.Kitty (IntegralCat' (..), RealToFracCat (..))
 import Kitty.Prim (Arrays, IsPrimitive, PrimFractional, PrimIntegral, PrimNum)
 import Test.QuickCheck (Arbitrary (..))
@@ -394,44 +394,53 @@ instance Eq (KEnum C a) where
 
   x /= y = unsafeC (x ./= y)
 
-instance (GArrays C a, Bounded a, Enum a, Show a) => Show (KEnum C a) where
+instance (Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b, Show a) => Show (KEnum C a) where
   showsPrec k x = showsPrec k (fromKEnum x :: a)
 
 instance
-  (GArrays C a, CBOR.Serialise a, Bounded a, Enum a, Eq a) =>
+  (GArrays C a, CBOR.Serialise a, Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b) =>
   CBOR.Serialise (KEnum C a)
   where
   encode = CBOR.encode . fromKEnum
 
   decode = fmap toKEnum CBOR.decode
 
-instance (Arbitrary a, Bounded a, Enum a, Eq a) => Arbitrary (KEnum C a) where
+instance (Arbitrary a, Bounded a, Enum a, Eq a, Client.HasRep a, (C Word8, b) ~ Client.Rep a) => Arbitrary (KEnum C a) where
   arbitrary = toKEnum <$> arbitrary
 
-instance (Aeson.FromJSON a, Bounded a, Enum a, Eq a) => Aeson.FromJSON (KEnum C a) where
+instance (Aeson.FromJSON a, Bounded a, Enum a, Eq a, Client.HasRep a, (C Word8, b) ~ Client.Rep a) => Aeson.FromJSON (KEnum C a) where
   parseJSON x =
     toKEnum <$> (Aeson.parseJSON x :: Aeson.Parser a)
 
-instance (GArrays C a, Aeson.ToJSON a, Bounded a, Enum a) => Aeson.ToJSON (KEnum C a) where
+instance (GArrays C a, Aeson.ToJSON a, Bounded a, Enum a, Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b) => Aeson.ToJSON (KEnum C a) where
   toJSON x = Aeson.toJSON (fromKEnum x)
 
-instance (GArrays C a, Lookup a, Bounded a, Enum a, Eq a) => Lookup (KEnum C a) where
+instance (Lookup a, Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b) => Lookup (KEnum C a) where
   toAccessorTree lens0 = toAccessorTree (lens0 . kenumLens)
     where
       kenumLens :: Lens' (KEnum C a) a
       kenumLens f y = fmap toKEnum (f (fromKEnum y))
 
 -- | Extract enum from 'KEnum'.
-fromKEnum :: forall a. (Bounded a, GArrays C a, Enum a) => KEnum C a -> a
-fromKEnum (KEnum k) =
-  SwitchCase.unsafeIndex (enumFrom minBound) k
+fromKEnum :: (Client.HasRep a, (C Word8, b) ~ Client.Rep a, Monoid b) => KEnum C a -> a
+fromKEnum = Client.abst . Client.repr
+
+-- | convert enum to 'KEnum'
+--
+--  __NB__: This can _only_ be used on enum constructors in code passed through "Kitty.Plugin".
+toKEnum ::
+  forall f a b.
+  (Client.HasRep a, (C Word8, b) ~ Client.Rep a, KLiteral f Word8) =>
+  a ->
+  KEnum f a
+toKEnum = KEnum . kliteral . unsafeC . fst . Client.repr
 
 newtype FromKEnumInvalidState = FromKEnumInvalidState Word8
   deriving (Show)
 
 instance Exception FromKEnumInvalidState
 
-deriveHasRep ''FromKEnumInvalidState
+Client.deriveHasRep ''FromKEnumInvalidState
 
 -- | A safe version of `Unsafe.!!`, which returns `Nothing` if the index is either out of bounds or
 --   @< 0@. This will terminate even with infinite lists, which is a common problem with "safe"
@@ -453,7 +462,7 @@ instance KSelect C where
 
   unsafeBoolToZeroOrOne (UnsafeC False) = UnsafeC 0
   unsafeBoolToZeroOrOne (UnsafeC True) = UnsafeC 1
-  -- Needed for "Kitty.Cat" to not get stuck on the specialization.
+  -- Needed for "Kitty.Plugin" to not get stuck on the specialization.
   {-# INLINE unsafeBoolToZeroOrOne #-}
 
 instance SwitchCase.KIf C where
@@ -523,7 +532,7 @@ data IndexOutOfBounds a
 
 instance (Show a, Typeable a) => Exception (IndexOutOfBounds a)
 
-deriveHasRep ''IndexOutOfBounds
+Client.deriveHasRep ''IndexOutOfBounds
 
 type instance TargetOb (IndexOutOfBounds a) = IndexOutOfBounds (TargetOb a)
 
