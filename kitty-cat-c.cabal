@@ -41,6 +41,7 @@ library
       Kitty.CTypes.ToCxxType
       Kitty.CTypes.Traverse
       Kitty.CTypes.Types
+      Kitty.Cat.Client
       Kitty.Cat.Client.Internal
       Kitty.Graph
       Kitty.Graph.Fold
