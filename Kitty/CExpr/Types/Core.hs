@@ -32,7 +32,7 @@ import qualified Barbies.Constraints as Barbies
 import Control.Arrow ((&&&))
 import Control.Lens (set, view, _Wrapped)
 import Data.Bits (FiniteBits (..))
-import Data.Foldable (foldl', toList)
+import Data.Foldable (foldl')
 import Data.Function (on)
 import Data.Functor.Classes (Show1 (..), showsPrec1)
 import Data.Functor.Compose (Compose (..))
@@ -844,15 +844,14 @@ realSelectList choices@(c :| _) index = Barbies.bmapC @PrimTypeLens fillArray ar
     fillArray (Const n) = Compose . Vector.generate n $ hembed . SelectOutputF result
 
 instance KSelect CExpr where
-  selectList :: forall a. IsPrimitive a => [[CExpr a]] -> CExpr Word8 -> [CExpr a]
-  selectList [] _ = error "You must provide at least one option!"
-  selectList (a : as) idx =
-    toList . getCompose . view prims_ $ realSelectList (fmap arr_a $ a :| as) idx
+  selectList :: forall a. IsPrimitive a => [Vector (CExpr a)] -> CExpr Word8 -> Vector (CExpr a)
+  selectList [] = error "You must provide at least one option!"
+  selectList (a : as) = getCompose . view prims_ . realSelectList (fmap arr_a $ a :| as)
     where
-      arr_a :: [CExpr a] -> Arrays (Compose Vector CExpr)
-      arr_a xs = set (prims_ . _Wrapped) (Vector.fromList xs) $ Barbies.bpure (Compose mempty)
+      arr_a :: Vector (CExpr a) -> Arrays (Compose Vector CExpr)
+      arr_a xs = set (prims_ . _Wrapped) xs $ Barbies.bpure (Compose mempty)
 
-  unsafeBoolToZeroOrOne x = hembed $ BranchF x (hembed (LitF 1)) (hembed (LitF 0))
+  unsafeBoolToZeroOrOne x = hembed $ BranchF x 1 0
 
 instance IsPrimitive a => KTernary CExpr (CExpr a) where
   kTernary predicate true false = hembed $ BranchF predicate true false

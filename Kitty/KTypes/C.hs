@@ -451,9 +451,9 @@ instance KSelect C where
   selectList xs (UnsafeC index) =
     fromMaybe (impureThrow $ KSelectIndexOutOfBounds index) $ xs !!? index
 
-  unsafeBoolToZeroOrOne (UnsafeC False) = UnsafeC 0
-  unsafeBoolToZeroOrOne (UnsafeC True) = UnsafeC 1
-  -- Needed for "Kitty.Cat" to not get stuck on the specialization.
+  unsafeBoolToZeroOrOne (UnsafeC False) = 0
+  unsafeBoolToZeroOrOne (UnsafeC True) = 1
+  -- Needed for "Kitty.Plugin" to not get stuck on the specialization.
   {-# INLINE unsafeBoolToZeroOrOne #-}
 
 instance SwitchCase.KIf C where

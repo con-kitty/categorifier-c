@@ -13,6 +13,7 @@ module Kitty.KTypes.Conditional
   )
 where
 
+import Data.Vector (Vector)
 import Data.Word (Word8)
 import Kitty.KTypes.BooleanLogic (KAnd)
 import Kitty.Prim (IsPrimitive)
@@ -26,7 +27,7 @@ class KAnd f => KTernary f a | a -> f where
 -- TODO(greg/peddie): clean this up.
 -- TODO(ziyang): can we move KSelect to SwitchCase.hs and merge with KIf?
 class KSelect f where
-  selectList :: IsPrimitive a => [[f a]] -> f Word8 -> [f a]
+  selectList :: IsPrimitive a => [Vector (f a)] -> f Word8 -> Vector (f a)
 
   -- | used to implement 'Kitty.KTypes.kIfThenElse', it better just be 0 or 1
   unsafeBoolToZeroOrOne :: f Bool -> f Word8
