@@ -82,36 +82,6 @@ library hedgehog-options
     , DeriveTraversable
     , DerivingStrategies
 
-library hk-classes
-  exposed-modules:
-      Kitty.KTypes.ArcTan2
-      Kitty.KTypes.FMod
-      Kitty.KTypes.KType1
-  hs-source-dirs: hk_classes
-  ghc-options: -Wall
-  build-depends:
-      base
-    , kitty-cat-c
-  default-language: Haskell2010
-  default-extensions:
-      InstanceSigs
-    , ScopedTypeVariables
-    , TypeApplications
-    , FlexibleContexts
-    , FlexibleInstances
-    , FunctionalDependencies
-    , LambdaCase
-    , NoStarIsType
-    , TypeOperators
-    , BangPatterns
-    , StandaloneDeriving
-    , DeriveGeneric
-    , DeriveDataTypeable
-    , DeriveFunctor
-    , DeriveFoldable
-    , DeriveTraversable
-    , DerivingStrategies
-
 library kgen
   exposed-modules:
       Kitty.KGen.KGen
@@ -155,8 +125,8 @@ library kgen
     , unix
     --
     , ffi
-    , hk-classes
     , kitty-cat-c
+    , kitty-cat-c-hk-classes
     , kitty-cat-c-recursion
     , kitty-cat-common
 

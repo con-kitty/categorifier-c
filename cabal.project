@@ -107,6 +107,7 @@ constraints:
 
 packages:
   ./kitty-cat-c.cabal
+  ./hk-classes/kitty-cat-c-hk-classes.cabal
   ./recursion/kitty-cat-c-recursion.cabal
   ./show/kitty-cat-c-show.cabal
   ./tests/kitty-cat-c-tests.cabal
