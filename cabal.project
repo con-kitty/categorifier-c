@@ -66,13 +66,16 @@ source-repository-package
 constraints:
     adjunctions >=4.4 && <5
   , aeson >=1.5.4.1 && <3
+  , async >=2.2.2 && <3
   , barbies >=2.0.1.0 && <2.1
   , base >=4.14 && <4.15
+  , binary >=0.8.8.0 && <1
   , bytestring >=0.10.10.0 && <0.12
   , casing >=0.1.4.1 && <0.2
   , constraints >=0.12 && <0.14
   , containers >=0.6.2.1 && <0.7
   , deepseq >=1.4.4.0 && <1.5
+  , directory >=1.3.6.0 && <2
   , dlist >=0.8.0.8 && <2
   , either >=5.0.1.1 && <6
   , extra >=1.7.8 && <2
@@ -82,14 +85,20 @@ constraints:
   , generic-deriving >=1.13.1 && <1.15
   -- TODO: support hashable-1.4
   , hashable >=1.3.0.0 && <1.4
+  , haskell-src-exts >=1.23.1 && <2
+  , hedgehog >=1.0.3 && <1.1
   , lens >=4.19.2 && <6
+  , optparse-applicative >=0.15.1.0 && <0.17
   , prettyprinter >=1.6.2 && <1.8
   , primitive >=0.7.1.0 && <0.8
+  , process >=1.6.8.2 && <2
+  , sbv >=8.5
   , serialise >=0.2.3.0 && <0.3
   , tagged >=0.8.6 && <0.9
   , template-haskell >=2.16.0.0 && <2.19
   , text >=1.2.3.2 && <1.3
   , transformers >=0.5.6.2 && <0.7
+  , unix >=2.7.2.2 && <3
   , unordered-containers >=0.2.13.0 && <0.3
   , vec >=0.3 && <0.5
   , vector >=0.12.1.2 && <0.13
@@ -100,3 +109,4 @@ packages:
   ./kitty-cat-c.cabal
   ./recursion/kitty-cat-c-recursion.cabal
   ./show/kitty-cat-c-show.cabal
+  ./tests/kitty-cat-c-tests.cabal

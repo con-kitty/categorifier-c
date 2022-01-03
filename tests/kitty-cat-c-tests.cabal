@@ -1,0 +1,215 @@
+cabal-version:  2.4
+
+name:           kitty-cat-c-tests
+version:        0.1
+description:    Tests for kitty-cat-c.
+homepage:       https://github.com/con-kitty/kitty-cat-c#readme
+bug-reports:    https://github.com/con-kitty/kitty-cat-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1
+
+source-repository head
+  type: git
+  location: https://github.com/con-kitty/kitty-cat-c
+
+library ffi
+  exposed-modules:
+      Kitty.Codegen.FFI.ArraysCC
+      Kitty.Codegen.FFI.Call
+      Kitty.Codegen.FFI.Foreign
+      Kitty.Codegen.FFI.Spec
+  hs-source-dirs: ffi
+  ghc-options: -Wall
+  build-depends:
+      barbies
+    , base
+    , deepseq
+    , kitty-cat-c
+    , kitty-cat-common
+    , lens
+    , serialise
+    , transformers
+    , vector
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+library hedgehog-options
+  exposed-modules:
+      Kitty.Hedgehog.Options
+      Kitty.Hedgehog.Paths
+  hs-source-dirs: hedgehog_options
+  ghc-options: -Wall
+  build-depends:
+      PyF
+    , base
+    , hedgehog
+    , optparse-applicative
+    , transformers
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+library hk-classes
+  exposed-modules:
+      Kitty.KTypes.ArcTan2
+      Kitty.KTypes.FMod
+      Kitty.KTypes.KType1
+  hs-source-dirs: hk_classes
+  ghc-options: -Wall
+  build-depends:
+      base
+    , kitty-cat-c
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+library kgen
+  exposed-modules:
+      Kitty.KGen.KGen
+      Kitty.KGen.TH
+      Kitty.KGenGenerate.FFI.Bindings
+      Kitty.KGenGenerate.FFI.Gen
+      Kitty.KGenGenerate.FFI.JIT
+      Kitty.KGenGenerate.FFI.Plugin
+      Kitty.KGenGenerate.FFI.Spec
+      Kitty.KGenGenerate.Test.Equality
+      Kitty.KGenGenerate.Test.Error
+      Kitty.KGenGenerate.Test.GenerateTyped
+      Kitty.KGenGenerate.Test.InputReader
+      Kitty.KGenGenerate.Test.IProduct
+      Kitty.KGenGenerate.Test.Plugin
+      Kitty.KGenGenerate.Test.Pretty
+      Kitty.KGenGenerate.Test.Subprocess
+      Kitty.Prim.Hedgehog
+  hs-source-dirs: kgen
+  ghc-options: -Wall
+  build-depends:
+      PyF
+    , barbies
+    , base
+    , binary
+    , bytestring
+    , casing
+    , deepseq
+    , directory
+    , extra
+    , haskell-src-exts
+    , hedgehog
+    , lens
+    , process
+    , sbv
+    , serialise
+    , template-haskell
+    , text
+    , transformers
+    , vector
+    , unix
+    --
+    , ffi
+    , hk-classes
+    , kitty-cat-c
+    , kitty-cat-c-recursion
+    , kitty-cat-common
+
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+test-suite functions
+  type: exitcode-stdio-1.0
+  hs-source-dirs: functions
+  main-is:     Functions.hs
+  build-depends:
+      async
+    , base
+    , hedgehog
+    , optparse-applicative
+    --
+    , hedgehog-options
+    , kgen
+    , kitty-cat-c
+    , kitty-cat-common
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
