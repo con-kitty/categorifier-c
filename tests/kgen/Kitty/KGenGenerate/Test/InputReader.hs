@@ -10,6 +10,7 @@ import Control.Applicative (liftA2)
 import Control.Monad.Trans.Reader (Reader)
 import Data.Functor.Compose (Compose)
 import Data.Vector (Vector)
+import qualified Data.Vector as V
 import GHC.Stack (HasCallStack, callStack)
 import Kitty.KGenGenerate.Test.Error (KSelectIndexError (..), throwKSelectIndexError)
 import Kitty.KTypes.ArcTan2 (ArcTan2 (..))
@@ -137,17 +138,23 @@ instance KSelect f => KSelect (InputReader f) where
     where
       go ::
         (IsPrimitive a, HasCallStack) =>
-        [[InputReader f a]] ->
-        [InputReader f a]
+        [Vector (InputReader f a)] ->
+        Vector (InputReader f a)
       go [] = throwKSelectIndexError callStack KSelectMissingCase
       go alternatives =
         pure . InputReader . fmap selectSingleton $
           selectList
             <$> traverse (traverse getInputReader) (fmap checkScalar alternatives)
             <*> getInputReader idx
-      checkScalar [x] = [x]
-      checkScalar xs = throwKSelectIndexError callStack . KSelectInvalidArgument $ length xs
-      selectSingleton [x] = x
-      selectSingleton xs = throwKSelectIndexError callStack . KSelectInvalidReturn $ length xs
+      checkScalar xs =
+        let len = length xs
+         in if len == 1
+             then xs
+             else throwKSelectIndexError callStack $ KSelectInvalidArgument len
+      selectSingleton xs =
+        let len = length xs
+         in if len == 1
+             then V.head xs
+             else throwKSelectIndexError callStack $ KSelectInvalidReturn len
 
   unsafeBoolToZeroOrOne = InputReader . fmap unsafeBoolToZeroOrOne . getInputReader

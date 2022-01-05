@@ -9,8 +9,8 @@ where
 
 import qualified Barbies
 import Data.Functor.Compose (Compose (..))
-import qualified Data.List as List
 import Data.Vector (Vector)
+import qualified Data.Vector as V
 import GHC.Stack (callStack)
 import Kitty.KGenGenerate.Test.Error (KSelectIndexError (..), throwKSelectIndexError)
 import Kitty.KTypes.ArcTan2 (ArcTan2 (..))
@@ -154,7 +154,7 @@ splitIProduct f = (fleft, fright)
     outputRight (Compose v) = Compose $ fmap iProductRight v
 
 instance (KSelect f, KSelect g) => KSelect (IProduct f g) where
-  selectList lst (IPair idxf idxg) = checkLengths $ List.zipWith IPair fs gs
+  selectList lst (IPair idxf idxg) = checkLengths $ V.zipWith IPair fs gs
     where
       fs = selectList (lefts tuplist) idxf
       gs = selectList (rights tuplist) idxg
