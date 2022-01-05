@@ -4,7 +4,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
--- redundant constraints allow us to make `coerceC'` safer than the underlying `coerceC`
+-- redundant constraints allow us to make `coerceC` safer than the underlying `unsafeCoerceK`
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
 
 module Kitty.KTypes.C
@@ -23,8 +23,7 @@ import Accessors (Lookup (..))
 import qualified Barbies
 import qualified Codec.Serialise as CBOR
 import ConCat.Category
-  ( CoerceCat (..),
-    EqCat (..),
+  ( EqCat (..),
     FromIntegralCat (..),
     IfCat (..),
     IntegralCat (..),
@@ -80,7 +79,7 @@ import qualified Kitty.KTypes.Libm as Libm
 import Kitty.KTypes.Round (KRound (..), safeRound)
 import qualified Kitty.KTypes.SwitchCase as SwitchCase
 import Kitty.KTypes.TotalOrder (KOrd (..))
-import Kitty.Plugin.Category (NativeCat (..))
+import Kitty.Plugin.Category (NativeCat (..), UnsafeCoerceCat (..))
 import Kitty.Plugin.Client (deriveHasRep)
 import Kitty.Plugin.Kitty (IntegralCat' (..), RealToFracCat (..))
 import Kitty.Prim (Arrays, IsPrimitive, PrimFractional, PrimIntegral, PrimNum)
@@ -538,7 +537,7 @@ instance OrdCat Cat a => OrdCat Cat (C a) where
   greaterThanOrEqual = coerceK @(a, a) greaterThanOrEqual
 
 instance {-# OVERLAPPABLE #-} RealToFracCat Cat a b => RealToFracCat Cat a (C b) where
-  realToFracK = coerceC' ConCat.Category.. realToFracK @Cat @a @b
+  realToFracK = coerceC ConCat.Category.. realToFracK @Cat @a @b
 
 instance
   ( PrimNum a,
@@ -659,9 +658,9 @@ instance
 
 -- * Helper functions
 
--- | Like `coerceC`, but with a `Coercible` constraint for improved type safety.
-coerceC' :: forall a b. Coercible (TargetOb a) (TargetOb b) => Cat a b
-coerceC' = coerceC
+-- | Like `unsafeCoerceK`, but with a `Coercible` constraint for improved type safety.
+coerceC :: forall a b. Coercible (TargetOb a) (TargetOb b) => Cat a b
+coerceC = unsafeCoerceK
 
 coerceK ::
   forall a b c d.

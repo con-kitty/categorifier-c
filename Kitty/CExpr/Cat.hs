@@ -36,7 +36,6 @@ import ConCat.Category
     BraidedPCat (..),
     Category (..),
     ClosedCat (..),
-    CoerceCat (..),
     ConstCat (..),
     CoproductCat (..),
     DistribCat (..),
@@ -48,6 +47,7 @@ import ConCat.Category
     IfCat (..),
     IntegralCat (..),
     MinMaxCat (..),
+    MinMaxFunctorCat (..),
     MonoidalPCat (..),
     MonoidalSCat (..),
     NumCat (..),
@@ -58,6 +58,8 @@ import ConCat.Category
     RepresentableCat (..),
     Strong (..),
     TerminalCat (..),
+    TracedCat (..),
+    TraversableCat (..),
     (&&&),
   )
 import Control.Applicative (liftA2)
@@ -66,6 +68,7 @@ import Data.Bifunctor (bimap)
 import Data.Coerce (Coercible, coerce)
 import Data.Either.Extra (fromEither)
 import Data.Either.Validation (Validation)
+import Data.Foldable (toList)
 import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Rep (Representable)
@@ -101,8 +104,13 @@ import Kitty.KTypes.Function
   )
 import Kitty.KTypes.KDivisible (kDiv, kMod)
 import qualified Kitty.KTypes.SwitchCase as SwitchCase
-import Kitty.KTypes.TotalOrder (KOrd (..), kMaximum, kMinimum)
-import Kitty.Plugin.Category (ForeignFunCallCat (..), ReferenceCat (..), RepCat (..))
+import Kitty.KTypes.TotalOrder (KOrd (..))
+import Kitty.Plugin.Category
+  ( ForeignFunCallCat (..),
+    ReferenceCat (..),
+    RepCat (..),
+    UnsafeCoerceCat (..)
+  )
 import Kitty.Plugin.Client (HasRep (..))
 import Kitty.Plugin.Kitty
   ( ApplicativeCat (..),
@@ -113,22 +121,20 @@ import Kitty.Plugin.Kitty
     FloatingPointConvertCat (..),
     IntegralCat' (..),
     LaxMonoidalFunctorCat (..),
-    MinMaxCat' (..),
     MonadCat (..),
     NumCat' (..),
     PowICat (..),
     RealToFracCat (..),
     SemigroupCat (..),
-    TracedCat (..),
     TranscendentalCat (..),
-    TraversableCat (..),
+    TraversableCat' (..),
+    defaultTrace,
   )
 import qualified Kitty.Plugin.UnconCat as UnconCat
 import Kitty.PolyVec (PolyVec)
 import Kitty.Prim (PrimAny, PrimFractional, PrimGADT (..), PrimIntegral, PrimNum, primGADT)
 import Kitty.Recursion (hembed)
 import Prelude hiding (and, const, curry, id, not, pred, uncurry, (.))
-import Unsafe.Coerce (unsafeCoerce)
 
 -- so that it is legal to import Unsafe.Coerce
 {-# ANN module "HLint: ignore Avoid restricted module" #-}
@@ -285,18 +291,23 @@ instance {-# OVERLAPPABLE #-} (Monad m, TargetOb1 m) => BindableCat Cat m where
         . uncurry (>>=)
         . (fromTargetOb1 (Proxy @a) *** (fromTargetOb1 (Proxy @b) .))
 
-instance (Traversable t, TargetOb1 t) => TraversableCat Cat t where
-  type OkTraversable Cat t f = (Applicative f, TargetOb1 f)
+instance (Traversable t, TargetOb1 t, Applicative f, TargetOb1 f) => TraversableCat Cat t f where
+  sequenceAC :: forall a. t (f a) `Cat` f (t a)
+  sequenceAC =
+    cat $
+      toTargetOb1 @f (Proxy @(t a))
+        . fmap (toTargetOb1 (Proxy @a))
+        . sequenceA
+        . fmap (fromTargetOb1 (Proxy @a))
+        . fromTargetOb1 @t (Proxy @(f a))
 
-  traverseK :: forall f a b. OkTraversable Cat t f => a `Cat` f b -> t a `Cat` f (t b)
+instance (Traversable t, TargetOb1 t, Applicative f, TargetOb1 f) => TraversableCat' Cat t f where
+  traverseK :: forall a b. a `Cat` f b -> t a `Cat` f (t b)
   traverseK f =
     cat $
       toTargetOb1 @f (Proxy @(t b)) . fmap (toTargetOb1 (Proxy @b))
         . traverse (fromTargetOb1 (Proxy @b) . lowerCat f)
         . fromTargetOb1 @t (Proxy @a)
-
-  sequenceAK :: forall f a. OkTraversable Cat t f => t (f a) `Cat` f (t a)
-  sequenceAK = traverseK id
 
 instance {-# OVERLAPPABLE #-} (Functor f, TargetOb1 f) => Strong Cat f where
   strength :: forall a b. (a, f b) `Cat` f (a, b)
@@ -315,7 +326,8 @@ instance SemigroupCat Cat Data.Semigroup.All where
 instance SemigroupCat Cat Data.Semigroup.Any where
   appendK = cat $ uncurry (.||)
 
-instance TracedCat Cat
+instance TracedCat Cat where
+  trace = defaultTrace
 
 instance FixedCat Cat where
   fixK :: forall a x. Cat (a, x) x -> Cat a x
@@ -468,7 +480,6 @@ instance Num (TargetOb a) => NumCat' Cat a where
 
 instance Floating (TargetOb a) => FloatingCat' Cat a where
   powK = cat $ uncurry (**)
-  sqrtK = cat sqrt
 
 instance
   {-# OVERLAPPABLE #-}
@@ -534,6 +545,7 @@ instance Floating (TargetOb a) => FloatingCat Cat a where
   logC = cat log
   cosC = cat cos
   sinC = cat sin
+  sqrtC = cat sqrt
 
 instance
   {-# OVERLAPPABLE #-}
@@ -595,11 +607,15 @@ minmax :: forall a. IfCat Cat a => Cat (a, a) Bool -> Cat (a, a) a
 minmax cmp = Cat $ runCat ifC . uncurry zipTargetObW . (runCat cmp &&& id)
 
 instance
-  (Functor f, Foldable f, KOrd CExpr (TargetOb a), TargetOb (f a) ~ f (TargetOb a)) =>
-  MinMaxCat' Cat f a
+  (Functor f, Foldable f, MinMaxCat Cat a, TargetOb (f a) ~ f (TargetOb a)) =>
+  MinMaxFunctorCat Cat f a
   where
-  minimumK = cat kMinimum
-  maximumK = cat kMaximum
+  minimumC = cat $ \xs -> case toList xs of
+    [] -> error "minimumC: empty structure"
+    y0 : ys -> foldr (curry $ lowerCat @_ @a minC) y0 ys
+  maximumC = cat $ \xs -> case toList xs of
+    [] -> error "maximumC: empty structure"
+    y0 : ys -> foldr (curry $ lowerCat @_ @a maxC) y0 ys
 
 instance IfCat Cat Bool where
   ifC = ifKPrim
@@ -643,8 +659,8 @@ ifKPrim = cat $ \(cond, (t, f)) -> hembed $ BranchF cond t f
 -- | There _should_ be a `Coercible (TargetOb a) (TargetOb b)` constraint, which would allow us to
 --   use `coerce` rather than `unsafeCoerce`. But this leads to errors in categorization due to data
 --   constructors not being in scope.
-instance CoerceCat Cat (a :: Type) (b :: Type) where
-  coerceC = cat unsafeCoerce
+instance UnsafeCoerceCat Cat (a :: Type) (b :: Type) where
+  unsafeCoerceK = cat unsafeCoerceK
 
 instance Exception (TargetOb a) => BottomCat Cat (a :: Type) (b :: Type) where
   bottomC = cat impureThrow
