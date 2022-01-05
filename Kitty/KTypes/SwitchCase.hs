@@ -10,7 +10,6 @@ module Kitty.KTypes.SwitchCase
 where
 
 import qualified Barbies
-import Data.Bool (bool)
 import Data.Functor.Compose (Compose (..))
 import qualified Data.Vector as V
 import Data.Word (Word8)
@@ -27,10 +26,7 @@ class KSelect f => KIf f where
   -- This is dangerous in general, but fine here.
   -- This is the sole purpose for 'unsafeBoolToZeroOrOne'
   kIfThenElse :: forall b. PolyVec f b => f Bool -> b -> b -> b
-  kIfThenElse boolIndex tru fls = switch enumIndex (bool fls tru)
-    where
-      enumIndex :: KEnum f Bool
-      enumIndex = KEnum (unsafeBoolToZeroOrOne boolIndex)
+  kIfThenElse boolIndex tru fls = unsafeIndex [fls, tru] (unsafeBoolToZeroOrOne boolIndex)
 
 switch ::
   forall f a b.
@@ -72,7 +68,7 @@ unsafeIndex allOutputs0 index = either Exception.impureThrow id $ pdevectorize o
           Compose [] (Compose V.Vector f) c ->
           Compose V.Vector f c
         selectPrimList (Compose allPrimOutputs) =
-          Compose . V.fromList $ selectList (V.toList . getCompose <$> allPrimOutputs) index
+          Compose $ selectList (getCompose <$> allPrimOutputs) index
     outputs :: Arrays (Compose V.Vector f)
     outputs = either Exception.impureThrow processOutputs $ traverse pvectorize allOutputs0
 
