@@ -41,7 +41,7 @@ import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Monoid (All (..), Sum (..))
 import Data.Proxy (Proxy (..))
 import Data.Vector (Vector)
-import qualified Data.Vector as Vector (fromList, length, zipWith, (!))
+import qualified Data.Vector as Vector
 import Data.Word (Word8, Word16, Word32, Word64)
 import GHC.Stack (callStack)
 import qualified Hedgehog as H
@@ -409,8 +409,11 @@ genSelectList idx elemGen = do
   idxmod <- (`kMod` (kliteral $ fromIntegral count)) <$> idx
   subtermList elemGen count (\elems -> selectHead $ selectList (fmap pure elems) idxmod)
   where
-    selectHead [x] = x
-    selectHead xs = throwKSelectIndexError callStack . KSelectInvalidReturn $ length xs
+    selectHead xs =
+      let len = length xs
+       in if len == 1
+            then Vector.head xs
+            else throwKSelectIndexError callStack $ KSelectInvalidReturn len
 
 {- Input generation -}
 

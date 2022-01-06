@@ -22,11 +22,14 @@ module Kitty.KGen.KGen
 where
 
 import Control.Lens (view)
+import Data.Foldable (toList)
 import Data.Functor.Classes (Show1 (..))
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.SBV (SBV, (.&&))
 import qualified Data.SBV as SBV
 import qualified Data.Text as Text (unpack)
+import Data.Vector (Vector)
+import qualified Data.Vector as V
 import Data.Word (Word8, Word16, Word32, Word64)
 import GHC.Generics (Generic)
 import Kitty.CTypes.CGeneric (CGeneric)
@@ -375,48 +378,53 @@ instance KT.KType1 KGen
 instance KT.KSelect KGen where
   unsafeBoolToZeroOrOne (KGen bool') = KGen (SBV.ite bool' 1 0)
 
-  selectList :: forall a. IsPrimitive a => [[KGen a]] -> KGen Word8 -> [KGen a]
+  selectList :: forall a. IsPrimitive a => [Vector (KGen a)] -> KGen Word8 -> Vector (KGen a)
   -- error for list of length 0
   selectList [] _ = error "selectList got 0 constructors"
   -- lists of length 1 gets special cased so that SBV doesn't use its mergeArrays code
-  selectList ([KGen x0] : xs') (KGen index) = [KGen ret]
+  selectList (x0s'' : xs'') (KGen index') =
+    if length x0s'' == 1
+      then selectSingleton (V.head x0s'') xs'' index'
+      else selectMulti (toList x0s'') (fmap toList xs'') index'
     where
-      xs = fmap getOneKGen xs'
+      selectSingleton (KGen x0) xs' index = pure $ KGen ret
         where
-          getOneKGen [KGen x] = x
-          getOneKGen r =
-            error $
-              "selectList expected scalars but got length "
-                <> show (length r)
-      ret = case primGADT @a of
-        GBool -> SBV.select (x0 : xs) x0 index
-        GInt8 -> SBV.select (x0 : xs) x0 index
-        GInt16 -> SBV.select (x0 : xs) x0 index
-        GInt32 -> SBV.select (x0 : xs) x0 index
-        GInt64 -> SBV.select (x0 : xs) x0 index
-        GWord8 -> SBV.select (x0 : xs) x0 index
-        GWord16 -> SBV.select (x0 : xs) x0 index
-        GWord32 -> SBV.select (x0 : xs) x0 index
-        GWord64 -> SBV.select (x0 : xs) x0 index
-        GFloat -> SBV.select (x0 : xs) x0 index
-        GDouble -> SBV.select (x0 : xs) x0 index
-  -- merge arrays
-  selectList (x0s' : xs') (KGen index) = fmap KGen ret
-    where
-      ret = case primGADT @a of
-        GBool -> SBV.select (x0s : xs) x0s index
-        GInt8 -> SBV.select (x0s : xs) x0s index
-        GInt16 -> SBV.select (x0s : xs) x0s index
-        GInt32 -> SBV.select (x0s : xs) x0s index
-        GInt64 -> SBV.select (x0s : xs) x0s index
-        GWord8 -> SBV.select (x0s : xs) x0s index
-        GWord16 -> SBV.select (x0s : xs) x0s index
-        GWord32 -> SBV.select (x0s : xs) x0s index
-        GWord64 -> SBV.select (x0s : xs) x0s index
-        GFloat -> SBV.select (x0s : xs) x0s index
-        GDouble -> SBV.select (x0s : xs) x0s index
-      x0s = fmap getKGen x0s'
-      xs = fmap getKGen <$> xs'
+          xs = fmap getOneKGen xs'
+            where
+              getOneKGen r =
+                let len = length r
+                 in if len == 1
+                      then getKGen $ V.head r
+                      else error $ "selectList expected scalars but got length " <> show len
+          ret = case primGADT @a of
+            GBool -> SBV.select (x0 : xs) x0 index
+            GInt8 -> SBV.select (x0 : xs) x0 index
+            GInt16 -> SBV.select (x0 : xs) x0 index
+            GInt32 -> SBV.select (x0 : xs) x0 index
+            GInt64 -> SBV.select (x0 : xs) x0 index
+            GWord8 -> SBV.select (x0 : xs) x0 index
+            GWord16 -> SBV.select (x0 : xs) x0 index
+            GWord32 -> SBV.select (x0 : xs) x0 index
+            GWord64 -> SBV.select (x0 : xs) x0 index
+            GFloat -> SBV.select (x0 : xs) x0 index
+            GDouble -> SBV.select (x0 : xs) x0 index
+      -- merge arrays
+      selectMulti x0s' xs' index = V.fromList $ fmap KGen ret
+        where
+          ret = case primGADT @a of
+            GBool -> SBV.select (x0s : xs) x0s index
+            GInt8 -> SBV.select (x0s : xs) x0s index
+            GInt16 -> SBV.select (x0s : xs) x0s index
+            GInt32 -> SBV.select (x0s : xs) x0s index
+            GInt64 -> SBV.select (x0s : xs) x0s index
+            GWord8 -> SBV.select (x0s : xs) x0s index
+            GWord16 -> SBV.select (x0s : xs) x0s index
+            GWord32 -> SBV.select (x0s : xs) x0s index
+            GWord64 -> SBV.select (x0s : xs) x0s index
+            GFloat -> SBV.select (x0s : xs) x0s index
+            GDouble -> SBV.select (x0s : xs) x0s index
+          x0s = fmap getKGen x0s'
+          xs = fmap getKGen <$> xs'
 
 instance KIf KGen
 

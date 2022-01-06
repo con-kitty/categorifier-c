@@ -11,7 +11,7 @@ module Kitty.KGenGenerate.Test.Pretty
 where
 
 import qualified Barbies
-import Data.Foldable (fold)
+import Data.Foldable (fold, toList)
 import Data.Functor.Classes (Show1 (..))
 import Data.Functor.Compose (Compose (..))
 import qualified Data.List as List
@@ -208,7 +208,7 @@ instance KSelect Pretty where
   selectList lst (Pretty idx) =
     pure . Pretty $ "selectList " <> prettyList (fmap (prettyList . fmap getPretty) lst) <> idx
     where
-      prettyList :: [Text.Builder] -> Text.Builder
-      prettyList elems = "[ " <> fold (List.intersperse ", " elems) <> " ]"
+      prettyList :: Foldable f => f Text.Builder -> Text.Builder
+      prettyList elems = "[ " <> fold (List.intersperse ", " $ toList elems) <> " ]"
 
   unsafeBoolToZeroOrOne = parenthesise1P "unsafeBoolToZeroOrOne"
