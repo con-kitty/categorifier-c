@@ -19,6 +19,7 @@ import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product)
 import qualified Data.Functor.Rep as Representable
 import Data.Kind (Type)
+import Data.List.NonEmpty (NonEmpty)
 import Data.Proxy (Proxy)
 import qualified Data.Semigroup
 import GHC.Generics ((:*:) (..), (:+:) (..))
@@ -67,6 +68,8 @@ type instance TargetOb (Proxy a) = ()
 type instance TargetOb (Product f g a) = Product (TargetObTC1 f) (TargetObTC1 g) a
 
 type instance TargetOb [a] = [TargetOb a]
+
+type instance TargetOb (NonEmpty a) = NonEmpty (TargetOb a)
 
 type instance TargetOb (Representable.WrappedRep f) = Representable.WrappedRep f
 

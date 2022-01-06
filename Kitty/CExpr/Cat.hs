@@ -72,6 +72,7 @@ import Data.Functor.Rep (Representable)
 import qualified Data.Functor.Rep as Representable
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Kind (Type)
+import Data.List.NonEmpty (NonEmpty)
 import Data.Proxy (Proxy (..))
 import qualified Data.Semigroup
 import Data.Text (Text)
@@ -594,16 +595,11 @@ minmax :: forall a. IfCat Cat a => Cat (a, a) Bool -> Cat (a, a) a
 minmax cmp = Cat $ runCat ifC . uncurry zipTargetObW . (runCat cmp &&& id)
 
 instance
-  ( Functor f,
-    Foldable f,
-    HasRep (TargetOb a),
-    KOrd CExpr (Rep (TargetOb a)),
-    TargetOb (f a) ~ f (TargetOb a)
-  ) =>
+  (Functor f, Foldable f, KOrd CExpr (TargetOb a), TargetOb (f a) ~ f (TargetOb a)) =>
   MinMaxCat' Cat f a
   where
-  minimumK = cat $ abst . kMinimum . fmap repr
-  maximumK = cat $ abst . kMaximum . fmap repr
+  minimumK = cat kMinimum
+  maximumK = cat kMaximum
 
 instance IfCat Cat Bool where
   ifC = ifKPrim
@@ -802,6 +798,9 @@ instance ToTargetOb a => ToTargetOb [a] where
 
 instance ToTargetOb a => ToTargetOb (Identity a) where
   toTargetOb (Identity a) = TargetObW . Identity . unTargetObW $ toTargetOb a
+
+instance ToTargetOb a => ToTargetOb (NonEmpty a) where
+  toTargetOb = TargetObW . fmap (unTargetObW . toTargetOb)
 
 instance
   (ToTargetOb (f p), Coercible (TargetOb (f p)) (TargetOb (G.M1 i c f p))) =>
