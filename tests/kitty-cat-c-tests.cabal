@@ -12,44 +12,6 @@ source-repository head
   type: git
   location: https://github.com/con-kitty/kitty-cat-c
 
-library ffi
-  exposed-modules:
-      Kitty.Codegen.FFI.ArraysCC
-      Kitty.Codegen.FFI.Call
-      Kitty.Codegen.FFI.Foreign
-      Kitty.Codegen.FFI.Spec
-  hs-source-dirs: ffi
-  ghc-options: -Wall
-  build-depends:
-      barbies
-    , base
-    , deepseq
-    , kitty-cat-c
-    , kitty-cat-common
-    , lens
-    , serialise
-    , transformers
-    , vector
-  default-language: Haskell2010
-  default-extensions:
-      InstanceSigs
-    , ScopedTypeVariables
-    , TypeApplications
-    , FlexibleContexts
-    , FlexibleInstances
-    , FunctionalDependencies
-    , LambdaCase
-    , NoStarIsType
-    , TypeOperators
-    , BangPatterns
-    , StandaloneDeriving
-    , DeriveGeneric
-    , DeriveDataTypeable
-    , DeriveFunctor
-    , DeriveFoldable
-    , DeriveTraversable
-    , DerivingStrategies
-
 library hedgehog-options
   exposed-modules:
       Kitty.Hedgehog.Options
@@ -82,54 +44,20 @@ library hedgehog-options
     , DeriveTraversable
     , DerivingStrategies
 
-library kgen
-  exposed-modules:
-      Kitty.KGen.KGen
-      Kitty.KGen.TH
-      Kitty.KGenGenerate.FFI.Bindings
-      Kitty.KGenGenerate.FFI.Gen
-      Kitty.KGenGenerate.FFI.JIT
-      Kitty.KGenGenerate.FFI.Plugin
-      Kitty.KGenGenerate.FFI.Spec
-      Kitty.KGenGenerate.Test.Equality
-      Kitty.KGenGenerate.Test.Error
-      Kitty.KGenGenerate.Test.GenerateTyped
-      Kitty.KGenGenerate.Test.InputReader
-      Kitty.KGenGenerate.Test.IProduct
-      Kitty.KGenGenerate.Test.Plugin
-      Kitty.KGenGenerate.Test.Pretty
-      Kitty.KGenGenerate.Test.Subprocess
-      Kitty.Prim.Hedgehog
-  hs-source-dirs: kgen
-  ghc-options: -Wall
+test-suite functions
+  type: exitcode-stdio-1.0
+  hs-source-dirs: functions
+  main-is:     Functions.hs
   build-depends:
-      PyF
-    , barbies
+      async
     , base
-    , binary
-    , bytestring
-    , casing
-    , deepseq
-    , directory
-    , extra
-    , haskell-src-exts
     , hedgehog
-    , lens
-    , process
-    , sbv
-    , serialise
-    , template-haskell
-    , text
-    , transformers
-    , vector
-    , unix
+    , optparse-applicative
     --
-    , ffi
+    , hedgehog-options
     , kitty-cat-c
-    , kitty-cat-c-hk-classes
-    , kitty-cat-c-recursion
+    , kitty-cat-c-test-lib
     , kitty-cat-common
-
   default-language: Haskell2010
   default-extensions:
       InstanceSigs
@@ -150,20 +78,20 @@ library kgen
     , DeriveTraversable
     , DerivingStrategies
 
-test-suite functions
+test-suite random-expressions
   type: exitcode-stdio-1.0
-  hs-source-dirs: functions
-  main-is:     Functions.hs
+  hs-source-dirs: random_expressions
+  main-is:     RandomExpressions.hs
   build-depends:
-      async
+      PyF
     , base
+    , extra
     , hedgehog
     , optparse-applicative
     --
     , hedgehog-options
-    , kgen
     , kitty-cat-c
-    , kitty-cat-common
+    , kitty-cat-c-test-lib
   default-language: Haskell2010
   default-extensions:
       InstanceSigs

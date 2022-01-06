@@ -110,4 +110,5 @@ packages:
   ./hk-classes/kitty-cat-c-hk-classes.cabal
   ./recursion/kitty-cat-c-recursion.cabal
   ./show/kitty-cat-c-show.cabal
+  ./test-lib/kitty-cat-c-test-lib.cabal
   ./tests/kitty-cat-c-tests.cabal
