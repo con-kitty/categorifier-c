@@ -20,6 +20,8 @@ library
   build-depends:
       base
     , kitty-cat-c
+    , kitty-cat-c-recursion
+    , kitty-cat-kitty-category
   default-language: Haskell2010
   default-extensions:
       InstanceSigs

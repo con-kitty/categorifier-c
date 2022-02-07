@@ -1,10 +1,22 @@
+{-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 -- | Define a class that just does arctan2, so that we don't need RealFloat.
 module Kitty.KTypes.ArcTan2
   ( ArcTan2 (..),
   )
 where
 
+import Control.Applicative (liftA2)
+import Data.Typeable (Typeable)
+import Kitty.CExpr.Cat (Cat (..), cat)
+import Kitty.CExpr.Cat.TargetOb (TargetOb)
+import Kitty.CExpr.Types.Core (CExpr, CExprF (..))
+import Kitty.CExpr.Types.Operations (FPBinOp (..))
+import Kitty.KTypes.C (C (..))
 import qualified Kitty.KTypes.Libm as Libm
+import Kitty.Plugin.Kitty (ArcTan2Cat (..))
+import Kitty.Recursion (hembed)
 
 -- $setup
 -- |
@@ -60,3 +72,18 @@ class Floating a => ArcTan2 a where
 instance ArcTan2 Double where arctan2 = Libm.libmAtan2
 
 instance ArcTan2 Float where arctan2 = Libm.libmAtan2f
+
+instance (ArcTan2 (TargetOb a), Typeable a) => ArcTan2Cat Cat a where
+  arctan2K = cat $ uncurry arctan2
+
+instance ArcTan2 (C Double) where
+  arctan2 = liftA2 Libm.libmAtan2
+
+instance ArcTan2 (C Float) where
+  arctan2 = liftA2 Libm.libmAtan2f
+
+instance ArcTan2 (CExpr Double) where
+  arctan2 x = hembed . FPBinOpF FPAtan2 x
+
+instance ArcTan2 (CExpr Float) where
+  arctan2 x = hembed . FPBinOpF FPAtan2 x
