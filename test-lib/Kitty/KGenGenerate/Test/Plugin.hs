@@ -75,7 +75,6 @@ where
 
 import qualified Barbies
 import Codec.Serialise (Serialise)
-import Control.Applicative (liftA2)
 import Control.DeepSeq (NFData, force)
 import Control.Lens (over, _Left)
 import Control.Monad (join, replicateM)
@@ -90,8 +89,7 @@ import qualified Data.Vector as V (Vector)
 import GHC.Generics (Generic)
 import qualified Hedgehog as H
 import qualified Kitty.CExpr.IO as CExpr
-import Kitty.CExpr.Types.Core (CExpr, CExprF (..))
-import Kitty.CExpr.Types.Operations (FPBinOp (..))
+import Kitty.CExpr.Types.Core (CExpr)
 import Kitty.Codegen.FFI.Call (callSBVCFunction)
 import Kitty.Codegen.FFI.Spec
   ( CallError (..),
@@ -128,39 +126,11 @@ import Kitty.KGenGenerate.Test.IProduct (splitIProduct)
 import Kitty.KGenGenerate.Test.Pretty (Pretty (..), specToPrettyArray)
 import Kitty.KGenGenerate.Test.Subprocess (Channel, SubprocessError (..), Uniplex (..))
 import qualified Kitty.KGenGenerate.Test.Subprocess as Subprocess
-import Kitty.KTypes.ArcTan2 (ArcTan2 (..))
 import Kitty.KTypes.C (C (..), (!!?))
 import Kitty.KTypes.CExpr.Generate (generateCExprFunction)
-import Kitty.KTypes.FMod (FMod (..))
-import qualified Kitty.KTypes.Libm as Libm
-import Kitty.Recursion (hembed)
 import qualified System.Exit as Exit
 import qualified System.Posix.Process as Process
 import qualified System.Posix.Signals as Signals (floatingPointException, killProcess)
-
-instance ArcTan2 (C Double) where
-  arctan2 = liftA2 Libm.libmAtan2
-
-instance ArcTan2 (C Float) where
-  arctan2 = liftA2 Libm.libmAtan2f
-
-instance FMod (C Double) where
-  fmod = liftA2 Libm.libmFMod
-
-instance FMod (C Float) where
-  fmod = liftA2 Libm.libmFModf
-
-instance ArcTan2 (CExpr Double) where
-  arctan2 x = hembed . FPBinOpF FPAtan2 x
-
-instance ArcTan2 (CExpr Float) where
-  arctan2 x = hembed . FPBinOpF FPAtan2 x
-
-instance FMod (CExpr Double) where
-  fmod x y = hembed $ FPBinOpF FPFmod x y
-
-instance FMod (CExpr Float) where
-  fmod x y = hembed $ FPBinOpF FPFmod x y
 
 data QuietConfig = Quiet | Noisy deriving (Eq, Ord, Show)
 
