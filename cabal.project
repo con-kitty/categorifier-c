@@ -1,43 +1,43 @@
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: client
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: common
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: duoids
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: category
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: integrations/kitty/category
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: integrations/unconcat/category
 
 source-repository-package
   type: git
-  location: https://heavisoft-temp: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@github.com/con-kitty/kitty-cat
-  tag: 4e70f33acb4c87eb6ee0e93c77b8ddcf51c59b29
+  location: git@github.com:con-kitty/kitty-cat.git
+  tag: 7b0bae1e4025475fc210856c332f76787544a6ca
   subdir: plugin
 
 source-repository-package
