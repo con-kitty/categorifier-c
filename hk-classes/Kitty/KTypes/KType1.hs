@@ -26,8 +26,10 @@ where
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Typeable (Typeable)
 import Data.Word (Word8, Word16, Word32, Word64)
+import Kitty.CExpr.Types.Core (CExpr)
 import Kitty.CTypes.CGeneric.Class (CGeneric)
 import Kitty.KTypes.ArcTan2 (ArcTan2)
+import Kitty.KTypes.C (C)
 import Kitty.KTypes.Conditional (KTernary)
 import Kitty.KTypes.FMod (FMod)
 import Kitty.KTypes.FromIntegral (KFromIntegral)
@@ -190,3 +192,7 @@ class
     KCGenericPrimitives f
   ) =>
   KType1 f
+
+instance KType1 C
+
+instance KType1 CExpr
