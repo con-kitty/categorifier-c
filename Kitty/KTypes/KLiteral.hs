@@ -8,9 +8,9 @@ module Kitty.KTypes.KLiteral
   )
 where
 
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Proxy (Proxy (..))
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Kitty.Prim (IsPrimitive)
 
 class IsPrimitive a => KLiteral f a where

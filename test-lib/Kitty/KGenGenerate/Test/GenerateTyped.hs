@@ -37,12 +37,12 @@ import qualified Control.Monad.Trans.Writer.CPS as Writer
 import Data.Bits (FiniteBits (finiteBitSize))
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Product (Product (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Monoid (All (..), Sum (..))
 import Data.Proxy (Proxy (..))
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Stack (callStack)
 import qualified Hedgehog as H
 import qualified Hedgehog.Gen as H
@@ -859,26 +859,26 @@ generateOpen selector state@(OpenGenState oldBudget@(Budget budget) stateArr) =
     generateMinimal :: m (f a)
     generateMinimal
       | numFreeVars == 0 =
-        -- If there are no free variables, we can choose uniformly between recursively generating
-        -- this type (from the array) and pulling in a free variable that's already been bound
-        -- elsewhere in the expression.
-        H.choice $
-          thisClosed :
-          fmap pure (getKVec . beenBound $ view selector stateArr)
+          -- If there are no free variables, we can choose uniformly between recursively generating
+          -- this type (from the array) and pulling in a free variable that's already been bound
+          -- elsewhere in the expression.
+          H.choice $
+            thisClosed :
+            fmap pure (getKVec . beenBound $ view selector stateArr)
       | numFreeVars > 0
           && numFreeTypes == 1 =
-        -- We only have free variables of one type we must still assign. This is where the budget
-        -- comes in -- if our budget is getting short, we may _have_ to shoot for a minimally sized
-        -- tree. Otherwise we have a choice.
-        if countThisFreeVars state > 0
-          then genMinimalThisOnly state
-          else genMinimalOtherOnly state
+          -- We only have free variables of one type we must still assign. This is where the budget
+          -- comes in -- if our budget is getting short, we may _have_ to shoot for a minimally sized
+          -- tree. Otherwise we have a choice.
+          if countThisFreeVars state > 0
+            then genMinimalThisOnly state
+            else genMinimalOtherOnly state
       | otherwise =
-        -- We have free variables of multiple types. If the budget is tight, we had better start
-        -- branching in types.
-        if countThisFreeVars state > 0
-          then genMinimalThisAndOthers state
-          else genMinimalOthers state
+          -- We have free variables of multiple types. If the budget is tight, we had better start
+          -- branching in types.
+          if countThisFreeVars state > 0
+            then genMinimalThisAndOthers state
+            else genMinimalOthers state
     -- If our budget is low, we have to select from the minimally-deep options we have
     -- available. These sets depend on whether we still need to use free variables of the type of
     -- _this_ term.
@@ -1038,5 +1038,4 @@ arraysEq aa = getAll . Writer.execWriter . Barbies.bzipWith3M_ go eqArray aa
   where
     go (EqFunction f) va vb
       | Vector.length va /= Vector.length vb = Writer.tell $ All False
-      | otherwise =
-        Writer.tell . foldMap All $ Vector.zipWith f va vb
+      | otherwise = Writer.tell . foldMap All $ Vector.zipWith f va vb

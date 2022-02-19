@@ -30,9 +30,9 @@ import Data.Hashable (Hashable (..))
 import Data.Hashable.Lifted (Hashable1 (..))
 import GHC.Generics (Generic, Generic1)
 import Kitty.Higher (HFunctorC (..))
-import Prelude hiding ((.), id)
 import Yaya.Fold (Projectable (..), Recursive (..), Steppable (..))
 import Yaya.Functor (HFunctor (..))
+import Prelude hiding (id, (.))
 
 newtype NaturalTransformation arr f g = NT {runNT :: forall a. f a `arr` g a}
 

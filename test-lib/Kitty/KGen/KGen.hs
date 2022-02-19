@@ -24,13 +24,13 @@ where
 import Control.Lens (view)
 import Data.Foldable (toList)
 import Data.Functor.Classes (Show1 (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.SBV (SBV, (.&&))
 import qualified Data.SBV as SBV
 import qualified Data.Text as Text (unpack)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (Generic)
 import Kitty.CTypes.CGeneric (CGeneric)
 import qualified Kitty.CTypes.CGeneric as CG

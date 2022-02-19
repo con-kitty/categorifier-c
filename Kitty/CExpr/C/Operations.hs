@@ -31,7 +31,7 @@ where
 
 import Control.Arrow ((&&&))
 import Data.Bool (bool)
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import Data.Text.Prettyprint.Doc (Doc, (<+>))
@@ -388,16 +388,16 @@ genDoubleLiteral = genFPLiteral "double" ""
 genFPLiteral :: (Doc.Pretty a, RealFloat a) => Doc ann -> Doc ann -> a -> Doc ann
 genFPLiteral typeName suffix f
   | isNaN f =
-    "((" <> typeName <> ") (NAN))"
+      "((" <> typeName <> ") (NAN))"
   | isInfinite f,
     f < 0 =
-    "((" <> typeName <> ") (-INFINITY))"
+      "((" <> typeName <> ") (-INFINITY))"
   | isInfinite f =
-    "((" <> typeName <> ") (INFINITY))"
+      "((" <> typeName <> ") (INFINITY))"
   | otherwise =
-    Doc.pretty (showHFloat f "") <> suffix
-      -- Add a comment in the source with the normal decimal representation.
-      <+> "/* " <> Doc.pretty f <> suffix <> " */"
+      Doc.pretty (showHFloat f "") <> suffix
+        -- Add a comment in the source with the normal decimal representation.
+        <+> "/* " <> Doc.pretty f <> suffix <> " */"
 
 genIntLiteral :: Bool -> IntSize -> Integer -> Doc ann
 genIntLiteral signed size i

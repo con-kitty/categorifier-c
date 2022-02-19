@@ -8,7 +8,7 @@ module Kitty.Cat.Plugin.UnconCat
   )
 where
 
-import Control.Monad ((<=<), guard)
+import Control.Monad (guard, (<=<))
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except (ExceptT (..), runExceptT)
 import Control.Monad.Trans.Maybe (MaybeT (..))
@@ -40,15 +40,15 @@ tryAutoInterpret = do
         eqTypeIO :: GhcPlugins.UniqSupply -> GhcPlugins.Type -> GhcPlugins.Type -> IO Bool
         eqTypeIO uniqS a b
           | GhcPlugins.eqType (GhcPlugins.typeKind a) (GhcPlugins.typeKind b) =
-            let eqPred =
-                  GhcPlugins.mkTyConApp
-                    GhcPlugins.eqTyCon
-                    [GhcPlugins.typeKind a, a, b]
-             in isRight . fst3
-                  <$> runRWST
-                    (runExceptT (buildDictionary eqPred))
-                    ()
-                    (CategoryState uniqS 0 mempty)
+              let eqPred =
+                    GhcPlugins.mkTyConApp
+                      GhcPlugins.eqTyCon
+                      [GhcPlugins.typeKind a, a, b]
+               in isRight . fst3
+                    <$> runRWST
+                      (runExceptT (buildDictionary eqPred))
+                      ()
+                      (CategoryState uniqS 0 mempty)
           | otherwise = pure False
     guard canAutoInterpret
     -- Suppose the type of `target` is
@@ -68,11 +68,11 @@ tryAutoInterpret = do
     -- `target @F @A dict`.
     let isCTy arg
           | Just (tc, _) <- GhcPlugins.splitTyConApp_maybe arg =
-            splitNameString (GhcPlugins.tyConName tc) == (Just "Kitty.KTypes.C", "C")
+              splitNameString (GhcPlugins.tyConName tc) == (Just "Kitty.KTypes.C", "C")
           | otherwise = False
         liftTyArg arg
           | GhcPlugins.tcIsLiftedTypeKind (GhcPlugins.typeKind arg) =
-            GhcPlugins.mkTyConApp targetObTyCon [GhcPlugins.liftedTypeKind, arg]
+              GhcPlugins.mkTyConApp targetObTyCon [GhcPlugins.liftedTypeKind, arg]
           | isCTy arg = GhcPlugins.mkTyConTy cexprTyCon
           | otherwise = arg
         buildDictionary' ::
@@ -82,10 +82,10 @@ tryAutoInterpret = do
         buildDictionary' predArg ty
           | GhcPlugins.eqType (GhcPlugins.exprType predArg) ty = pure predArg
           | otherwise =
-            MaybeT . ExceptT . withRWST (const ((),)) $
-              runExceptT (buildDictionary ty) >>= \case
-                Right res -> pure (Right (Just res))
-                Left _ -> pure (Right Nothing)
+              MaybeT . ExceptT . withRWST (const ((),)) $
+                runExceptT (buildDictionary ty) >>= \case
+                  Right res -> pure (Right (Just res))
+                  Left _ -> pure (Right Nothing)
     targetObFun <-
       foldlM
         ( \acc -> \case

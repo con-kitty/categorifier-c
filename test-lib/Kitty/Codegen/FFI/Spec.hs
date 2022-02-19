@@ -59,13 +59,13 @@ import Control.DeepSeq (NFData)
 import Control.Lens (makeClassyPrisms, makeLensesWith, set)
 import Control.Monad (when)
 import Data.Bifunctor (bimap, first)
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Proxy (Proxy (..))
 import Data.Semigroup (getSum)
 import Data.Vector (Vector)
 import qualified Data.Vector as V (length)
 import qualified Data.Vector.Storable.Mutable as MSV
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Foreign.C.Types (CBool (..))
 import qualified Foreign.Marshal.Array as Marshal
 import Foreign.Ptr (Ptr)
@@ -296,15 +296,15 @@ checkSBVCFunctionSpec SBVCFunction {..} = do
             (fromIntegral inputCount, fromIntegral outputCount) :: (Word, Word)
           decide
             | cFunSpecSizes /= hsSpecSizes =
-              Left . SpecMismatchArgCount $
-                SpecMismatchInfo
-                  (Spec hsInputSize hsOutputSize)
-                  (Spec cInputSize cOutputSize)
+                Left . SpecMismatchArgCount $
+                  SpecMismatchInfo
+                    (Spec hsInputSize hsOutputSize)
+                    (Spec cInputSize cOutputSize)
             | cFunSpec /= sbvCFunFFISpec =
-              Left . SpecMismatchArgSize $
-                SpecMismatchInfo
-                  (Spec (specInput sbvCFunFFISpec) (specOutput sbvCFunFFISpec))
-                  (Spec cInputSpec cOutputSpec)
+                Left . SpecMismatchArgSize $
+                  SpecMismatchInfo
+                    (Spec (specInput sbvCFunFFISpec) (specOutput sbvCFunFFISpec))
+                    (Spec cInputSpec cOutputSpec)
             | otherwise = pure sbvCFunFFISpec
       pure decide
   where

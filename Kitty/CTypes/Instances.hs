@@ -22,7 +22,7 @@ import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product (..))
 import Data.Functor.Sum (Sum)
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Kind (Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NE
@@ -36,7 +36,7 @@ import qualified Data.Type.Nat as Nat
 import Data.Typeable (Typeable, typeRep)
 import Data.Vec.Lazy (Vec)
 import qualified Data.Vector as V
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Kitty.CTypes.KTypeRep (toKTypeRep)
 import Kitty.CTypes.Render (infiniteTupleFieldNames, renderCType)
 import Kitty.CTypes.ToCxxType
@@ -504,6 +504,6 @@ class
     ToCxxType f (f Bool),
     ToCxxType f (f BS.ByteString),
     ToCxxType f (f T.Text)
-    --, forall a . IsPrimitive a => ToCxxType f (f a)
+    -- forall a . IsPrimitive a => ToCxxType f (f a)
   ) =>
   PrimitivesToCxxType f

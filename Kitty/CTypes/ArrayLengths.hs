@@ -26,7 +26,7 @@ import Data.Maybe (catMaybes)
 import Data.Proxy (Proxy (..))
 import Data.Semigroup (All (..))
 import qualified Data.Text as T
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Kitty.CTypes.Traverse (CTraversalFuns_ (..), traverseCCon_, traverseCType_)
 import Kitty.CTypes.Types (CCon, CType, CUnion, CUnionF (..), Prim (..))
 import Kitty.Prim (ArrayCount (..), ArrayName (..), Arrays (..), PrimLens, arrayNames, prims_)

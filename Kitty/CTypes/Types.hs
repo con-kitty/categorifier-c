@@ -82,7 +82,7 @@ import qualified Data.List.NonEmpty as NE
 import Data.Proxy (Proxy (..))
 import qualified Data.Text as T
 import qualified Data.Vector as V
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (Generic)
 import qualified GHC.Generics as Generics
 import GHC.OverloadedLabels (IsLabel (..))

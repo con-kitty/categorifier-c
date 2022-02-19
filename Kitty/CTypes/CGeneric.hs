@@ -96,7 +96,7 @@ import Data.Type.Nat (Nat (..))
 import qualified Data.Type.Nat as Nat
 import Data.Typeable (Typeable)
 import Data.Vec.Lazy (Vec (..))
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics
   ( C1,
     D1,
@@ -145,8 +145,8 @@ import Kitty.CTypes.Types (SupportsKBits)
 import qualified Kitty.Cat.Client.Internal as ConCat
 import qualified Kitty.KTypes.KBits as KBits
 import Kitty.Nat.Operators (type (*), type (+), type (<=))
-import Prelude hiding (Enum)
 import Test.QuickCheck (Arbitrary)
+import Prelude hiding (Enum)
 
 -- | `CGenerically` is provided mainly to be used with @-XDerivingVia@ to derive other instances via
 -- a `CGeneric` instance.  Individual instances are provided as orphans within the appropriate

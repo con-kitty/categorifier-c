@@ -149,12 +149,12 @@ instance KSelect f => KSelect (InputReader f) where
       checkScalar xs =
         let len = length xs
          in if len == 1
-             then xs
-             else throwKSelectIndexError callStack $ KSelectInvalidArgument len
+              then xs
+              else throwKSelectIndexError callStack $ KSelectInvalidArgument len
       selectSingleton xs =
         let len = length xs
          in if len == 1
-             then V.head xs
-             else throwKSelectIndexError callStack $ KSelectInvalidReturn len
+              then V.head xs
+              else throwKSelectIndexError callStack $ KSelectInvalidReturn len
 
   unsafeBoolToZeroOrOne = InputReader . fmap unsafeBoolToZeroOrOne . getInputReader
