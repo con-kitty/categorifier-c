@@ -1,42 +1,42 @@
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: client
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: common
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: duoids
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: category
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: integrations/kitty/category
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: integrations/unconcat/category
 
 source-repository-package
   type: git
-  location: git@github.com:con-kitty/kitty-cat.git
+  location: git@github.com:con-kitty/categorifier.git
   tag: 48926413d097306f66b1731771b32584010f4b76
   subdir: plugin
 
