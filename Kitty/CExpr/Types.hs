@@ -16,8 +16,8 @@ import qualified Barbies
 import Control.Lens (Lens')
 import Data.Functor.Classes (Eq1 (..))
 import Data.Hashable (Hashable (..))
-import Data.Int (Int8, Int16, Int32, Int64)
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Int (Int16, Int32, Int64, Int8)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (Generic)
 import Kitty.CExpr.Types.Operations as X
 import Kitty.Prim (Arrays, PrimLens (..), PrimType)

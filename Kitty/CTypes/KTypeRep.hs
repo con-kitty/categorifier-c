@@ -68,9 +68,9 @@ cleanupKTypeRep :: TypeRep -> Maybe KTypeRep
 cleanupKTypeRep rep
   | -- TODO(greg): clean up code duplication
     isC tyCon = case apps of
-    [] -> Nothing -- C just disappears
-    [x] -> cleanupKTypeRep x -- C a -> a
-    _ -> error [fmt|Con' C with too many apps: {show rep}|]
+      [] -> Nothing -- C just disappears
+      [x] -> cleanupKTypeRep x -- C a -> a
+      _ -> error [fmt|Con' C with too many apps: {show rep}|]
   | otherwise = Just $ UnsafeKTypeRep tyCon $ mapMaybe cleanupKTypeRep apps
   where
     (tyCon, apps) = splitTyConApp rep
@@ -103,7 +103,7 @@ TODO(greg): fix this.
 
 isC :: TyCon -> Bool
 -- if we had C in scope
---isC tyCon = tyCon == typeRepTyCon (typeRep (Proxy @C))
+-- isC tyCon = tyCon == typeRepTyCon (typeRep (Proxy @C))
 isC tyCon
   | show tyCon /= "C" = False
   | tyConModule tyCon == "Kitty.KTypes.C" = True

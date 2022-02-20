@@ -74,13 +74,13 @@ import Data.Functor.Compose (Compose)
 import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Kind (Type)
 import Data.Proxy (Proxy (..))
 import Data.Type.Nat (Nat (..))
 import qualified Data.Type.Nat as Nat
 import Data.Vec.Lazy (Vec (..))
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics
   ( C1,
     D1,

@@ -23,7 +23,7 @@ import Control.Monad.Trans.State.Strict (StateT (..))
 import Data.Foldable (traverse_)
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Identity (Identity (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Proxy (Proxy (..))
 import Data.STRef (STRef, readSTRef, writeSTRef)
 import qualified Data.Type.Nat as Nat
@@ -31,7 +31,7 @@ import Data.Vec.Lazy (Vec)
 import qualified Data.Vec.Lazy as Vec
 import qualified Data.Vector.Generic as GV
 import qualified Data.Vector.Generic.Mutable as MV
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (K1 (..), M1 (..), U1 (..), (:*:) (..), (:+:) (..))
 import Kitty.CTypes.CGeneric.Class (CGeneric)
 import qualified Kitty.CTypes.CGeneric.Class as CG

@@ -37,13 +37,13 @@ import Control.Monad.Trans.Except (ExceptT (ExceptT), runExceptT)
 import qualified Data.Bifunctor as Bifunctor (second)
 import Data.Bitraversable (bitraverse)
 import Data.Functor.Compose (Compose (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Proxy (Proxy (..))
 import Data.STRef (newSTRef)
 import qualified Data.Vector as V
 import qualified Data.Vector.Generic as GV
 import qualified Data.Vector.Generic.Mutable as MV
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Kitty.CTypes.GArrays (FromArraysError, GArrays (..), ToArraysError)
 import qualified Kitty.Common.IO.Exception as Exception
 import Kitty.KTypes.KLiteral (KLiteral (..), KLiteralPrimitives)

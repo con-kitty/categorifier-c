@@ -139,7 +139,7 @@ renderCNat (CNatType _ rep) = camelToScreamingSnake ("Num" <> ctypeNameFromKType
     camelToScreamingSnake = T.pack . Casing.toScreamingSnake . Casing.fromHumps . T.unpack
 
 -- If we ever decide to get rid of the system dimension #defines:
---renderCNat (CNatType n _)  = T.pack (show n)
+-- renderCNat (CNatType n _)  = T.pack (show n)
 
 renderCType :: CType f -> T.Text
 renderCType (CTypePrim prim) = getPrimCName prim
@@ -153,8 +153,8 @@ renderPrimData :: Prim Identity -> T.Text
 -- or printf("%a") in C. Unfortunately, while this is perfectly legal C99,
 -- it only becomes legal C++ in C++17!
 -- So for now just print the value.
---renderPrimData (PrimFloat  (Identity x)) = [fmt|{Numeric.showHFloat x ""}|]
---renderPrimData (PrimDouble  (Identity x)) = [fmt|{Numeric.showHFloat x ""}|]51
+-- renderPrimData (PrimFloat  (Identity x)) = [fmt|{Numeric.showHFloat x ""}|]
+-- renderPrimData (PrimDouble  (Identity x)) = [fmt|{Numeric.showHFloat x ""}|]51
 renderPrimData (PrimFloat (Identity x)) = [fmt|{x}f|]
 renderPrimData (PrimDouble (Identity x)) = [fmt|{x}|]
 renderPrimData (PrimInt8 (Identity x)) = [fmt|INT8_C({x})|]

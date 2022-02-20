@@ -73,7 +73,7 @@ import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Rep (Representable)
 import qualified Data.Functor.Rep as Representable
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Kind (Type)
 import Data.List.NonEmpty (NonEmpty)
 import Data.Proxy (Proxy (..))
@@ -82,7 +82,7 @@ import Data.Text (Text)
 import Data.Tuple.Extra (dupe)
 import Data.Typeable (Typeable)
 import qualified Data.Typeable as Typeable
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics ((:*:) (..), (:+:) (..))
 import qualified GHC.Generics as G
 import Kitty.CExpr.Cat.TargetOb (TargetOb, TargetObTC1, TargetObW (..))
@@ -109,7 +109,7 @@ import Kitty.Plugin.Category
   ( ForeignFunCallCat (..),
     ReferenceCat (..),
     RepCat (..),
-    UnsafeCoerceCat (..)
+    UnsafeCoerceCat (..),
   )
 import Kitty.Plugin.Client (HasRep (..))
 import Kitty.Plugin.Kitty

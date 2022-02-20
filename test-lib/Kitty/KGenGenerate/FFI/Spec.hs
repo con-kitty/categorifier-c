@@ -89,11 +89,11 @@ cgStateToSpec SBV.CgState {..} =
       | null xs = mempty
       | kindsMatch && kIsPrimitive = countOf k n
       | otherwise =
-        error $
-          iostr <> " arrays of kind(s) '" <> show kinds
-            <> "' are incompatible with the KGen calling convention: '"
-            <> show xs
-            <> "'"
+          error $
+            iostr <> " arrays of kind(s) '" <> show kinds
+              <> "' are incompatible with the KGen calling convention: '"
+              <> show xs
+              <> "'"
       where
         (headXs, tailXs) = case xs of
           (a : as) -> (a, as)

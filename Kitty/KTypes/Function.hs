@@ -317,7 +317,7 @@ instance PolyVec f r => KVariadicDevecAndApply 'FullyApplied f r where
   devectorizeAndApply Proxy emptyInArrays vectorizedOutputs
     | leftoverLengths /= mempty = Except.throwE $ LeftoverArrayData leftoverLengths
     | otherwise =
-      Except.withExceptT PVectorizeError . Except.except $ pvectorize vectorizedOutputs
+        Except.withExceptT PVectorizeError . Except.except $ pvectorize vectorizedOutputs
     where
       leftoverLengths = arraysLength emptyInArrays
 
@@ -379,9 +379,9 @@ instance
     r
   vectorizeFunctionInputs Proxy arraysFunction inputCounts marraysAction
     | returnedOutputCounts /= expectedOutputCounts =
-      impureThrow countMismatchError
+        impureThrow countMismatchError
     | otherwise =
-      either impureThrow id $ pdevectorize functionOutputs
+        either impureThrow id $ pdevectorize functionOutputs
     where
       functionOutputs = arraysFunction marraysAction inputCounts expectedOutputCounts
       expectedOutputCounts = pvlengths (Proxy @f) (Proxy @r)

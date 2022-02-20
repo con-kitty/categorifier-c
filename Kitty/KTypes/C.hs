@@ -42,14 +42,14 @@ import Data.Functor.Classes (Eq1 (..), Show1 (..))
 import Data.Functor.Compose (Compose (..))
 import Data.Hashable (Hashable)
 import Data.Hashable.Lifted (Hashable1 (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Maybe (fromMaybe)
 import Data.Order (Preorder ((<~)))
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Data.Typeable (Typeable)
 import qualified Data.Vector.Generic as GV
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import Foreign.Storable (Storable)
 -- NB: This is an internal GHC API. It hasn't changed for years at this point, but it's possible it
 -- could go away and need to be replaced by direct C casting.

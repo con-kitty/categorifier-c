@@ -41,7 +41,7 @@ import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product (Pair))
 import Data.Hashable (Hashable (..))
 import Data.Hashable.Lifted (Hashable1 (..))
-import Data.Int (Int8, Int16, Int32, Int64)
+import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Kind (Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Monoid (Endo (..))
@@ -51,7 +51,7 @@ import Data.Text (Text)
 import Data.Typeable (typeRep)
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
-import Data.Word (Word8, Word16, Word32, Word64)
+import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (Generic)
 import Kitty.CExpr.Cat.TargetOb (TargetOb)
 import Kitty.CExpr.Types (CExprFunctionCall, CExprSelectExpression, CExprTypeLens)
@@ -682,18 +682,18 @@ safeIdx :: forall a. (PrimIntegral a, FiniteBits a) => Proxy a -> Int -> CExpr W
 safeIdx proxyA idx
   | idx < 0 = error "I can only test bits with a non-negative index!"
   | idx > maxIndex =
-    error $
-      "The CExpr code generation system can only index up to "
-        <> show numBits
-        <> " bits (index "
-        <> show maxIndex
-        <> ") here.  Do you really have "
-        <> show ((2 :: Integer) ^ idx)
-        <> " bits (index "
-        <> show idx
-        <> ") in your "
-        <> show (typeRep proxyA)
-        <> "?"
+      error $
+        "The CExpr code generation system can only index up to "
+          <> show numBits
+          <> " bits (index "
+          <> show maxIndex
+          <> ") here.  Do you really have "
+          <> show ((2 :: Integer) ^ idx)
+          <> " bits (index "
+          <> show idx
+          <> ") in your "
+          <> show (typeRep proxyA)
+          <> "?"
   | otherwise = hembed $ LitF (fromIntegral idx :: Word8)
   where
     numBits = finiteBitSize (0 :: a)

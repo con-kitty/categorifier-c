@@ -551,26 +551,17 @@ toRecordNamedCxxType recordNames = updateCons <=< gtoCxxType
     updateCxxCon :: CxxCon (Compose g f) -> Either ToCxxTypeError (CxxCon (Compose g f))
     updateCxxCon (CxxNormalCon name fields)
       | NE.length fields == NE.length recordNames =
-        pure $
-          CxxNormalCon
-            name
-            (NE.zipWith replaceFieldName recordNames fields)
+          pure $ CxxNormalCon name (NE.zipWith replaceFieldName recordNames fields)
       | otherwise = Left $ RecordLengthMismatch (typeRep (Proxy @a)) fields recordNames
     replaceFieldName newName (_oldName, field) = (makeRfName newName, field)
     updateCCon :: CCon (Compose g f) -> Either ToCxxTypeError (CCon (Compose g f))
     updateCCon (CNormalCon name tup fields)
       | NE.length fields == NE.length recordNames =
-        pure $
-          CNormalCon
-            name
-            tup
-            (NE.zipWith replaceFieldName recordNames fields)
+          pure $ CNormalCon name tup (NE.zipWith replaceFieldName recordNames fields)
       | otherwise = Left $ RecordLengthMismatch (typeRep (Proxy @a)) fields recordNames
     updateCCon (CBitfieldCon (CBitfield name fields value))
       | NE.length fields == NE.length recordNames =
-        pure $
-          CBitfieldCon $
-            CBitfield name (makeRfName <$> recordNames) value
+          pure $ CBitfieldCon $ CBitfield name (makeRfName <$> recordNames) value
       | otherwise = Left $ RecordLengthMismatch (typeRep (Proxy @a)) fields recordNames
     updateCCon con@(CNullaryCon _) = Left $ NullaryRecord con
 {-# INLINEABLE toRecordNamedCxxType #-}
