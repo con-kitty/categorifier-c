@@ -1,0 +1,111 @@
+cabal-version:  2.4
+
+name:           categorifier-c-tests
+version:        0.1
+description:    Tests for categorifier-c.
+homepage:       https://github.com/con-kitty/categorifier-c#readme
+bug-reports:    https://github.com/con-kitty/categorifier-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1, GHC==8.10.2, GHC==8.10.4
+
+source-repository head
+  type: git
+  location: https://github.com/con-kitty/categorifier-c
+
+library hedgehog-options
+  exposed-modules:
+      Categorifier.C.Hedgehog.Options
+      Categorifier.C.Hedgehog.Paths
+  hs-source-dirs: hedgehog_options
+  ghc-options: -Wall
+  build-depends:
+      PyF
+    , base
+    , hedgehog
+    , optparse-applicative
+    , transformers
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+test-suite functions
+  type: exitcode-stdio-1.0
+  hs-source-dirs: functions
+  main-is:     Functions.hs
+  build-depends:
+      async
+    , base
+    , categorifier-c
+    , categorifier-c-test-lib
+    , categorifier-common
+    , hedgehog
+    , hedgehog-options
+    , optparse-applicative
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
+
+test-suite random-expressions
+  type: exitcode-stdio-1.0
+  hs-source-dirs: random_expressions
+  main-is:     RandomExpressions.hs
+  build-depends:
+      PyF
+    , base
+    , categorifier-c
+    , categorifier-c-test-lib
+    , extra
+    , hedgehog
+    , hedgehog-options
+    , optparse-applicative
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies

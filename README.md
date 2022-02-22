@@ -1,12 +1,12 @@
-# C Backend for Kitty-Cat
+# C Backend for Categorifier
 
-This repo is a backend for the kitty-cat plugin, with the purpose of compiling Haskell
+This repo is a backend for the categorifier plugin, with the purpose of compiling Haskell
 to C. It contains a cartesian closed category,
 referred to as CCat, as well as code that converts morphisms in this category into C code.
 
 At a high level, a Haskell function is compiled into a C function via the following steps:
 
-- The kitty-cat plugin (i.e., frontend) maps the Hask morphism (i.e., the Haskell function)
+- The categorifier plugin (i.e., frontend) maps the Hask morphism (i.e., the Haskell function)
   into a CCat morphism.
   - Hask is, roughly speaking, a category where objects are Haskell types and morphisms are
     Haskell functions.
@@ -32,9 +32,9 @@ alternative approach of using an embedded DSL, are:
 On the flip side, using a compiler plugin is more fragile than an eDSL-based
 approach, and it is harder to support multiple GHC versions. Also, it is harder to give
 a precise, formal description of the subset of Haskell that is supported. That being said, this
-approach has been tested extensively at Kitty Hawk on its flight controller codebase. The
-stability turns out to be quite good, and the ability for control engineers to write
-normal Haskell is highly appreciated.
+approach has been tested extensively at [Kittyhawk](https://www.kittyhawk.aero/) on its flight
+controller codebase. The stability turns out to be quite good, and the ability for control engineers
+to write normal Haskell is highly appreciated.
 
 The readers are encouraged to refer to the [examples](../examples) (coming soon) to follow along this document.
 
@@ -48,7 +48,7 @@ following conditions must be met:
 
 A supported type is defined as one of the following:
 
-- A primitive type. All primitive types except `Bool` need to be wrapped in `Kitty.KTypes.C`.
+- A primitive type. All primitive types except `Bool` need to be wrapped in `Categorifier.C.KTypes.C`.
   Specifically, the primitive types are `Bool`, `C Int8`, `C Int16`, `C Int32`,
   `C Int64`, `C Word8`, `C Word16`, `C Word32`, `C Word64`, `C Float`, and `C Double`.
   - The `C` here is a newtype wrapper. The reason most primitive types need to be wrapped is
@@ -71,11 +71,11 @@ produces lists, or is polymorphic.
 The `Input` and `Output` types should also have the following type class and
 type family instances:
 
+- `Categorifier.C.CExpr.Cat.TargetOb.TargetOb`
+- `Categorifier.C.CTypes.CGeneric.Class.CGeneric`
+- `Categorifier.C.CTypes.GArrays.GArrays`
+- `Categorifier.Client.HasRep`
 - `GHC.Generics.Generic`
-- `Kitty.Plugin.Client.HasRep`
-- `Kitty.CTypes.CGeneric.Class.CGeneric`
-- `Kitty.CTypes.GArrays.GArrays`
-- `Kitty.CExpr.Cat.TargetOb.TargetOb`
 
 The internal types usuallly only need `HasRep` and `TargetOb` instances.
 
@@ -114,10 +114,10 @@ functions can be very slow.
 ## Separate categorization
 
 Compiling large functions is slow and memory intensive in most compiled languages.
-The same holds true for categorizing large function using kitty-cat, which is also both
+The same holds true for categorizing large function using categorifier, which is also both
 slow and memory intensive. It is thus often desirable to categorize a large function in
-smaller chunks. To do so, use `Kitty.Plugin.Categorize.separately` to categorize
-the subparts. Each call to `separately` creates a `Kitty.Plugin.Category.NativeCat`
+smaller chunks. To do so, use `Categorifier.Categorize.separately` to categorize
+the subparts. Each call to `separately` creates a `Categorifier.Category.NativeCat`
 instance. For example, calling `separately` on function `f :: InputF -> OutputF` in
 module `M` produces `instance NativeCat C.Cat "M.f" InputF OutputF`, which contains
 a method `nativeK :: C.Cat InputF OutputF`. Then, if the plugin encounters `M.f`, it

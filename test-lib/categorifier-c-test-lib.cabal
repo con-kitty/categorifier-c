@@ -1,0 +1,80 @@
+cabal-version:  2.4
+
+name:           categorifier-c-test-lib
+version:        0.1
+homepage:       https://github.com/con-kitty/categorifier-c#readme
+bug-reports:    https://github.com/con-kitty/categorifier-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1
+
+source-repository head
+  type: git
+  location: https://github.com/con-kitty/categorifier-c
+
+library
+  exposed-modules:
+      Categorifier.C.Codegen.FFI.ArraysCC
+      Categorifier.C.Codegen.FFI.Call
+      Categorifier.C.Codegen.FFI.Foreign
+      Categorifier.C.Codegen.FFI.Spec
+      Categorifier.C.KGen.KGen
+      Categorifier.C.KGen.TH
+      Categorifier.C.KGenGenerate.FFI.Bindings
+      Categorifier.C.KGenGenerate.FFI.Gen
+      Categorifier.C.KGenGenerate.FFI.JIT
+      Categorifier.C.KGenGenerate.FFI.Plugin
+      Categorifier.C.KGenGenerate.FFI.Spec
+      Categorifier.C.KGenGenerate.Test.Equality
+      Categorifier.C.KGenGenerate.Test.Error
+      Categorifier.C.KGenGenerate.Test.GenerateTyped
+      Categorifier.C.KGenGenerate.Test.InputReader
+      Categorifier.C.KGenGenerate.Test.IProduct
+      Categorifier.C.KGenGenerate.Test.Plugin
+      Categorifier.C.KGenGenerate.Test.Pretty
+      Categorifier.C.KGenGenerate.Test.Subprocess
+      Categorifier.C.Prim.Hedgehog
+  ghc-options: -Wall
+  build-depends:
+      PyF
+    , barbies
+    , base
+    , binary
+    , bytestring
+    , casing
+    , categorifier-c
+    , categorifier-c-hk-classes
+    , categorifier-c-recursion
+    , categorifier-common
+    , deepseq
+    , directory
+    , extra
+    , haskell-src-exts
+    , hedgehog
+    , lens
+    , process
+    , sbv
+    , serialise
+    , template-haskell
+    , text
+    , transformers
+    , vector
+    , unix
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
