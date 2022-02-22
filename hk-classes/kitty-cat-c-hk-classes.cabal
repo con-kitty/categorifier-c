@@ -16,7 +16,11 @@ library
       Kitty.KTypes.ArcTan2
       Kitty.KTypes.FMod
       Kitty.KTypes.KType1
-  ghc-options: -Wall
+  ghc-options:
+      -O0
+      -fexpose-all-unfoldings
+      -fno-omit-interface-pragmas
+      -Wall
   build-depends:
       base
     , kitty-cat-c

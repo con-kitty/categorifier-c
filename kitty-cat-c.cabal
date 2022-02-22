@@ -60,6 +60,7 @@ library
       Kitty.KTypes.KLiteral
       Kitty.KTypes.Libm
       Kitty.KTypes.Round
+      Kitty.KTypes.Sum.Maybe
       Kitty.KTypes.SwitchCase
       Kitty.KTypes.TotalOrder
       Kitty.Lens.Rules
