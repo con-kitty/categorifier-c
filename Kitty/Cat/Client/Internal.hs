@@ -114,7 +114,7 @@ deriveHasRep' = \case
                 hasRepInstD (pure type0) vars t (reverse (evalState a 0)) (evalState r (0 :: Word8))
             )
               ( [t|
-                  ($(size), $(mkNestedPairs (\x y -> [t|($x, $y)|]) [t|()|] =<< traverse fst3 cons))
+                  ($size, $(mkNestedPairs (\x y -> [t|($x, $y)|]) [t|()|] =<< traverse fst3 cons))
                   |],
                 buildClauses
                   ( traverse $ \p -> do
