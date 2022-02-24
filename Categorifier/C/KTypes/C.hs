@@ -573,6 +573,8 @@ instance IntegralCat Cat a => IntegralCat Cat (C a) where
   modC = coerceK @(a, a) modC
 
 instance IntegralCat' Cat a => IntegralCat' Cat (C a) where
+  evenK = coerceK @a evenK
+  oddK = coerceK @a oddK
   quotK = coerceK @(a, a) quotK
   remK = coerceK @(a, a) remK
 
