@@ -743,7 +743,7 @@ instance CGeneric (C Double) where
 --   codegen system. So we can freely unwrap it without it being considered like the other
 --   primitives would be.
 --
---  __TODO__: Once everything is categorized, we should delete this (because there should be no
+--  __TODO__: Once everything is categorified, we should delete this (because there should be no
 --            @`C` `Bool`@ remaining in the code).
 unCBool :: C Bool -> Bool
 unCBool = unsafeC

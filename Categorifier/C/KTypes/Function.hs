@@ -228,7 +228,7 @@ data Callee
 -- | Like `kFunctionCall`, but instead of generating and calling a C function, it calls
 -- an existing C function.
 --
--- This is the function version of `kffcall`, to make it easier for categorization.
+-- This is the function version of `kffcall`, to make it easier for categorification.
 kForeignFunctionCall ::
   forall f isFunCall a b.
   ( KForeignFunctionCall f,
