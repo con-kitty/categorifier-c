@@ -1,43 +1,43 @@
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: client
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: common
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: duoids
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
-  subdir: integrations/kitty/category
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
+  subdir: integrations/concat-extensions/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: integrations/unconcat/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 48926413d097306f66b1731771b32584010f4b76
+  tag: 5a1bb543f251be333eb728a7fe07b17ab5067b29
   subdir: plugin
 
 source-repository-package
@@ -116,10 +116,10 @@ constraints:
   , QuickCheck >=2.13.2 && <3
 
 packages:
-  ./kitty-cat-c.cabal
-  ./hk-classes/kitty-cat-c-hk-classes.cabal
-  ./recursion/kitty-cat-c-recursion.cabal
-  ./show/kitty-cat-c-show.cabal
-  ./unconcat/kitty-cat-c-unconcat.cabal
-  ./test-lib/kitty-cat-c-test-lib.cabal
-  ./tests/kitty-cat-c-tests.cabal
+  ./categorifier-c.cabal
+  ./hk-classes/categorifier-c-hk-classes.cabal
+  ./recursion/categorifier-c-recursion.cabal
+  ./show/categorifier-c-show.cabal
+  ./unconcat/categorifier-c-unconcat.cabal
+  ./test-lib/categorifier-c-test-lib.cabal
+  ./tests/categorifier-c-tests.cabal

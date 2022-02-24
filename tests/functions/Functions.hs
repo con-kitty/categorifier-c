@@ -8,6 +8,27 @@ module Main
   )
 where
 
+import Categorifier.C.CExpr.Types.Core (CExpr)
+import Categorifier.C.CTypes.CGeneric (CGeneric)
+import Categorifier.C.CTypes.GArrays (GArrays)
+import Categorifier.C.CTypes.ToCxxType (ToCxxType)
+import Categorifier.C.Hedgehog.Options
+  ( HedgehogOptions (..),
+    checkRNG,
+    parseHedgehogOptionsWithDefaultNumTestExprs,
+  )
+import Categorifier.C.Hedgehog.Paths (lookupTestTmpDir)
+import Categorifier.C.KGenGenerate.FFI.JIT (BuildOptions (..), defaultBuildOptions, withJitFunction)
+import Categorifier.C.KGenGenerate.Test.Equality (polyEqNaN)
+import Categorifier.C.KTypes.C (C)
+import Categorifier.C.KTypes.FromIntegral (KFromIntegral (..))
+import Categorifier.C.KTypes.KDivisible (KDivisible (..))
+import Categorifier.C.KTypes.KLiteral (KLiteral (..))
+import Categorifier.C.KTypes.Round (KRound (..))
+import Categorifier.C.PolyVec (PolyVec)
+import Categorifier.C.Prim (IsPrimitive)
+import Categorifier.C.Prim.Hedgehog (getPrimitiveGen)
+import qualified Categorifier.Common.IO.Exception as Exception (bracket_)
 import Control.Applicative ((<**>))
 import qualified Control.Concurrent as Concurrent (getNumCapabilities)
 import Control.Concurrent.Async (Concurrently (..))
@@ -19,27 +40,6 @@ import Data.Typeable (Typeable)
 import Data.Word (Word16, Word32, Word64, Word8)
 import GHC.Generics (Generic)
 import qualified Hedgehog as H
-import Kitty.CExpr.Types.Core (CExpr)
-import Kitty.CTypes.CGeneric (CGeneric)
-import Kitty.CTypes.GArrays (GArrays)
-import Kitty.CTypes.ToCxxType (ToCxxType)
-import qualified Kitty.Common.IO.Exception as Exception (bracket_)
-import Kitty.Hedgehog.Options
-  ( HedgehogOptions (..),
-    checkRNG,
-    parseHedgehogOptionsWithDefaultNumTestExprs,
-  )
-import Kitty.Hedgehog.Paths (lookupTestTmpDir)
-import Kitty.KGenGenerate.FFI.JIT (BuildOptions (..), defaultBuildOptions, withJitFunction)
-import Kitty.KGenGenerate.Test.Equality (polyEqNaN)
-import Kitty.KTypes.C (C)
-import Kitty.KTypes.FromIntegral (KFromIntegral (..))
-import Kitty.KTypes.KDivisible (KDivisible (..))
-import Kitty.KTypes.KLiteral (KLiteral (..))
-import Kitty.KTypes.Round (KRound (..))
-import Kitty.PolyVec (PolyVec)
-import Kitty.Prim (IsPrimitive)
-import Kitty.Prim.Hedgehog (getPrimitiveGen)
 import Options.Applicative
   ( Parser,
     ParserInfo,

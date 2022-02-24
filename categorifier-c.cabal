@@ -1,0 +1,147 @@
+cabal-version:  2.4
+
+name:           categorifier-c
+version:        0.1
+description:    categorifier's CExpr backend.
+homepage:       https://github.com/con-kitty/categorifier-c#readme
+bug-reports:    https://github.com/con-kitty/categorifier-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1
+
+source-repository head
+  type: git
+  location: https://github.com/con-kitty/categorifier-c
+
+library
+  exposed-modules:
+      Categorifier.C.Barbies
+      Categorifier.C.CExpr.C
+      Categorifier.C.CExpr.C.Assignment
+      Categorifier.C.CExpr.C.Operations
+      Categorifier.C.CExpr.C.Pretty
+      Categorifier.C.CExpr.Cat
+      Categorifier.C.CExpr.Cat.TargetOb
+      Categorifier.C.CExpr.File
+      Categorifier.C.CExpr.Function
+      Categorifier.C.CExpr.FunctionCall
+      Categorifier.C.CExpr.IO
+      Categorifier.C.CExpr.Normalize
+      Categorifier.C.CExpr.Types
+      Categorifier.C.CExpr.Types.Core
+      Categorifier.C.CExpr.Types.Operations
+      Categorifier.C.CTypes.ArrayLengths
+      Categorifier.C.CTypes.CGeneric
+      Categorifier.C.CTypes.CGeneric.Class
+      Categorifier.C.CTypes.CGeneric.Plugin
+      Categorifier.C.CTypes.GArrays
+      Categorifier.C.CTypes.KTypeRep
+      Categorifier.C.CTypes.Instances
+      Categorifier.C.CTypes.Render
+      Categorifier.C.CTypes.ToArrays
+      Categorifier.C.CTypes.ToCxxType
+      Categorifier.C.CTypes.Traverse
+      Categorifier.C.CTypes.Types
+      Categorifier.C.Client
+      Categorifier.C.Client.Internal
+      Categorifier.C.Graph
+      Categorifier.C.Graph.Fold
+      Categorifier.C.Graph.Reify
+      Categorifier.C.KTypes.BooleanLogic
+      Categorifier.C.KTypes.C
+      Categorifier.C.KTypes.CExpr.Generate
+      Categorifier.C.KTypes.Conditional
+      Categorifier.C.KTypes.Equality
+      Categorifier.C.KTypes.FromIntegral
+      Categorifier.C.KTypes.Function
+      Categorifier.C.KTypes.IEEE
+      Categorifier.C.KTypes.KBits
+      Categorifier.C.KTypes.KDivisible
+      Categorifier.C.KTypes.KEnum
+      Categorifier.C.KTypes.KLiteral
+      Categorifier.C.KTypes.Libm
+      Categorifier.C.KTypes.Round
+      Categorifier.C.KTypes.Sum.Maybe
+      Categorifier.C.KTypes.SwitchCase
+      Categorifier.C.KTypes.TotalOrder
+      Categorifier.C.Lens.Rules
+      Categorifier.C.Nat.Operators
+      Categorifier.C.PolyVec
+      Categorifier.C.Prim
+      Categorifier.C.Prim.ArrayCount
+      Categorifier.C.Prim.ArrayLens
+      Categorifier.C.Prim.ArrayName
+      Categorifier.C.Prim.ArrayVec
+      Categorifier.C.Prim.Base
+      Categorifier.C.Prim.ConstArrays
+      Categorifier.C.Prim.Helpers
+      Categorifier.C.Prim.Patterns
+      Categorifier.C.TypeUtils.Lists
+  other-modules:
+      Paths_categorifier_c
+  autogen-modules:
+      Paths_categorifier_c
+  ghc-options:
+      -O0
+      -fexpose-all-unfoldings
+      -fno-omit-interface-pragmas
+      -Wall
+  build-depends:
+      PyF
+    , QuickCheck
+    , adjunctions
+    , aeson
+    , barbies
+    , base
+    , bytestring
+    , casing
+    , constraints
+    , containers
+    , deepseq
+    , dlist
+    , either
+    , extra
+    , fin
+    , generic-accessors
+    , generic-deriving
+    , hashable
+    , lens
+    , prettyprinter
+    , primitive
+    , serialise
+    , tagged
+    , template-haskell
+    , text
+    , transformers
+    , unordered-containers
+    , vec
+    , vector
+    -- Below are source-repository-packages
+    , categorifier-c-recursion
+    , categorifier-c-show
+    , categorifier-category
+    , categorifier-client
+    , categorifier-common
+    , categorifier-concat-extensions-category
+    , categorifier-duoids
+    , categorifier-unconcat-category
+    , concat-classes
+    , connections
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies

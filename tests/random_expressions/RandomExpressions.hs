@@ -22,14 +22,14 @@ module Main
   )
 where
 
+import qualified Categorifier.C.Hedgehog.Options as Options
+import qualified Categorifier.C.Hedgehog.Paths as Paths
+import qualified Categorifier.C.KGenGenerate.Test.Plugin as Plugin
 import Control.Applicative ((<**>))
 import Control.Monad.Extra (join, when, whenJust)
 import Data.IORef (modifyIORef', newIORef, readIORef)
 import GHC.IO.Encoding (setLocaleEncoding, utf8)
 import qualified Hedgehog as H
-import qualified Kitty.Hedgehog.Options as Options
-import qualified Kitty.Hedgehog.Paths as Paths
-import qualified Kitty.KGenGenerate.Test.Plugin as Plugin
 import Options.Applicative
   ( Parser,
     ParserInfo,
