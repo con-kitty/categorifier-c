@@ -111,12 +111,12 @@ internal types, and do not need to meet those criteria.
 Doing so can reduce the compilation time of the generated C code, since compiling large C
 functions can be very slow.
 
-## Separate categorization
+## Separate categorification
 
 Compiling large functions is slow and memory intensive in most compiled languages.
-The same holds true for categorizing large function using categorifier, which is also both
-slow and memory intensive. It is thus often desirable to categorize a large function in
-smaller chunks. To do so, use `Categorifier.Categorize.separately` to categorize
+The same holds true for categorifying large function using categorifier, which is also both
+slow and memory intensive. It is thus often desirable to categorify a large function in
+smaller chunks. To do so, use `Categorifier.Categorify.separately` to categorify
 the subparts. Each call to `separately` creates a `Categorifier.Category.NativeCat`
 instance. For example, calling `separately` on function `f :: InputF -> OutputF` in
 module `M` produces `instance NativeCat C.Cat "M.f" InputF OutputF`, which contains

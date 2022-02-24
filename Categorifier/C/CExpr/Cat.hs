@@ -657,8 +657,8 @@ ifKPrim :: forall a. (PrimAny a, CExprTypeLens a, TargetOb a ~ CExpr a) => Cat (
 ifKPrim = cat $ \(cond, (t, f)) -> hembed $ BranchF cond t f
 
 -- | There _should_ be a `Coercible (TargetOb a) (TargetOb b)` constraint, which would allow us to
---   use `coerce` rather than `unsafeCoerce`. But this leads to errors in categorization due to data
---   constructors not being in scope.
+--   use `coerce` rather than `unsafeCoerce`. But this leads to errors in categorification due to
+--   data constructors not being in scope.
 instance UnsafeCoerceCat Cat (a :: Type) (b :: Type) where
   unsafeCoerceK = cat unsafeCoerceK
 
@@ -855,7 +855,7 @@ instance
 -- * HasRep instances
 
 -- The following instances are created in order to satisfy the @Rep (TargetOb b) ~ TargetOb (Rep b)@
--- constraint. They are not supposed to be used by `categorizeLambda` to handle non-standard
+-- constraint. They are not supposed to be used by `categorifyLambda` to handle non-standard
 -- data types, because they would obviously result in infinite loops.
 
 instance HasRep (a, b) where
