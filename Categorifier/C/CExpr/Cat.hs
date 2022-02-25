@@ -560,6 +560,9 @@ instance
   (PrimIntegral a, CExprTypeLens a, TargetOb a ~ CExpr a) =>
   IntegralCat' Cat a
   where
+  evenK = cat $ \a ->
+    lowerCat (equal @Cat @a) (lowerCat remK (a, hembed (LitF 2)), hembed (LitF 0))
+  oddK = notC . evenK
   quotK = binop (IntBinOpF Op.Quot)
   remK = binop (IntBinOpF Op.Rem)
 
