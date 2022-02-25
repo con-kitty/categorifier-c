@@ -43,6 +43,7 @@ library
       Categorifier.C.CTypes.Types
       Categorifier.C.Client
       Categorifier.C.Client.Internal
+      Categorifier.C.Generate
       Categorifier.C.Graph
       Categorifier.C.Graph.Fold
       Categorifier.C.Graph.Reify
@@ -100,6 +101,7 @@ library
     , dlist
     , either
     , extra
+    , filepath
     , fin
     , generic-accessors
     , generic-deriving
