@@ -88,6 +88,7 @@ constraints:
   , dlist >=0.8.0.8 && <2
   , either >=5.0.1.1 && <6
   , extra >=1.7.8 && <2
+  , filepath >=1.4.2.1 && <1.5
   -- TODO: support fin-0.2
   , fin >=0.1.1 && <0.2
   , generic-accessors >=0.7.1.0 && <0.8
