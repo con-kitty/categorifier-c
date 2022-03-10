@@ -120,7 +120,6 @@ packages:
   ./categorifier-c.cabal
   ./hk-classes/categorifier-c-hk-classes.cabal
   ./recursion/categorifier-c-recursion.cabal
-  ./show/categorifier-c-show.cabal
   ./unconcat/categorifier-c-unconcat.cabal
   ./test-lib/categorifier-c-test-lib.cabal
   ./tests/categorifier-c-tests.cabal
