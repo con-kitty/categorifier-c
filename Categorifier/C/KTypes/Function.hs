@@ -42,7 +42,6 @@ import Categorifier.C.PolyVec
     pvlengths,
   )
 import Categorifier.C.Prim (ArrayCount (..), ArrayMVec (..), Arrays, IsPrimitive)
-import qualified Categorifier.C.Show as Show
 import Categorifier.Common.IO.Exception (Exception (..), impureThrow)
 import Control.Monad (unless)
 import Control.Monad.ST (ST, runST)
@@ -59,6 +58,7 @@ import Data.Vector (Vector)
 import qualified Data.Vector as V (length, unsafeFreeze)
 import qualified Data.Vector.Mutable as M (unsafeNew)
 import PyF (fmt)
+import Text.Show.Combinators (showCon, (@|))
 
 arraysLength :: ArraysVec f -> Arrays ArrayCount
 arraysLength = Barbies.bmap (ArrayCount . V.length . getCompose)
@@ -119,10 +119,10 @@ data VariadicFunctionCallError
 -- | __TODO__: This should go away, see https://github.com/con-kitty/categorifier-c/issues/24
 instance Show VariadicFunctionCallError where
   showsPrec p = \case
-    LeftoverArrayData a -> Show.appPrec p "LeftoverArrayData" [Show.arg a]
-    CountMismatch a -> Show.appPrec p "CountMismatch" [showString $ prettyArrayCountMismatch a]
-    PDevectorizeError e -> Show.appPrec p "PDevectorizeError" [Show.arg e]
-    PVectorizeError e -> Show.appPrec p "PVectorizeError" [Show.arg e]
+    LeftoverArrayData a -> showCon "LeftoverArrayData" @| a $ p
+    CountMismatch a -> showCon "CountMismatch" @| prettyArrayCountMismatch a $ p
+    PDevectorizeError e -> showCon "PDevectorizeError" @| e $ p
+    PVectorizeError e -> showCon "PVectorizeError" @| e $ p
 
 -- | __TODO__: This should go away, see https://github.com/con-kitty/categorifier-c/issues/24
 instance Exception VariadicFunctionCallError
@@ -242,7 +242,7 @@ kForeignFunctionCall ::
   Callee ->
   -- | A Haskell function that is identical to the C function being called. This function is
   -- only used for evaluating the caller in Haskell. It is not involved in generating the
-  -- caller to C. If evaluating the caller in Haskell is needed, then it does not need to
+  -- caller to C. If evaluating the caller in Haskell isn't needed, then it does not need to
   -- be provided.
   Maybe (a -> b) ->
   (KFFCall f a -> KFFCall f b)

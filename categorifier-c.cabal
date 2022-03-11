@@ -110,6 +110,7 @@ library
     , prettyprinter
     , primitive
     , serialise
+    , show-combinators
     , tagged
     , template-haskell
     , text
@@ -119,7 +120,6 @@ library
     , vector
     -- Below are source-repository-packages
     , categorifier-c-recursion
-    , categorifier-c-show
     , categorifier-category
     , categorifier-client
     , categorifier-common

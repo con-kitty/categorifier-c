@@ -112,7 +112,6 @@ import qualified Barbies
 import qualified Barbies.Constraints as Barbies
 import qualified Categorifier.C.Barbies as Barbies
 import Categorifier.C.Lens.Rules (categorifierLensRules)
-import qualified Categorifier.C.Show as Show
 import Categorifier.Client (deriveHasRep)
 import Codec.Serialise (Serialise)
 import Control.DeepSeq (NFData (..), NFData1 (..), rnf1)
@@ -126,6 +125,7 @@ import Data.Hashable (Hashable (..))
 import Data.Hashable.Lifted (Hashable1 (..), hashWithSalt1)
 import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Kind (Type)
+import Data.List.NonEmpty (nonEmpty)
 import Data.Nat (Nat)
 import Data.Proxy (Proxy (..))
 import Data.Semigroup (All (..))
@@ -137,6 +137,7 @@ import GHC.Generics (Generic)
 import qualified GHC.Generics as Generic
 import GHC.TypeLits (KnownSymbol, Symbol)
 import Generics.Deriving.Enum (GEnum (..))
+import Text.Show.Combinators (ShowFields, noFields, showField, showRecord, (&|))
 
 -- | Primitive types for the 'Categorifier.C.KTypes.K' DSL.  These should behave exactly like the
 -- corresponding C type for all purposes.  This structure is dual to 'Arrays', and must contain
@@ -817,12 +818,16 @@ instance Hashable1 f => Hashable (Arrays f) where
   {-# INLINEABLE hashWithSalt #-}
 
 instance Show1 f => Show (Arrays f) where
-  showsPrec _ = Show.record "Arrays" . Barbies.bfoldMapC @IsPrimitive lsp
+  showsPrec p ars =
+    showRecord
+      "Arrays"
+      (maybe noFields (foldr1 (&|)) . nonEmpty $ Barbies.bfoldMapC @IsPrimitive lsp ars)
+      p
     where
-      lsp :: forall a. (Show a, Typeable a) => f a -> [(String, ShowS)]
+      lsp :: forall a. (Show a, Typeable a) => f a -> [ShowFields]
       lsp v =
         let typeName = show $ typeRep (Proxy @a)
-         in [("array" <> typeName, liftShowsPrec showsPrec showList 11 v)]
+         in [showField ("array" <> typeName) $ flip (liftShowsPrec showsPrec showList) v]
 
 instance NFData1 f => NFData (Arrays f) where
   rnf = Barbies.bfoldlC @NFData (\_ fa -> rnf1 fa) ()
