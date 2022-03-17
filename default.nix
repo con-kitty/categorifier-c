@@ -3,7 +3,7 @@ with import ./nixpkgs.nix {};
 mkShell {
   buildInputs = [
     clang
-    (haskellPackages.ghcWithPackages (p: with p; [
+    (haskell.packages.ghc8107.ghcWithPackages (p: with p; [
       cabal-install
     ]))
     ormolu # for Haskell formatting

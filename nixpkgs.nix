@@ -9,11 +9,10 @@ and the control sum computed using `sha256`.
 */
 
 let
-  # currently set to match Heaviside's
-  sha256 = "02anj9mbzy45bszlmv7k42mb5y7yj2lxc5vpbxgd3f5qljn5ih7y";
-  rev = "c00959877fb06b09468562518b408acda886c79e";
+  sha256 = "162dywda2dvfj1248afxc45kcrg83appjd0nmdb541hl7rnncf02";
+  version = "21.11";
 in
 import (fetchTarball {
   inherit sha256;
-  url = "https://github.com/NixOS/nixpkgs/archive/${rev}.tar.gz";
+  url = "https://github.com/NixOS/nixpkgs/archive/refs/tags/${version}.tar.gz";
 })
