@@ -1,43 +1,61 @@
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: client
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: common
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: duoids
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
+  subdir: integrations/concat/integration
+
+source-repository-package
+  type: git
+  location: https://github.com/con-kitty/categorifier.git
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: integrations/concat-extensions/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
+  subdir: integrations/concat-extensions/integration
+
+source-repository-package
+  type: git
+  location: https://github.com/con-kitty/categorifier.git
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: integrations/unconcat/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: d72020b7f2c4534f94d7694b477e0dc8a3cb1f77
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
+  subdir: integrations/unconcat/integration
+
+source-repository-package
+  type: git
+  location: https://github.com/con-kitty/categorifier.git
+  tag: 368e6d4395ca2641b01866d2dd94d20de503ebbf
   subdir: plugin
 
 source-repository-package
@@ -118,6 +136,7 @@ constraints:
 
 packages:
   ./categorifier-c.cabal
+  ./examples/categorifier-c-examples.cabal
   ./hk-classes/categorifier-c-hk-classes.cabal
   ./recursion/categorifier-c-recursion.cabal
   ./unconcat/categorifier-c-unconcat.cabal
