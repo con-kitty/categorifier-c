@@ -138,6 +138,7 @@ packages:
   ./categorifier-c.cabal
   ./examples/categorifier-c-examples.cabal
   ./hk-classes/categorifier-c-hk-classes.cabal
+  ./maker-map/categorifier-c-maker-map.cabal
   ./recursion/categorifier-c-recursion.cabal
   ./unconcat/categorifier-c-unconcat.cabal
   ./test-lib/categorifier-c-test-lib.cabal
