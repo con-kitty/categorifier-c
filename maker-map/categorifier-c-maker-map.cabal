@@ -1,0 +1,51 @@
+cabal-version:  2.4
+
+name:           categorifier-c-maker-map
+version:        0.1
+homepage:       https://github.com/con-kitty/categorifier-c#readme
+bug-reports:    https://github.com/con-kitty/categorifier-c/issues
+build-type:     Simple
+tested-with:    GHC==8.10.1, GHC==8.10.2, GHC==8.10.4, GHC==8.10.7
+
+source-repository head
+  type: git
+  location: https://github.com/con-kitty/categorifier-c
+
+library
+  exposed-modules:
+      Categorifier.C.MakerMap
+  ghc-options:
+      -O0
+      -fexpose-all-unfoldings
+      -fno-omit-interface-pragmas
+      -Wall
+  build-depends:
+      base
+    , containers
+    , ghc
+    , template-haskell
+    , transformers
+    , categorifier-c
+    , categorifier-c-hk-classes
+    , categorifier-common
+    , categorifier-duoids
+    , categorifier-plugin
+  default-language: Haskell2010
+  default-extensions:
+      InstanceSigs
+    , ScopedTypeVariables
+    , TypeApplications
+    , FlexibleContexts
+    , FlexibleInstances
+    , FunctionalDependencies
+    , LambdaCase
+    , NoStarIsType
+    , TypeOperators
+    , BangPatterns
+    , StandaloneDeriving
+    , DeriveGeneric
+    , DeriveDataTypeable
+    , DeriveFunctor
+    , DeriveFoldable
+    , DeriveTraversable
+    , DerivingStrategies
