@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -13,9 +14,11 @@ import Categorifier.C.CTypes.CGeneric (CGeneric)
 import qualified Categorifier.C.CTypes.CGeneric as CG
 import Categorifier.C.CTypes.GArrays (GArrays)
 import Categorifier.C.KTypes.C (C)
+import Categorifier.C.KTypes.Function (kFunctionCall)
 import qualified Categorifier.Categorify as Categorify
 import Categorifier.Client (deriveHasRep)
 import Data.Int (Int32)
+import Data.Proxy (Proxy (..))
 import Data.Word (Word64)
 import GHC.Generics (Generic)
 
@@ -51,10 +54,14 @@ type instance TargetOb Output = TargetOb (CG.Rep Output ())
 f :: Input -> Output
 f inp =
   Output
-    { oWord64 = if odd (iInt32 inp) then fromIntegral (iInt32 inp) + 5 else 42,
+    { oWord64 = g (iInt32 inp),
       oFloat = realToFrac $ min (iDouble inp) 3.14,
       oBool = iDouble inp > 0
     }
+
+g :: C Int32 -> C Word64
+g = kFunctionCall (Proxy @C) "g" $ \x ->
+  if odd x then fromIntegral x + 5 else 42
 
 fCategorified :: Input `C.Cat` Output
 fCategorified = Categorify.expression f
