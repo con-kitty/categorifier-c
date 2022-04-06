@@ -17,7 +17,7 @@ import Categorifier.C.Hedgehog.Options
     checkRNG,
     parseHedgehogOptionsWithDefaultNumTestExprs,
   )
-import Categorifier.C.Hedgehog.Paths (lookupTestTmpDir)
+import qualified Categorifier.C.Hedgehog.Paths as Paths
 import Categorifier.C.KGenGenerate.FFI.JIT (BuildOptions (..), defaultBuildOptions, withJitFunction)
 import Categorifier.C.KGenGenerate.Test.Equality (polyEqNaN)
 import Categorifier.C.KTypes.C (C)
@@ -288,7 +288,8 @@ data Parallelism
 
 data Options = Options
   { optionsParallelism :: Parallelism,
-    optionsHedgehog :: HedgehogOptions
+    optionsHedgehog :: HedgehogOptions,
+    optionsTestTmpDir :: Paths.TestTmpDirOptions
   }
   deriving (Eq, Ord, Show)
 
@@ -303,6 +304,8 @@ parseOptions =
           <> help "Run all properties in parallel using all available cores."
       )
     <*> parseHedgehogOptionsWithDefaultNumTestExprs 500
+    <*> Paths.parseTestTmpDirOptions
+
 
 opts :: ParserInfo Options
 opts =
@@ -323,8 +326,9 @@ data ProgramConfig = ProgramConfig
 
 main :: IO ()
 main = do
-  Options parallel hedgeopts <- execParser opts
-  jitOptions <- getJitOpts
+  Options parallel hedgeopts tmpDir <- execParser opts
+  path <- Paths.computeTestTmpDir tmpDir
+  jitOptions <- getJitOpts path
   semaphore <- computeNumRunners parallel >>= QSem.newQSem
   let properties = functionProperties (ProgramConfig hedgeopts jitOptions)
       propertyResults = runConcurrently $ traverse (runInPool semaphore) properties
@@ -340,7 +344,6 @@ main = do
       let numRunners = max 1 $ numCores - 1
       putStrLn $ "Running tests in " <> show numRunners <> " parallel threads."
       pure numRunners
-    getJitOpts = do
-      path <- lookupTestTmpDir
+    getJitOpts path = do
       defaultOpts <- defaultBuildOptions Nothing
       pure defaultOpts {buildOptOutputDirectory = Just path}
