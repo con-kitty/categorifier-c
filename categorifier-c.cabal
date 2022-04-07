@@ -47,6 +47,7 @@ library
       Categorifier.C.Graph
       Categorifier.C.Graph.Fold
       Categorifier.C.Graph.Reify
+      Categorifier.C.Hierarchy.Specialized
       Categorifier.C.KTypes.BooleanLogic
       Categorifier.C.KTypes.C
       Categorifier.C.KTypes.CExpr.Generate
@@ -125,6 +126,7 @@ library
     , categorifier-common
     , categorifier-concat-extensions-category
     , categorifier-duoids
+    , categorifier-plugin
     , categorifier-unconcat-category
     , concat-classes
     , connections
