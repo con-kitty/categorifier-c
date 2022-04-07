@@ -62,6 +62,7 @@ import Categorifier.Common.IO.Exception (Exception, impureThrow)
 import Categorifier.ConCatExtensions
   ( ApplicativeCat (..),
     BindableCat (..),
+    ConstraintCat (..),
     FixedCat (..),
     FloatingCat' (..),
     FloatingPointClassifyCat (..),
@@ -115,6 +116,7 @@ import Control.Applicative (liftA2)
 import Control.Monad ((<=<))
 import Data.Bifunctor (bimap)
 import Data.Coerce (Coercible, coerce)
+import qualified Data.Constraint
 import Data.Either.Extra (fromEither)
 import Data.Either.Validation (Validation)
 import Data.Foldable (toList)
@@ -668,6 +670,9 @@ instance UnsafeCoerceCat Cat (a :: Type) (b :: Type) where
 instance Exception (TargetOb a) => BottomCat Cat (a :: Type) (b :: Type) where
   bottomC = cat impureThrow
 
+instance ConstraintCat Cat a where
+  constraintK = Cat . const $ TargetObW Data.Constraint.Dict
+
 ------------------------------------------------------------------------------
 
 -- * "UnconCat" instances
@@ -852,6 +857,9 @@ instance
     runCat (cat abst) . toTargetOb . \case
       L1 a -> Left a
       R1 b -> Right b
+
+instance ToTargetOb (Data.Constraint.Dict c) where
+  toTargetOb = TargetObW
 
 ------------------------------------------------------------------------------
 
