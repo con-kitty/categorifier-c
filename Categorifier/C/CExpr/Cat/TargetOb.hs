@@ -12,13 +12,16 @@ module Categorifier.C.CExpr.Cat.TargetOb
   )
 where
 
+import qualified Barbies
+import qualified Barbies.Constraints as Barbies
+import qualified Data.Constraint
 import Data.Either.Validation (Validation)
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Const (Const)
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product)
 import qualified Data.Functor.Rep as Representable
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty)
 import Data.Proxy (Proxy)
 import qualified Data.Semigroup
@@ -72,6 +75,16 @@ type instance TargetOb [a] = [TargetOb a]
 type instance TargetOb (NonEmpty a) = NonEmpty (TargetOb a)
 
 type instance TargetOb (Representable.WrappedRep f) = Representable.WrappedRep f
+
+type instance TargetOb (c :: Constraint) = Data.Constraint.Dict c
+
+type instance TargetOb (Data.Constraint.Dict c) = Data.Constraint.Dict c
+
+type instance TargetOb (Barbies.Dict c (a :: Type)) = Barbies.Dict c a
+
+type instance TargetOb (Barbies.Unit f) = Barbies.Unit (TargetObTC1 f)
+
+type instance TargetObTC1 (Barbies.Dict c) = Barbies.Dict c
 
 -- | @TargetOb@ for type constructors of kind @Type -> Type@.
 type family TargetObTC1 (f :: Type -> Type) :: Type -> Type
