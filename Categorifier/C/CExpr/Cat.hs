@@ -299,8 +299,7 @@ instance (Traversable t, TargetOb1 t, Applicative f, TargetOb1 f) => Traversable
     cat $
       toTargetOb1 @f (Proxy @(t a))
         . fmap (toTargetOb1 (Proxy @a))
-        . sequenceA
-        . fmap (fromTargetOb1 (Proxy @a))
+        . traverse (fromTargetOb1 (Proxy @a))
         . fromTargetOb1 @t (Proxy @(f a))
 
 instance (Traversable t, TargetOb1 t, Applicative f, TargetOb1 f) => TraversableCat' Cat t f where
