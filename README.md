@@ -36,7 +36,7 @@ approach has been tested extensively at [Kittyhawk](https://www.kittyhawk.aero/)
 controller codebase. The stability turns out to be quite good, and the ability for control engineers
 to write normal Haskell is highly appreciated.
 
-The readers are encouraged to refer to the [examples](../examples) (coming soon) to follow along this document.
+The readers are encouraged to refer to the [examples](examples) to follow along this document.
 
 ## Supported Haskell Types
 
@@ -111,6 +111,8 @@ internal types, and do not need to meet those criteria.
 Doing so can reduce the compilation time of the generated C code, since compiling large C
 functions can be very slow.
 
+An example can be found at [examples/multiple-c-functions](examples/multiple-c-functions).
+
 ## Separate categorification
 
 Compiling large functions is slow and memory intensive in most compiled languages.
@@ -122,6 +124,8 @@ instance. For example, calling `separately` on function `f :: InputF -> OutputF`
 module `M` produces `instance NativeCat C.Cat "M.f" InputF OutputF`, which contains
 a method `nativeK :: C.Cat InputF OutputF`. Then, if the plugin encounters `M.f`, it
 does not need to inline it, but can directly replace it with `nativeK`.
+
+An example can be found at [examples/separate-categorification](examples/separate-categorification).
 
 ## Extending MakerMap
 
