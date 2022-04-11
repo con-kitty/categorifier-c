@@ -27,9 +27,11 @@ import GHC.Generics (Generic)
 import PyF (fmt)
 
 -- | newtype wrapper around Word8 with functions for treating it as its phantom type
--- TODO(greg): if we define this as:
---   newtype KEnum a f = KEnum (f Word8)
--- then do all our troubles go away?
+--
+-- This is used to wrap enum types (i.e., sum types where all constructors are nullary).
+-- It is possible to use an enum type directly without wrapping it in `KEnum`, but only if
+-- its `IfCat` instance is not needed (in other words, the enum type may not appear in
+-- the result of any @if@ branch).
 newtype KEnum f a = KEnum (f Word8) deriving (Generic)
 
 -- | Convert a 'KEnum' to a 'CEnum' by first creating a @'CEnum' 'Proxy'@ to get the type right, and
