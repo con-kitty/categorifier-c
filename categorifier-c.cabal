@@ -33,6 +33,25 @@ library
       Categorifier.C.CTypes.CGeneric
       Categorifier.C.CTypes.CGeneric.Class
       Categorifier.C.CTypes.CGeneric.Plugin
+      Categorifier.C.CTypes.Codegen.Arrays
+      Categorifier.C.CTypes.Codegen.Arrays.Types
+      Categorifier.C.CTypes.Codegen.CborSerialisation
+      Categorifier.C.CTypes.Codegen.DataLayout
+      Categorifier.C.CTypes.Codegen.EnumUtils
+      Categorifier.C.CTypes.Codegen.Helpers
+      Categorifier.C.CTypes.Codegen.IsEqual
+      Categorifier.C.CTypes.Codegen.NonFinite
+      Categorifier.C.CTypes.Codegen.PrintDifferences
+      Categorifier.C.CTypes.Codegen.Render.Render
+      Categorifier.C.CTypes.Codegen.Render.Typedefs
+      Categorifier.C.CTypes.Codegen.Render.Utils
+      Categorifier.C.CTypes.Codegen.Run
+      Categorifier.C.CTypes.Codegen.Sanitize
+      Categorifier.C.CTypes.Codegen.SimpleModule
+      Categorifier.C.CTypes.Codegen.ToString
+      Categorifier.C.CTypes.Codegen.TypesHeaders
+      Categorifier.C.CTypes.DSL.CxxAst
+      Categorifier.C.CTypes.DSL.FunctionWriter
       Categorifier.C.CTypes.GArrays
       Categorifier.C.CTypes.KTypeRep
       Categorifier.C.CTypes.Instances

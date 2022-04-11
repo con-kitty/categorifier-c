@@ -141,3 +141,15 @@ executable sum-types
     , categorifier-unconcat-category
     , categorifier-unconcat-integration
   default-language: Haskell2010
+
+executable c-types
+  hs-source-dirs: c-types
+  main-is: Main.hs
+  ghc-options:
+      -Wall
+  build-depends:
+      base
+    , filepath
+    , text
+    , categorifier-c
+  default-language: Haskell2010

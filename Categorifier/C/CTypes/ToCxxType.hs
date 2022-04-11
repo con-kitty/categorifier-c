@@ -444,13 +444,13 @@ maybeToBitfieldCon ::
   NE.NonEmpty (RfName, CxxType (Compose g f)) ->
   Either Int (CxxOrCCon (Compose g f))
 maybeToBitfieldCon dcname cxxFields =
-  case sequenceA (traverse toCType <$> cxxFields) of
+  case traverse (traverse toCType) cxxFields of
     Nothing -> pure . CxxCon $ CxxNormalCon dcname cxxFields
     Just cfields ->
       if null $ NE.tail cfields -- don't make a bitfield for a single `Bool`.
         then pure . CCon $ CNormalCon dcname NotTuple $ fmap (fmap hembed) cfields
         else
-          CCon <$> case sequenceA (traverse toBool <$> cfields) of
+          CCon <$> case traverse (traverse toBool) cfields of
             -- By the way, tuples are only made in Instances.hs, never by GHC.Generics.
             Nothing -> pure . CNormalCon dcname NotTuple $ fmap (fmap hembed) cfields
             Just (boolFields :: NE.NonEmpty (RfName, Compose g f Bool)) ->
