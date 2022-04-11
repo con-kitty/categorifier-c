@@ -29,6 +29,7 @@ library
     , categorifier-c-hk-classes
     , categorifier-common
     , categorifier-duoids
+    , categorifier-ghc
     , categorifier-plugin
   default-language: Haskell2010
   default-extensions:
