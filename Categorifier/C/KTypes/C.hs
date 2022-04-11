@@ -153,10 +153,6 @@ deriving newtype instance RealFrac a => RealFrac (C a)
 instance Eq1 C where
   liftEq eq (UnsafeC x) (UnsafeC y) = x `eq` y
 
-instance SupportsKBits C
-
-instance PrimitivesToCxxType C
-
 -- | Utility function for invoking 'toCxxType' using @'ToCxxType' 'C' a@ instance.  Then calls
 -- 'Barbies.bmap' to get rid of the 'C'.
 toCxxTypeViaC ::
@@ -273,6 +269,81 @@ instance Show1 C where
   liftShowsPrec sp _ prec (UnsafeC a) =
     ("UnsafeC { unsafeC = " <>) . sp prec a . (" }" <>)
 
+-- | A safe version of `Unsafe.!!`, which returns `Nothing` if the index is either out of bounds or
+--   @< 0@. This will terminate even with infinite lists, which is a common problem with "safe"
+--   implementations of indexing.
+--
+--  __TODO__: A better version of this would prevent a negative argument, but converting between
+--            numeric types is fraught.
+(!!?) :: Integral b => [a] -> b -> Maybe a
+[] !!? _ = Nothing
+(y : ys) !!? k =
+  case compare k 0 of
+    LT -> Nothing
+    EQ -> pure y
+    GT -> ys !!? (k - 1)
+
+data IndexOutOfBounds a
+  = KSelectIndexOutOfBounds a
+  | KSwitchIndexOutOfBounds a
+  deriving (Show)
+
+instance (Show a, Typeable a) => Exception (IndexOutOfBounds a)
+
+deriveHasRep ''IndexOutOfBounds
+
+type instance TargetOb (IndexOutOfBounds a) = IndexOutOfBounds (TargetOb a)
+
+instance KSelect C where
+  selectList xs (UnsafeC index) =
+    fromMaybe (impureThrow $ KSelectIndexOutOfBounds index) $ xs !!? index
+
+  unsafeBoolToZeroOrOne (UnsafeC False) = 0
+  unsafeBoolToZeroOrOne (UnsafeC True) = 1
+  -- Needed for "Categorifier" to not get stuck on the specialization.
+  {-# INLINE unsafeBoolToZeroOrOne #-}
+
+instance SwitchCase.KIf C where
+  kIfThenElse (UnsafeC b) tru fls = if b then tru else fls
+
+instance KFunCall C where
+  kCallFunctionWithSpec _name _inspec _outspec fun = fun
+
+newtype KForeignFunctionCallError = HaskellCalleeNotProvided Text deriving (Show)
+
+instance Exception KForeignFunctionCallError
+
+instance KForeignFunctionCall C where
+  type KFFCall C a = a
+  kffcall _ name _ = fromMaybe . impureThrow $ HaskellCalleeNotProvided name
+
+instance KAnd C where
+  UnsafeC x .&& UnsafeC y = UnsafeC (x && y)
+  {-# INLINE (.&&) #-}
+
+  UnsafeC x .|| UnsafeC y = UnsafeC (x || y)
+  {-# INLINE (.||) #-}
+
+  kNot = fmap not
+  {-# INLINE kNot #-}
+
+instance RealFloat a => KIsInfinite C a where
+  kIsInfinite (UnsafeC x) = UnsafeC (isInfinite x)
+
+instance RealFloat a => KIsNaN C a where
+  kIsNaN (UnsafeC x) = UnsafeC (isNaN x)
+
+instance KConvertFloat C where
+  kFloatToDouble (UnsafeC x) = UnsafeC (GHC.float2Double x)
+
+  kDoubleToFloat (UnsafeC x) = UnsafeC (GHC.double2Float x)
+
+instance Lookup a => Lookup (C a) where
+  toAccessorTree lens0 = toAccessorTree (lens0 . nativeLens)
+    where
+      nativeLens :: Lens' (C a) a
+      nativeLens f y = fmap UnsafeC (f (unsafeC y))
+
 instance Preorder a => Preorder (C a) where
   UnsafeC x <~ UnsafeC y = x <~ y
 
@@ -309,6 +380,10 @@ instance {-# OVERLAPPABLE #-} PrimIntegral a => KFromIntegral C a where
 instance KFromIntegral C Float where kFromIntegral = realToFrac
 
 instance KFromIntegral C Double where kFromIntegral = realToFrac
+
+instance SupportsKBits C
+
+instance PrimitivesToCxxType C
 
 kDivSigned :: (Bounded a, Integral a) => C a -> C a -> C a
 kDivSigned _ 0 = 0
@@ -433,70 +508,6 @@ instance Exception FromKEnumInvalidState
 
 deriveHasRep ''FromKEnumInvalidState
 
--- | A safe version of `Unsafe.!!`, which returns `Nothing` if the index is either out of bounds or
---   @< 0@. This will terminate even with infinite lists, which is a common problem with "safe"
---   implementations of indexing.
---
---  __TODO__: A better version of this would prevent a negative argument, but converting between
---            numeric types is fraught.
-(!!?) :: Integral b => [a] -> b -> Maybe a
-[] !!? _ = Nothing
-(y : ys) !!? k =
-  case compare k 0 of
-    LT -> Nothing
-    EQ -> pure y
-    GT -> ys !!? (k - 1)
-
-instance KSelect C where
-  selectList xs (UnsafeC index) =
-    fromMaybe (impureThrow $ KSelectIndexOutOfBounds index) $ xs !!? index
-
-  unsafeBoolToZeroOrOne (UnsafeC False) = 0
-  unsafeBoolToZeroOrOne (UnsafeC True) = 1
-  -- Needed for "Categorifier" to not get stuck on the specialization.
-  {-# INLINE unsafeBoolToZeroOrOne #-}
-
-instance SwitchCase.KIf C where
-  kIfThenElse (UnsafeC b) tru fls = if b then tru else fls
-
-instance KFunCall C where
-  kCallFunctionWithSpec _name _inspec _outspec fun = fun
-
-newtype KForeignFunctionCallError = HaskellCalleeNotProvided Text deriving (Show)
-
-instance Exception KForeignFunctionCallError
-
-instance KForeignFunctionCall C where
-  type KFFCall C a = a
-  kffcall _ name _ = fromMaybe . impureThrow $ HaskellCalleeNotProvided name
-
-instance KAnd C where
-  UnsafeC x .&& UnsafeC y = UnsafeC (x && y)
-  {-# INLINE (.&&) #-}
-
-  UnsafeC x .|| UnsafeC y = UnsafeC (x || y)
-  {-# INLINE (.||) #-}
-
-  kNot = fmap not
-  {-# INLINE kNot #-}
-
-instance RealFloat a => KIsInfinite C a where
-  kIsInfinite (UnsafeC x) = UnsafeC (isInfinite x)
-
-instance RealFloat a => KIsNaN C a where
-  kIsNaN (UnsafeC x) = UnsafeC (isNaN x)
-
-instance KConvertFloat C where
-  kFloatToDouble (UnsafeC x) = UnsafeC (GHC.float2Double x)
-
-  kDoubleToFloat (UnsafeC x) = UnsafeC (GHC.double2Float x)
-
-instance Lookup a => Lookup (C a) where
-  toAccessorTree lens0 = toAccessorTree (lens0 . nativeLens)
-    where
-      nativeLens :: Lens' (C a) a
-      nativeLens f y = fmap UnsafeC (f (unsafeC y))
-
 instance Arbitrary (Barbies.Unit C) where
   arbitrary = pure Barbies.Unit
 
@@ -515,17 +526,6 @@ instance ToTargetOb a => ToTargetOb (C a) where
 type instance TargetOb (C a) = TargetOb a
 
 type instance TargetObTC1 C = CExpr
-
-data IndexOutOfBounds a
-  = KSelectIndexOutOfBounds a
-  | KSwitchIndexOutOfBounds a
-  deriving (Show)
-
-instance (Show a, Typeable a) => Exception (IndexOutOfBounds a)
-
-deriveHasRep ''IndexOutOfBounds
-
-type instance TargetOb (IndexOutOfBounds a) = IndexOutOfBounds (TargetOb a)
 
 instance EqCat Cat a => EqCat Cat (C a) where
   equal = coerceK @(a, a) equal

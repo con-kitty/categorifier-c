@@ -26,9 +26,9 @@ import Categorifier.Core.MakerMap
     splitNameString,
   )
 import Categorifier.Core.Makers (Makers (..), isFreeIn)
-import Categorifier.Core.Simplify (Transformation (..))
 import Categorifier.Core.Types (CategoricalFailure (..))
 import Categorifier.Duoidal (joinD, (<*\>), (=<\<))
+import Categorifier.GHC.Core (Transformation (..))
 import Control.Arrow ((&&&))
 import Control.Monad.Trans.Except (throwE)
 import qualified Data.Map as Map
@@ -39,6 +39,7 @@ import qualified TyCoRep
 cMakerMapFun :: MakerMapFun
 cMakerMapFun
   dflags
+  logger
   m@Makers {..}
   n
   target
@@ -143,7 +144,7 @@ cMakerMapFun
           \case
             [Plugins.Type _f, Plugins.Type _a, _kliteral, a] ->
               pure $
-                simplifyFun dflags [Rules] expr >>= \case
+                simplifyFun dflags logger [Rules] expr >>= \case
                   -- `kliteral` failed to be simplified: after simplification, the head
                   -- is still `kliteral`.
                   Plugins.App (Plugins.collectArgs -> (Plugins.Var ident', _)) _
