@@ -57,7 +57,8 @@ A supported type is defined as one of the following:
     `fmin(0.0, -0.0) == -0.0`.
 - A product type where each field is a supported type
 - An enum type (i.e., a sum type whose data constructors are all nullary) represented by `KEnum`.
-- A `Maybe` type represented by `KMaybe`.
+- A `Maybe` type represented by `KMaybe`. See [examples/sum-types](examples/sum-types) for an
+  example of using `KEnum` and `KMaybe`.
 
 `Input` and `Output` are allowed to be instantiations of polymorphic types, for example
 `Data.Semigroup.Product (C Int32)`.
