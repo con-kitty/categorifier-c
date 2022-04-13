@@ -68,7 +68,7 @@ toDataLayoutModule cenums cstructsOrUnions =
       [ IncludeSystemLib Def, -- For offsetof.
         IncludeSystemFile "endian.h",
         IncludeSystemFile "json/json.h",
-        IncludeHeavisoftFile "avionics/flight_computer/kitty_protos/type_name.hpp",
+        IncludeLocalFile "type_name.hpp",
         IncludeModule CTypes
       ]
     functions :: [CFunction]
