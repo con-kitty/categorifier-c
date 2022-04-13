@@ -26,21 +26,48 @@ import Categorifier.C.CTypes.DSL.CxxAst
     Define (..),
   )
 import Categorifier.C.CTypes.Render (renderCNat)
+import Categorifier.C.CTypes.ToCxxType (ToCxxType)
 import Categorifier.C.CTypes.Types
+import Categorifier.C.KTypes.C (C, toCxxTypeViaC)
 import Categorifier.C.Prim (Arrays)
 import Control.Monad (join)
 import Data.List.NonEmpty (NonEmpty)
 import Data.Maybe (mapMaybe)
 import Data.Proxy (Proxy (..))
 import qualified Data.Text as T
+import Data.Word (Word64)
+import GHC.Generics (Generic)
+
+-- | This is used in @from_arrays.c@ to allow a recovery value for every non-finite
+-- floating-point value that might occur in the function output.
+--
+-- For functions with this feature enabled, if the recovery argument (of
+-- type identical to the output) is non-NULL and the arrays resulting from
+-- calling the generated function contain non-finite (inf or NaN)
+-- floating-point values, the corresponding values from the recovery
+-- argument will be inserted into the output of the arrays conversion in
+-- their place.
+--
+-- A further argument is added for keeping track of statistics - how many
+-- of each floating-point type was inf and NaN in each conversion.
+data NonFiniteStats = NonFiniteStats
+  { nfsDoubleInf :: Word64,
+    nfsDoubleNaN :: Word64,
+    nfsFloatInf :: Word64,
+    nfsFloatNaN :: Word64
+  }
+  deriving (Generic)
+
+instance ToCxxType C NonFiniteStats
 
 renderCTypesModules ::
   [CxxType Proxy] ->
   Either (NonEmpty (T.Text, Arrays Mismatch)) [RenderedFile]
-renderCTypesModules allCxxTypes =
+renderCTypesModules cxxTypes =
   fmap join . traverse (\target -> catModuleFiles . renderModule target <$> toModule target) $
     enumFrom minBound
   where
+    allCxxTypes = toCxxTypeViaC (Proxy @NonFiniteStats) : cxxTypes
     -- Sort all the types.
     OrderedTypes cnats cenums cstructsOrUnions cxxStructsOrUnions carrays =
       getOrderedTypes allCxxTypes
