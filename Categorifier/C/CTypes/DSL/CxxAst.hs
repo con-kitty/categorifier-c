@@ -119,7 +119,7 @@ data Include
   | IncludeModule CxxTarget
   | IncludeSystemLib SystemLib
   | IncludeSystemFile T.Text
-  | IncludeHeavisoftFile T.Text
+  | IncludeLocalFile T.Text
 
 -- | A module is something that creates exactly one function group which will
 -- turn into either a header or a source and header.

@@ -134,9 +134,9 @@ toCborSerialisationModule doe cenums cstructsOrUnions cxxstructsOrUnions topLeve
         IncludeModule CxxTypes,
         case doe of
           Decode ->
-            IncludeHeavisoftFile "avionics/flight_computer/kitty_protos/cbor_decoder.hpp"
+            IncludeLocalFile "cbor_decoder.hpp"
           Encode ->
-            IncludeHeavisoftFile "avionics/flight_computer/kitty_protos/cbor_encoder.hpp"
+            IncludeLocalFile "cbor_encoder.hpp"
       ]
     WrittenFunctions functions _ = execState writeFunctions (WrittenFunctions [] mempty)
     toCborFunction' = toCborFunction doe . CfCxxType

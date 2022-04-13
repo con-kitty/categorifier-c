@@ -179,9 +179,9 @@ renderIncludes includes = T.intercalate "\n" (renderInclude <$> includes) <> "\n
 renderInclude :: Include -> T.Text
 renderInclude (IncludeModule target) =
   renderInclude
-    . IncludeHeavisoftFile
-    $ [fmt|avionics/flight_computer/kitty_protos/autogen/{renderCxxTargetHeaderName target}|]
-renderInclude (IncludeHeavisoftFile path) = [fmt|#include "{path}"|]
+    . IncludeLocalFile
+    $ [fmt|{renderCxxTargetHeaderName target}|]
+renderInclude (IncludeLocalFile path) = [fmt|#include "{path}"|]
 renderInclude (IncludeSystemFile filename) = case M.lookup filename systemLibFilenameMap of
   Nothing -> [fmt|#include <{filename}>|]
   Just lib ->
