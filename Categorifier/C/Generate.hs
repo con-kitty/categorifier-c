@@ -1,9 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Categorifier.C.Generate
   ( generateCFunction,
     generateCFunction',
     writeCFiles,
+    writeCWrapperFiles,
+    writeCWrapperFilesWithConfig,
   )
 where
 
@@ -12,6 +15,17 @@ import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
 import qualified Categorifier.C.CExpr.File as CExpr (FunctionText (..))
 import qualified Categorifier.C.CExpr.IO as CExpr (layoutOptions, prettyFunctionGenError)
 import Categorifier.C.CExpr.Types.Core (CExpr)
+import Categorifier.C.CTypes.ArrayLengths (showMismatches)
+import Categorifier.C.CTypes.Codegen.Render.Render (RenderedFile (..))
+import Categorifier.C.CTypes.Codegen.Run (renderCTypesModules)
+import Categorifier.C.CTypes.Types (CxxType (..))
+import Categorifier.C.Codegen.Cxx.WrapKGenCFunction
+  ( ArrayConversionFailure (..),
+    CheckFinite (..),
+    FunctionExporterConfig (..),
+    toKGenWrapper,
+  )
+import Categorifier.C.Codegen.ToKioTypes (KioType (..), ToKioTypes (toKioTypes))
 import Categorifier.C.KTypes.C (C)
 import Categorifier.C.KTypes.CExpr.Generate (generateCExprFunction)
 import Categorifier.C.PolyVec (PolyVec, pdevectorize, pvectorize, pvlengths)
@@ -26,6 +40,7 @@ import qualified Data.Text as Text
 import qualified Data.Text.IO as Text
 import qualified Data.Text.Prettyprint.Doc.Render.Text as Prettyprint
 import Data.Vector (Vector)
+import PyF (fmt)
 import System.FilePath ((</>))
 
 generateCFunction ::
@@ -76,3 +91,71 @@ writeCFiles ::
   IO ()
 writeCFiles dir filename morphism =
   writeFiles dir =<< generateCFunction filename morphism
+
+writeCWrapperFiles ::
+  forall i o.
+  (PolyVec CExpr (TargetOb i), PolyVec CExpr (TargetOb o), ToKioTypes i, ToKioTypes o) =>
+  -- | dir
+  Text ->
+  -- | wrapper C file name
+  Text ->
+  -- | low-level C file name
+  Text ->
+  (i `C.Cat` o) ->
+  IO ()
+writeCWrapperFiles =
+  writeCWrapperFilesWithConfig
+    FunctionExporterConfig
+      { fecGenerateTimingInfo = False,
+        fecCheckFinite = Don'tCheckFinite
+      }
+
+writeCWrapperFilesWithConfig ::
+  forall i o.
+  (PolyVec CExpr (TargetOb i), PolyVec CExpr (TargetOb o), ToKioTypes i, ToKioTypes o) =>
+  FunctionExporterConfig ->
+  -- | dir
+  Text ->
+  -- | wrapper C file name
+  Text ->
+  -- | low-level C file name
+  Text ->
+  (i `C.Cat` o) ->
+  IO ()
+writeCWrapperFilesWithConfig config dir wrapperName lowLevelName _morphism = do
+  let inputIOTypes = toKioTypes (Proxy @i)
+      outputIOTypes = toKioTypes (Proxy @o)
+      cxxTypes :: [CxxType Proxy]
+      cxxTypes = fmap (CxxTypeCType . kiotCType) (inputIOTypes <> outputIOTypes)
+  ctypesModules <-
+    either
+      ( Exception.throwIOAsException $ \err ->
+          "Error from renderCTypesModules: " <> show err
+      )
+      pure
+      $ renderCTypesModules cxxTypes
+  (wrapperSrc, wrapperHeader) <-
+    either
+      ( Exception.throwIOAsException $ \case
+          InputArraysMismatch types mismatches ->
+            "internal error: total input array lengths for ("
+              <> Text.unpack (Text.intercalate ", " (Text.pack . show . kiotRep <$> types))
+              <> ") computed in Haskell (left) and C (right) didn't match\n"
+              <> Text.unpack (showMismatches mismatches)
+          OutputArraysMismatch types mismatches ->
+            "internal error: total output array lengths for ("
+              <> Text.unpack (Text.intercalate ", " (Text.pack . show . kiotRep <$> types))
+              <> ") computed in Haskell (left) and C (right) didn't match\n"
+              <> Text.unpack (showMismatches mismatches)
+          InternalConstructorMismatches mismatches ->
+            foldMap (Text.unpack . uncurry (<>) . fmap showMismatches) mismatches
+      )
+      pure
+      $ toKGenWrapper config inputIOTypes outputIOTypes wrapperName lowLevelName
+  writeFiles dir $
+    fmap (\(RenderedFile fileName contents) -> (fileName, contents)) ctypesModules
+  writeFiles
+    dir
+    [ ([fmt|{wrapperName}.c|], wrapperSrc),
+      ([fmt|{wrapperName}.h|], wrapperHeader)
+    ]

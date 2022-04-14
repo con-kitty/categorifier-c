@@ -60,8 +60,11 @@ library
       Categorifier.C.CTypes.ToCxxType
       Categorifier.C.CTypes.Traverse
       Categorifier.C.CTypes.Types
+      Categorifier.C.CTypes.WhyNotCType
       Categorifier.C.Client
       Categorifier.C.Client.Internal
+      Categorifier.C.Codegen.Cxx.WrapKGenCFunction
+      Categorifier.C.Codegen.ToKioTypes
       Categorifier.C.Generate
       Categorifier.C.Graph
       Categorifier.C.Graph.Fold
