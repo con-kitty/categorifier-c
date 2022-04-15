@@ -1,4 +1,5 @@
 {-# LANGUAGE MagicHash #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | This is separate from "Categorifier.C.Client" because we can't define Template Haskell and use it in
@@ -13,6 +14,7 @@ import Categorifier.C.KTypes.C (C)
 import Categorifier.C.PolyVec (PolyVec, zeroValue)
 import Categorifier.Client (HasRep (..))
 import qualified Categorifier.Common.IO.Exception as Exception
+import Categorifier.TH (TyVarBndr, tyVarBndrName, pattern KindedTV, pattern PlainTV)
 import Control.Monad ((<=<))
 import Control.Monad.Trans.State.Strict (evalState, get, modify)
 import Data.Bifunctor (first, second)
@@ -61,15 +63,13 @@ deriveHasRep' = \case
     hasRep name tyVarBndrs ctx $ pure dataCon
   info -> Left $ InvalidName info
   where
-    applyType name = foldl' TH.AppT (TH.ConT name) . fmap (TH.VarT . nameOfBinder)
-    nameOfBinder (TH.PlainTV n) = n
-    nameOfBinder (TH.KindedTV n _) = n
+    applyType name = foldl' TH.AppT (TH.ConT name) . fmap (TH.VarT . tyVarBndrName)
 
-    nameOfProperBinder (TH.PlainTV n) = Just n
-    nameOfProperBinder (TH.KindedTV n TH.StarT) = Just n
-    nameOfProperBinder (TH.KindedTV _ _) = Nothing
+    nameOfProperBinder (PlainTV n) = Just n
+    nameOfProperBinder (KindedTV n TH.StarT) = Just n
+    nameOfProperBinder (KindedTV _ _) = Nothing
 
-    hasRep :: TH.Name -> [TH.TyVarBndr] -> TH.Cxt -> [TH.Con] -> Either DeriveCallFailure [TH.DecQ]
+    hasRep :: TH.Name -> [TyVarBndr ()] -> TH.Cxt -> [TH.Con] -> Either DeriveCallFailure [TH.DecQ]
     hasRep typ vars ctx =
       fmap (fmap (uncurry (sums vars)) . groupSort) . traverse (processCon (applyType typ vars) ctx)
 
@@ -96,7 +96,7 @@ deriveHasRep' = \case
           $ listToMaybe names
 
     sums ::
-      [TH.TyVarBndr] -> TH.Type -> [(TH.TypeQ, (TH.PatQ, TH.ExpQ), (TH.PatQ, TH.ExpQ))] -> TH.DecQ
+      [TyVarBndr ()] -> TH.Type -> [(TH.TypeQ, (TH.PatQ, TH.ExpQ), (TH.PatQ, TH.ExpQ))] -> TH.DecQ
     sums vars type0 cons =
       maybe
         ( ( \(t, a, r) ->
@@ -175,7 +175,7 @@ deriveHasRep' = \case
         . bitraverse (fmap (fmap pure) . patFn) (fmap (fmap (fmap TH.NormalB)) . expFn)
         . unzip
 
-    hasRepInstD :: TH.TypeQ -> [TH.TyVarBndr] -> TH.TypeQ -> [TH.ClauseQ] -> [TH.ClauseQ] -> TH.DecQ
+    hasRepInstD :: TH.TypeQ -> [TyVarBndr ()] -> TH.TypeQ -> [TH.ClauseQ] -> [TH.ClauseQ] -> TH.DecQ
     hasRepInstD type0 vars repTy abstClauses reprClauses =
       TH.instanceD
         ( sequenceA $
