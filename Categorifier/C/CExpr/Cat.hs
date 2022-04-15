@@ -145,7 +145,7 @@ import Prelude hiding (and, const, curry, id, not, pred, uncurry, (.))
 -- @ControlInputs C -> ControlOutputs C@, and converts it into
 -- @ControlInputs C `Cat` ControlOutputs C@.
 --
--- TODO: make @k1@ and @k2@ the same kind (SW-3538).
+-- TODO: make @k1@ and @k2@ the same kind (#51).
 newtype Cat (a :: k1) (b :: k2) = Cat {runCat :: TargetObW a -> TargetObW b}
 
 -- | Construct `Cat` from `TargetOb`.
@@ -197,7 +197,7 @@ instance
     KVariadicVectorizeFunctionInputs isFunCall CExpr (TargetOb a -> TargetOb b),
     isFunCall ~ IsFunCall (TargetOb a -> TargetOb b)
   ) =>
-  -- TODO (SW-4070): instead of `(x, a)`, we should use a custom pair type that is only
+  -- TODO (#52): instead of `(x, a)`, we should use a custom pair type that is only
   -- used by the plugin, such as `CategorifierCInternalPair x a`.
   ReferenceCat Cat (x, a) (b :: Type)
   where
