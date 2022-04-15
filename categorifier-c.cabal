@@ -125,7 +125,6 @@ library
     , extra
     , filepath
     , fin
-    , generic-accessors
     , generic-deriving
     , hashable
     , lens

@@ -10,7 +10,6 @@ module Categorifier.C.CTypes.Instances
   )
 where
 
-import Accessors.Dynamic (DConstructor, DData, DField, DSimpleEnum)
 import qualified Barbies
 import Categorifier.C.CTypes.KTypeRep (toKTypeRep)
 import Categorifier.C.CTypes.Render (infiniteTupleFieldNames, renderCType)
@@ -480,15 +479,6 @@ instance (Applicative f, SupportsKBits f) => ToCxxType f BSL.ByteString where
 instance (Applicative f, SupportsKBits f) => ToCxxType f BS.ByteString where
   toCxxType = toCxxType . fmap (pure :: BS.ByteString -> f BS.ByteString)
   {-# INLINEABLE toCxxType #-}
-
--- These are third-party types that are not higher-kinded.
-instance (Applicative f, SupportsKBits f) => ToCxxType f DField
-
-instance (Applicative f, SupportsKBits f) => ToCxxType f DData
-
-instance (Applicative f, SupportsKBits f) => ToCxxType f DConstructor
-
-instance (Applicative f, SupportsKBits f) => ToCxxType f DSimpleEnum
 
 class
   ( ToCxxType f (f Int8),

@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -71,6 +72,9 @@ checkRNG propertyName opts@HedgehogOptions {..} property = do
         H.RunnerConfig
           { H.runnerWorkers = Nothing,
             H.runnerColor = Nothing,
+#if MIN_VERSION_hedgehog(1, 1, 1)
+            H.runnerSeed = Nothing,
+#endif
             H.runnerVerbosity = Nothing
           }
   run runnerConfig property
