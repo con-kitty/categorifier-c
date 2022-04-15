@@ -11,7 +11,6 @@ module Categorifier.C.KGenGenerate.Test.GenerateTyped
     genCounts,
     genInputValues,
     fromCInputs,
-    fromCInputs',
 
     -- * Type constraints
     Gennable,
@@ -447,27 +446,9 @@ genInputValues ::
   forall m f. (Gennable f, H.MonadGen m) => Arrays ArrayCount -> m (Arrays (Compose Vector f))
 genInputValues = Barbies.bzipWithM getSafelyGenerate safeGenerators
 
-newtype KLitWrap f a = KLitWrap {_getKLitWrap :: a -> f a}
-
-kLitArray :: forall f. (forall a. IsPrimitive a => KLiteral f a) => Arrays (KLitWrap f)
-kLitArray = Barbies.bpureC @IsPrimitive lit
-  where
-    lit :: forall a. KLiteral f a => KLitWrap f a
-    lit = KLitWrap kliteral
-
-fromCInputs ::
-  forall f.
-  (forall a. IsPrimitive a => KLiteral f a) =>
-  Arrays (Compose Vector C) ->
-  Arrays (Compose Vector f)
-fromCInputs = Barbies.bzipWithC @IsPrimitive go kLitArray
-  where
-    go :: KLitWrap f a -> Compose Vector C a -> Compose Vector f a
-    go (KLitWrap conv) (Compose v) = Compose $ fmap (conv . unsafeC) v
-
-fromCInputs' :: Arrays (Compose Vector C) -> Arrays Vector
-fromCInputs' = Barbies.bmap (fmap unsafeC . getCompose)
-{-# INLINE fromCInputs' #-}
+fromCInputs :: Arrays (Compose Vector C) -> Arrays Vector
+fromCInputs = Barbies.bmap (fmap unsafeC . getCompose)
+{-# INLINE fromCInputs #-}
 
 {- Open terms -}
 

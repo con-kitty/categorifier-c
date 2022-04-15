@@ -361,12 +361,6 @@ instance KT.KConvertFloat KGen where
 
   kDoubleToFloat (KGen x) = KGen (SBV.toSFloat SBV.sRoundNearestTiesToEven x)
 
-instance SupportsKBits KGen
-
-instance PrimitivesToCxxType KGen
-
-instance KT.KType1 KGen
-
 instance KT.KSelect KGen where
   unsafeBoolToZeroOrOne (KGen bool') = KGen (SBV.ite bool' 1 0)
 
@@ -777,3 +771,9 @@ instance CGeneric (KGen Double) where
       CG.PrimRep "KGenDouble" "Categorifier.C.KTypes.KGen" "kgen" (KGen Double)
   from = CG.primFrom
   to = CG.primTo
+
+instance SupportsKBits KGen
+
+instance PrimitivesToCxxType KGen
+
+instance KT.KType1 KGen

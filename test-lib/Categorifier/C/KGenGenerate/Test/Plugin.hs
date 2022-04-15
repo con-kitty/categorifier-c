@@ -103,7 +103,7 @@ import Categorifier.C.KGenGenerate.Test.GenerateTyped
   ( ArrayCount (..),
     Arrays (..),
     arraysEq,
-    fromCInputs',
+    fromCInputs,
     genCounts,
     genInputValues,
     genMIMOFunction,
@@ -375,7 +375,7 @@ pluginTest oldConfig@PluginTestConfig {pluginTestTopDir = pth} counter numInputs
               specOutput = outputCounts
             }
         functionName = "test_function" <> show nextNumber
-        cInputList = fmap fromCInputs' inputList
+        cInputList = fmap fromCInputs inputList
         sbvSources =
           fmap
             ((topDir <> "/" <> functionName <> "/") <>)
@@ -431,7 +431,7 @@ pluginTest oldConfig@PluginTestConfig {pluginTestTopDir = pth} counter numInputs
               sbvCResultList
               egenCResultList
               nativeResult
-              (fmap fromCInputs' inputList)
+              (fmap fromCInputs inputList)
     H.annotateShow topDir
     H.annotateShow . prettyF $ specToPrettyArray inputCounts
     H.annotateShow inputCounts

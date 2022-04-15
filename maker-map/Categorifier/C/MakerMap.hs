@@ -28,13 +28,15 @@ import Categorifier.Core.MakerMap
 import Categorifier.Core.Makers (Makers (..), isFreeIn)
 import Categorifier.Core.Types (CategoricalFailure (..))
 import Categorifier.Duoidal (joinD, (<*\>), (=<\<))
+import qualified Categorifier.GHC.Builtin as Plugins
 import Categorifier.GHC.Core (Transformation (..))
+import qualified Categorifier.GHC.Core as Plugins
+import qualified Categorifier.GHC.Data as Plugins
+import qualified Categorifier.GHC.Types as Plugins
 import Control.Arrow ((&&&))
 import Control.Monad.Trans.Except (throwE)
 import qualified Data.Map as Map
-import qualified GhcPlugins as Plugins
 import qualified Language.Haskell.TH as TH
-import qualified TyCoRep
 
 cMakerMapFun :: MakerMapFun
 cMakerMapFun
@@ -106,7 +108,7 @@ cMakerMapFun
         ),
         -- __TODO__: This requires disabling core lint, because it complaints that
         -- `KFFCall C (Foo C)` doesn't match `Foo C`. We can coerce
-        -- the former into the latter (via `mkUnsafeCo`) to appease core lint, but
+        -- the former into the latter (via `mkPluginCo`) to appease core lint, but
         -- that would require `rest` to be non-empty (because we are coercing the first
         -- element), i.e., it would no longer be partially applicable.
         ( 'Categorifier.C.KTypes.Function.kForeignFunctionCall,
@@ -165,7 +167,7 @@ cMakerMapFun
                                 cat
                                 [Plugins.varType n, Plugins.exprType a]
                             co =
-                              Plugins.mkUnsafeCo
+                              Plugins.mkPluginCo
                                 Plugins.Representational
                                 actualTy
                                 expectedTy
@@ -180,7 +182,7 @@ cMakerMapFun
     where
       mkNative' = do
         let tagTy =
-              TyCoRep.LitTy . TyCoRep.StrTyLit . Plugins.mkFastString $
+              Plugins.LitTy . Plugins.StrTyLit . Plugins.mkFastString $
                 modu <> "." <> var
             f = fst $ applyTyAndPredArgs Plugins.Var (Plugins.Var target) args
         (argTy, resTy) <-
