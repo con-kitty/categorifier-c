@@ -48,11 +48,11 @@ data CTraversalFuns m f g = CTraversalFuns
 
 data PrimChangedType = PrimChangedType
 
--- | __TODO__: This should go away, see https://kitty-hawk.atlassian.net/browse/SW-2658
+-- | __TODO__: This should go away, see #53
 instance Show PrimChangedType where
   show PrimChangedType = "when traversing a bitfield, prim changed type"
 
--- | __TODO__: This should go away, see https://kitty-hawk.atlassian.net/browse/SW-2658
+-- | __TODO__: This should go away, see #53
 instance Exception PrimChangedType
 
 {-# INLINEABLE traverseCEnum #-}

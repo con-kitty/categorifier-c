@@ -467,7 +467,7 @@ The following {show $ length consWithFloat} constructors conflict:
 
 There is no support for code-generating a corresponding product of fallback values for such a
 sum type, which might contain non-finite values in more than one branch.  Please see
-https://kitty-hawk.atlassian.net/browse/SW-5707 for more details.
+#54 for more details.
 |]
 
 -- | Used in "Kitty.Codegen.Cxx.WrapKGenCFunction".

@@ -195,7 +195,6 @@ instance Barbies.ConstraintsB Prim where
 
 instance Barbies.TraversableB Prim
 
--- | __TODO__: This instance is hand-written rather than using Generics, because SW-3114.
 deriveHasRep ''Prim
 
 makeClassyPrisms ''Prim
