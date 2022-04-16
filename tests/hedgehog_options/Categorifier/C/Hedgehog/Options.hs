@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -65,18 +66,29 @@ Running {show optionsNumTestExprs} individual Hedgehog tests.
 Maximum of {show optionsMaxShrinks} successful shrink steps allowed.
 |]
 
+runnerConfig :: H.RunnerConfig
+#if MIN_VERSION_hedgehog(1, 1, 1)
+runnerConfig =
+  H.RunnerConfig
+    { H.runnerWorkers = Nothing,
+      H.runnerColor = Nothing,
+      H.runnerSeed = Nothing,
+      H.runnerVerbosity = Nothing
+    }
+#else
+runnerConfig =
+  H.RunnerConfig
+    { H.runnerWorkers = Nothing,
+      H.runnerColor = Nothing,
+      H.runnerVerbosity = Nothing
+    }
+#endif
+
 checkRNG :: forall m. MonadIO m => String -> HedgehogOptions -> H.Property -> m Bool
-checkRNG propertyName opts@HedgehogOptions {..} property = do
-  let runnerConfig =
-        H.RunnerConfig
-          { H.runnerWorkers = Nothing,
-            H.runnerColor = Nothing,
-            H.runnerVerbosity = Nothing
-          }
-  run runnerConfig property
+checkRNG propertyName opts@HedgehogOptions {..} property = run property
   where
-    run :: H.RunnerConfig -> H.Property -> m Bool
-    run runnerConfig prop =
+    run :: H.Property -> m Bool
+    run prop =
       case (optionsRecheck, optionsRNG) of
         (Reproduce, RNGIO) ->
           seedMissingError
