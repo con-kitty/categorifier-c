@@ -78,7 +78,7 @@ type family instances:
 - `Categorifier.Client.HasRep`
 - `GHC.Generics.Generic`
 
-The internal types usuallly only need `HasRep` and `TargetOb` instances.
+The internal types usually only need `HasRep` and `TargetOb` instances.
 
 <!-- TODO: explain the following:
 - How to write TargetOb instances
