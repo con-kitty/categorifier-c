@@ -1,6 +1,6 @@
 # C Backend for Categorifier ![Build status](https://github.com/con-kitty/categorifier-c/actions/workflows/ci.yml/badge.svg?branch=master)
 
-This repo is a backend for the categorifier plugin, with the purpose of compiling Haskell
+This repo is a backend for the [categorifier plugin](https://github.com/con-kitty/categorifier), with the purpose of compiling Haskell
 to C. It contains a cartesian closed category,
 referred to as CCat, as well as code that converts morphisms in this category into C code.
 
