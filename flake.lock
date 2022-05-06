@@ -1,0 +1,92 @@
+{
+  "nodes": {
+    "categorifier": {
+      "inputs": {
+        "concat": [
+          "concat"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1651854949,
+        "narHash": "sha256-CQN5BcECX4Y+lIaZ0wDCJU0SUrLe36rqt96658h+hWI=",
+        "owner": "con-kitty",
+        "repo": "categorifier",
+        "rev": "e3a11ff5fa4720b5f9c249a42a1628442c2631cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "con-kitty",
+        "ref": "wavewave-flakes-2",
+        "repo": "categorifier",
+        "type": "github"
+      }
+    },
+    "concat": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1651854399,
+        "narHash": "sha256-FnKqFzFDaNWpLdJwi1kHmBQK0DbwuRNDN/2JuOOZvUQ=",
+        "owner": "con-kitty",
+        "repo": "concat",
+        "rev": "2cb72b794b4cfbcf8293e5e184879e3767d199c6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "con-kitty",
+        "ref": "wavewave-flake",
+        "repo": "concat",
+        "type": "github"
+      }
+    },
+    "connections": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1649885499,
+        "narHash": "sha256-kyE0v3n1OJXBxTkdXstvR+1g5MDHbK0QB0EqDopYHE8=",
+        "owner": "cmk",
+        "repo": "connections",
+        "rev": "e8f83fb816dccfbae27d18237c1988a08b8c79b1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cmk",
+        "ref": "master",
+        "repo": "connections",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1651743098,
+        "narHash": "sha256-NuQNu6yHh54li0kZffM59FRC5bWCJusygL4Cy+3O0fY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d4191fe35cbe52f755ef73009d4d37b9e002efa2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-21.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "categorifier": "categorifier",
+        "concat": "concat",
+        "connections": "connections",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
