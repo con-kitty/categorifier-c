@@ -13,11 +13,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1652299004,
-        "narHash": "sha256-BbGzRLjmsrxC16gnnKTZAKDHfg7qlIB59BnRCmcn19w=",
+        "lastModified": 1652302614,
+        "narHash": "sha256-Wt3IxuR34yj3dnHvTgvNP2l/9GPGLnCjkqBL+a8ejm4=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "8732141f9ed141911c8db4c996a0970e94e8756e",
+        "rev": "f285d49bf6806d67d6c71ac0863d13d217167ed1",
         "type": "github"
       },
       "original": {

@@ -33,18 +33,7 @@
           });
         };
 
-        pkgs = import nixpkgs {
-          overlays = [
-            overlay_connection
-            (concat.overlay.${system})
-            (categorifier.overlay.${system})
-          ];
-          inherit system;
-          config.allowBroken = true;
-        };
-        #haskellOverlay_connection = self: super: {
-        #  "connections" = self.callCabal2nix "connections" connections { };
-        #};
+        haskellLib = (import nixpkgs { inherit system; }).haskell.lib;
 
         haskellOverlay = self: super: {
           "categorifier-c" = self.callCabal2nix "categorifier-c" ./. { };
@@ -63,27 +52,44 @@
           "categorifier-c-tests" =
             self.callCabal2nix "categorifier-c-tests" ./tests { };
           # test is broken with DBool.
-          "generic-accessors" =
-            pkgs.haskell.lib.dontCheck super.generic-accessors;
+          "generic-accessors" = haskellLib.dontCheck super.generic-accessors;
         };
 
-        # NOTE: This would not be necessary if we can provide overlay from connections package.
-        #newHaskellPackages = pkgs.haskellPackages.override (old: {
-        #  overrides = pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-        #    haskellOverlay_connection;
-        #});
+        categorifierCComponentNames =
+          [ "categorifier-c" "categorifier-c-examples" ];
 
       in {
         packages = let
-          newHaskellPackages2 = pkgs.haskellPackages.override (old: {
-            overrides =
-              pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-              haskellOverlay;
-          });
+          packagesOnGHC = ghcVer:
+            let
+              overlayGHC = final: prev: {
+                haskellPackages = prev.haskell.packages.${ghcVer};
+              };
 
-        in {
-          inherit (newHaskellPackages2) categorifier-c categorifier-c-examples;
-        };
+              newPkgs = import nixpkgs {
+                overlays = [
+                  overlayGHC
+                  overlay_connection
+                  (concat.overlay.${system})
+                  (categorifier.overlay.${system})
+                ];
+                inherit system;
+                config.allowBroken = true;
+              };
+
+              newHaskellPackages = newPkgs.haskellPackages.override (old: {
+                overrides =
+                  newPkgs.lib.composeExtensions (old.overrides or (_: _: { }))
+                  haskellOverlay;
+              });
+            in builtins.listToAttrs (builtins.map (p: {
+              name = ghcVer + "_" + p;
+              value = builtins.getAttr p newHaskellPackages;
+            }) categorifierCComponentNames);
+
+        in packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
+        // packagesOnGHC "ghc901" // packagesOnGHC "ghc921";
+
         # see these issues and discussions:
         # - https://github.com/NixOS/nixpkgs/issues/16394
         # - https://github.com/NixOS/nixpkgs/issues/25887
@@ -100,7 +106,23 @@
           })
         ];
 
-        devShells = {
+        devShells = let
+          ghcVer = "ghc884";
+          overlayGHC = final: prev: {
+            haskellPackages = prev.haskell.packages.${ghcVer};
+          };
+          pkgs = import nixpkgs {
+            overlays = [
+              overlayGHC
+              overlay_connection
+              (concat.overlay.${system})
+              (categorifier.overlay.${system})
+            ];
+            inherit system;
+            config.allowBroken = true;
+          };
+
+        in {
           # Default shell invoked by nix develop .#
           # This is used for building categorifier-c
           default = let
