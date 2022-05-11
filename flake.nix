@@ -22,15 +22,31 @@
   outputs = { self, nixpkgs, flake-utils, concat, categorifier, connections }:
     flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" ] (system:
       let
+        overlay_connection = final: prev: {
+          haskellPackages = prev.haskellPackages.override (old: {
+            overrides =
+              final.lib.composeExtensions (old.overrides or (_: _: { }))
+              (self: super: {
+                "connections" =
+                  self.callCabal2nix "connections" connections { };
+              });
+          });
+        };
+
         pkgs = import nixpkgs {
-          overlays =
-            [ (concat.overlay.${system}) (categorifier.overlay.${system}) ];
+          overlays = [
+            overlay_connection
+            (concat.overlay.${system})
+            (categorifier.overlay.${system})
+          ];
           inherit system;
           config.allowBroken = true;
         };
+        #haskellOverlay_connection = self: super: {
+        #  "connections" = self.callCabal2nix "connections" connections { };
+        #};
 
         haskellOverlay = self: super: {
-          "connections" = self.callCabal2nix "connections" connections { };
           "categorifier-c" = self.callCabal2nix "categorifier-c" ./. { };
           "categorifier-c-examples" =
             self.callCabal2nix "categorifier-c-examples" ./examples { };
@@ -52,16 +68,14 @@
         };
 
         # NOTE: This would not be necessary if we can provide overlay from connections package.
-        newHaskellPackages = pkgs.haskellPackages.override (old: {
-          overrides = pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-            (self: super: {
-              "connections" = self.callCabal2nix "connections" connections { };
-            });
-        });
+        #newHaskellPackages = pkgs.haskellPackages.override (old: {
+        #  overrides = pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
+        #    haskellOverlay_connection;
+        #});
 
       in {
         packages = let
-          newHaskellPackages2 = newHaskellPackages.override (old: {
+          newHaskellPackages2 = pkgs.haskellPackages.override (old: {
             overrides =
               pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
               haskellOverlay;
@@ -75,19 +89,22 @@
         # - https://github.com/NixOS/nixpkgs/issues/25887
         # - https://github.com/NixOS/nixpkgs/issues/26561
         # - https://discourse.nixos.org/t/nix-haskell-development-2020/6170
-        overlay = final: prev: {
-          haskellPackages = prev.haskellPackages.override (old: {
-            overrides =
-              final.lib.composeExtensions (old.overrides or (_: _: { }))
-              haskellOverlay;
-          });
-        };
+        overlays = [
+          overlay_connection
+          (final: prev: {
+            haskellPackages = prev.haskellPackages.override (old: {
+              overrides =
+                final.lib.composeExtensions (old.overrides or (_: _: { }))
+                haskellOverlay;
+            });
+          })
+        ];
 
         devShells = {
           # Default shell invoked by nix develop .#
           # This is used for building categorifier-c
-          devShell = let
-            hsenv = newHaskellPackages.ghcWithPackages (p: [
+          default = let
+            hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
               p.cabal-install
               p.categorifier-category
               p.categorifier-client
