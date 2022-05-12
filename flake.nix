@@ -29,34 +29,29 @@
               (self: super: {
                 "connections" =
                   self.callCabal2nix "connections" connections { };
+                # test is broken with DBool.
+                "generic-accessors" =
+                  haskellLib.dontCheck super.generic-accessors;
               });
           });
         };
 
         haskellLib = (import nixpkgs { inherit system; }).haskell.lib;
+        parseCabalProject = import (categorifier + "/parse-cabal-project.nix");
+        categorifierCPackages =
+          # found this corner case
+          [{
+            name = "categorifier-c";
+            path = ".";
+          }] ++ parseCabalProject ./cabal.project;
+        categorifierCPackageNames =
+          builtins.map ({ name, ... }: name) categorifierCPackages;
 
-        haskellOverlay = self: super: {
-          "categorifier-c" = self.callCabal2nix "categorifier-c" ./. { };
-          "categorifier-c-examples" =
-            self.callCabal2nix "categorifier-c-examples" ./examples { };
-          "categorifier-c-hk-classes" =
-            self.callCabal2nix "categorifier-c-hk-classes" ./hk-classes { };
-          "categorifier-c-maker-map" =
-            self.callCabal2nix "categorifier-c-maker-map" ./maker-map { };
-          "categorifier-c-recursion" =
-            self.callCabal2nix "categorifier-c-recursion" ./recursion { };
-          "categorifier-c-unconcat" =
-            self.callCabal2nix "categorifier-c-unconcat" ./unconcat { };
-          "categorifier-c-test-lib" =
-            self.callCabal2nix "categorifier-c-test-lib" ./test-lib { };
-          "categorifier-c-tests" =
-            self.callCabal2nix "categorifier-c-tests" ./tests { };
-          # test is broken with DBool.
-          "generic-accessors" = haskellLib.dontCheck super.generic-accessors;
-        };
-
-        categorifierCComponentNames =
-          [ "categorifier-c" "categorifier-c-examples" ];
+        haskellOverlay = self: super:
+          builtins.listToAttrs (builtins.map ({ name, path }: {
+            inherit name;
+            value = self.callCabal2nix name (./. + "/${path}") { };
+          }) categorifierCPackages);
 
       in {
         packages = let
@@ -85,10 +80,11 @@
             in builtins.listToAttrs (builtins.map (p: {
               name = ghcVer + "_" + p;
               value = builtins.getAttr p newHaskellPackages;
-            }) categorifierCComponentNames);
+            }) categorifierCPackageNames);
 
-        in packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
-        // packagesOnGHC "ghc901" // packagesOnGHC "ghc921";
+        in builtins.trace (builtins.elemAt categorifierCPackageNames 0)
+        (packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
+          // packagesOnGHC "ghc901" // packagesOnGHC "ghc921");
 
         # see these issues and discussions:
         # - https://github.com/NixOS/nixpkgs/issues/16394
@@ -107,7 +103,7 @@
         ];
 
         devShells = let
-          ghcVer = "ghc884";
+          ghcVer = "ghc8107";
           overlayGHC = final: prev: {
             haskellPackages = prev.haskell.packages.${ghcVer};
           };
