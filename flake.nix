@@ -140,7 +140,9 @@
               p.concat-classes
               p.connections
             ]);
-          in pkgs.mkShell { buildInputs = [ hsenv ]; };
+          in pkgs.mkShell {
+            buildInputs = [ hsenv pkgs.haskell-language-server ];
+          };
           # The shell with all batteries included!
           user-shell = let
             postBuildHaskellPackages = pkgs.haskellPackages.override (old: {
@@ -158,7 +160,9 @@
               p.categorifier-c-unconcat
               p.categorifier-c-test-lib
             ]);
-          in pkgs.mkShell { buildInputs = [ hsenv ]; };
+          in pkgs.mkShell {
+            buildInputs = [ hsenv pkgs.haskell-language-server ];
+          };
         };
       });
 }
