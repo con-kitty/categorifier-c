@@ -10,6 +10,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ghc:
+          - "ghc8107"
+          - "ghc901"
+          - "ghc921"
     steps:
     - name: Install nix
       uses: cachix/install-nix-action@v16
@@ -20,33 +26,9 @@ jobs:
     - name: List files
       run: |
         ls ${{ github.workspace }}
-    - name: build for ghc 8.10.7
+    - name: build
       run: |
-        nix build --print-build-logs .#ghc8107_categorifier-c-examples
-    - name: build for ghc 8.8.4
-      run: |
-        nix build --print-build-logs .#ghc884_categorifier-c-examples
-    # strategy:
-    #   matrix:
-    #     ghc: ["8.10.1", "8.10.2", "8.10.4", "8.10.7", "9.0.1", "9.0.2"]
-    # env:
-    #   CONFIG: "--enable-tests --enable-benchmarks"
-    # steps:
-    #   - uses: actions/checkout@v2
-    #   - uses: haskell/actions/setup@v1
-    #     id: setup-haskell-cabal
-    #     with:
-    #       ghc-version: ${{ matrix.ghc }}
-    #       cabal-version: "3.6.0.0"
-    #   - run: cabal v2-update
-    #   - run: cabal v2-freeze $CONFIG
-    #   - uses: actions/cache@v2
-    #     with:
-    #       path: |
-    #         ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
-    #         dist-newstyle
-    #       key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
-    #   - run: cabal v2-build all $CONFIG
+        nix build --print-build-logs .#${{ matrix.ghc }}_categorifier-c-examples
   hlint:
     runs-on: ubuntu-latest
     steps:
