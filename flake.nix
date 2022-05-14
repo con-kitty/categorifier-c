@@ -77,14 +77,26 @@
                   newPkgs.lib.composeExtensions (old.overrides or (_: _: { }))
                   haskellOverlay;
               });
-            in builtins.listToAttrs (builtins.map (p: {
-              name = ghcVer + "_" + p;
-              value = builtins.getAttr p newHaskellPackages;
-            }) categorifierCPackageNames);
 
-        in builtins.trace (builtins.elemAt categorifierCPackageNames 0)
-        (packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
-          // packagesOnGHC "ghc901" // packagesOnGHC "ghc921");
+              individualPackages = builtins.listToAttrs (builtins.map (p: {
+                name = ghcVer + "_" + p;
+                value = builtins.getAttr p newHaskellPackages;
+              }) categorifierCPackageNames);
+
+              allEnv = let
+                hsenv = newHaskellPackages.ghcWithPackages (p:
+                  let
+                    deps = builtins.map ({ name, ... }: p.${name})
+                      categorifierCPackages;
+                  in deps);
+              in newPkgs.buildEnv {
+                name = "all-packages";
+                paths = [ hsenv ];
+              };
+            in individualPackages // { "${ghcVer}_all" = allEnv; };
+
+        in packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
+        // packagesOnGHC "ghc901" // packagesOnGHC "ghc921";
 
         # see these issues and discussions:
         # - https://github.com/NixOS/nixpkgs/issues/16394

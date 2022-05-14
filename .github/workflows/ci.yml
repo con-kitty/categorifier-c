@@ -28,7 +28,7 @@ jobs:
         ls ${{ github.workspace }}
     - name: build
       run: |
-        nix build --print-build-logs .#${{ matrix.ghc }}_categorifier-c-examples
+        nix build --print-build-logs .#${{ matrix.ghc }}_all
   hlint:
     runs-on: ubuntu-latest
     steps:
