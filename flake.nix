@@ -62,12 +62,9 @@
               };
 
               newPkgs = import nixpkgs {
-                overlays = [
-                  overlayGHC
-                  overlay_connection
-                  (concat.overlay.${system})
-                  (categorifier.overlay.${system})
-                ];
+                overlays =
+                  [ overlayGHC overlay_connection (concat.overlay.${system}) ]
+                  ++ (categorifier.overlays.${system});
                 inherit system;
                 config.allowBroken = true;
               };
@@ -120,12 +117,9 @@
             haskellPackages = prev.haskell.packages.${ghcVer};
           };
           pkgs = import nixpkgs {
-            overlays = [
-              overlayGHC
-              overlay_connection
-              (concat.overlay.${system})
-              (categorifier.overlay.${system})
-            ];
+            overlays =
+              [ overlayGHC overlay_connection (concat.overlay.${system}) ]
+              ++ (categorifier.overlays.${system});
             inherit system;
             config.allowBroken = true;
           };
