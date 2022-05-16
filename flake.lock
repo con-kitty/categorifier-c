@@ -14,11 +14,11 @@
         "yaya": "yaya"
       },
       "locked": {
-        "lastModified": 1652725217,
-        "narHash": "sha256-a8JYUFEFiQ6F3JOqenkWpE4FpIZvw3XEQdi2w8gjhhc=",
+        "lastModified": 1652741713,
+        "narHash": "sha256-zLYoHWBhjxWo4woDl9gg46BzXFlfKPTzMxfvl6ISEJg=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "b7bb2799ee936bb7eeb50b8bc3ee980b2b7ca143",
+        "rev": "5315f90aa78e6f6ec81889bca16b44e2b0860b1b",
         "type": "github"
       },
       "original": {

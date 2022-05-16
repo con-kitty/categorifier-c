@@ -53,6 +53,22 @@
             value = self.callCabal2nix name (./. + "/${path}") { };
           }) categorifierCPackages);
 
+        # see these issues and discussions:
+        # - https://github.com/NixOS/nixpkgs/issues/16394
+        # - https://github.com/NixOS/nixpkgs/issues/25887
+        # - https://github.com/NixOS/nixpkgs/issues/26561
+        # - https://discourse.nixos.org/t/nix-haskell-development-2020/6170
+        fullOverlays = [
+          overlay_connection
+          (final: prev: {
+            haskellPackages = prev.haskellPackages.override (old: {
+              overrides =
+                final.lib.composeExtensions (old.overrides or (_: _: { }))
+                haskellOverlay;
+            });
+          })
+        ];
+
       in {
         packages = let
           packagesOnGHC = ghcVer:
@@ -62,18 +78,18 @@
               };
 
               newPkgs = import nixpkgs {
-                overlays =
-                  [ overlayGHC overlay_connection (concat.overlay.${system}) ]
-                  ++ (categorifier.overlays.${system});
+                overlays = [ overlayGHC (concat.overlay.${system}) ]
+                  ++ (categorifier.overlays.${system}) ++ fullOverlays;
                 inherit system;
                 config.allowBroken = true;
               };
 
-              newHaskellPackages = newPkgs.haskellPackages.override (old: {
-                overrides =
-                  newPkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-                  haskellOverlay;
-              });
+              newHaskellPackages = newPkgs.haskellPackages;
+              #.override (old: {
+              #  overrides =
+              #    newPkgs.lib.composeExtensions (old.overrides or (_: _: { }))
+              #    haskellOverlay;
+              #});
 
               individualPackages = builtins.listToAttrs (builtins.map (p: {
                 name = ghcVer + "_" + p;
@@ -93,23 +109,10 @@
             in individualPackages // { "${ghcVer}_all" = allEnv; };
 
         in packagesOnGHC "ghc8107" // packagesOnGHC "ghc884"
-        // packagesOnGHC "ghc901" // packagesOnGHC "ghc921";
+        // packagesOnGHC "ghc901" // packagesOnGHC "ghc921"
+        // packagesOnGHC "ghcHEAD";
 
-        # see these issues and discussions:
-        # - https://github.com/NixOS/nixpkgs/issues/16394
-        # - https://github.com/NixOS/nixpkgs/issues/25887
-        # - https://github.com/NixOS/nixpkgs/issues/26561
-        # - https://discourse.nixos.org/t/nix-haskell-development-2020/6170
-        overlays = [
-          overlay_connection
-          (final: prev: {
-            haskellPackages = prev.haskellPackages.override (old: {
-              overrides =
-                final.lib.composeExtensions (old.overrides or (_: _: { }))
-                haskellOverlay;
-            });
-          })
-        ];
+        overlays = fullOverlays;
 
         devShells = let
           ghcVer = "ghc8107";
@@ -117,9 +120,8 @@
             haskellPackages = prev.haskell.packages.${ghcVer};
           };
           pkgs = import nixpkgs {
-            overlays =
-              [ overlayGHC overlay_connection (concat.overlay.${system}) ]
-              ++ (categorifier.overlays.${system});
+            overlays = [ overlayGHC (concat.overlay.${system}) ]
+              ++ (categorifier.overlays.${system}) ++ fullOverlays;
             inherit system;
             config.allowBroken = true;
           };
@@ -127,36 +129,18 @@
         in {
           # Default shell invoked by nix develop .#
           # This is used for building categorifier-c
-          default = let
-            hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
-              p.cabal-install
-              p.categorifier-category
-              p.categorifier-client
-              p.categorifier-common
-              p.categorifier-concat-extensions-category
-              p.categorifier-concat-extensions-integration
-              p.categorifier-concat-integration
-              p.categorifier-duoids
-              p.categorifier-ghc
-              p.categorifier-hedgehog
-              p.categorifier-plugin
-              p.categorifier-th
-              p.categorifier-unconcat-category
-              p.categorifier-unconcat-integration
-              p.concat-classes
-              p.connections
-            ]);
-          in pkgs.mkShell {
-            buildInputs = [ hsenv pkgs.haskell-language-server ];
+          default = pkgs.haskellPackages.shellFor {
+            packages = ps:
+              builtins.map (name: ps.${name}) categorifierCPackageNames;
+            buildInputs = [
+              pkgs.haskellPackages.cabal-install
+              pkgs.haskell-language-server
+            ];
+            withHoogle = false;
           };
           # The shell with all batteries included!
           user-shell = let
-            postBuildHaskellPackages = pkgs.haskellPackages.override (old: {
-              overrides =
-                pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-                haskellOverlay;
-            });
-            hsenv = postBuildHaskellPackages.ghcWithPackages (p: [
+            hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
               p.cabal-install
               p.categorifier-c
               p.categorifier-c-examples
