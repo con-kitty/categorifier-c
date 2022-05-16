@@ -18,7 +18,6 @@ import Categorifier.C.KTypes.KEnum (KEnum, toKEnum)
 import Categorifier.C.KTypes.Sum.Maybe (KMaybe, kJust, kNothing)
 import qualified Categorifier.Categorify as Categorify
 import Categorifier.Client (deriveHasRep)
-import qualified Categorifier.Client
 import Data.Int (Int32)
 import Data.Word (Word64)
 import GHC.Generics (Generic)
