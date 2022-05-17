@@ -8,17 +8,18 @@
         "flake-utils": [
           "flake-utils"
         ],
+        "ghc-typelits-natnormalise": "ghc-typelits-natnormalise",
         "nixpkgs": [
           "nixpkgs"
         ],
         "yaya": "yaya"
       },
       "locked": {
-        "lastModified": 1652741713,
-        "narHash": "sha256-zLYoHWBhjxWo4woDl9gg46BzXFlfKPTzMxfvl6ISEJg=",
+        "lastModified": 1652799532,
+        "narHash": "sha256-8hEaEpoIKGcaAz2wz5UxR99HL18TYT9n5N0uWShvhEg=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "5315f90aa78e6f6ec81889bca16b44e2b0860b1b",
+        "rev": "32b9cc67e1f28e3da0817d42a9eb8b1c59fa1131",
         "type": "github"
       },
       "original": {
@@ -94,6 +95,23 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "ghc-typelits-natnormalise": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1649255014,
+        "narHash": "sha256-NYbDIhQo+9xw0+16v0M+BRAVSYcThPhj+nTswSYxesM=",
+        "owner": "clash-lang",
+        "repo": "ghc-typelits-natnormalise",
+        "rev": "a68b722a6b10a932621dbf578f1408745a37a5ca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "clash-lang",
+        "repo": "ghc-typelits-natnormalise",
+        "rev": "a68b722a6b10a932621dbf578f1408745a37a5ca",
         "type": "github"
       }
     },

@@ -84,20 +84,13 @@
                 config.allowBroken = true;
               };
 
-              newHaskellPackages = newPkgs.haskellPackages;
-              #.override (old: {
-              #  overrides =
-              #    newPkgs.lib.composeExtensions (old.overrides or (_: _: { }))
-              #    haskellOverlay;
-              #});
-
               individualPackages = builtins.listToAttrs (builtins.map (p: {
                 name = ghcVer + "_" + p;
-                value = builtins.getAttr p newHaskellPackages;
+                value = builtins.getAttr p newPkgs.haskellPackages;
               }) categorifierCPackageNames);
 
               allEnv = let
-                hsenv = newHaskellPackages.ghcWithPackages (p:
+                hsenv = newPkgs.haskellPackages.ghcWithPackages (p:
                   let
                     deps = builtins.map ({ name, ... }: p.${name})
                       categorifierCPackages;
@@ -115,44 +108,48 @@
         overlays = fullOverlays;
 
         devShells = let
-          ghcVer = "ghc8107";
-          overlayGHC = final: prev: {
-            haskellPackages = prev.haskell.packages.${ghcVer};
-          };
-          pkgs = import nixpkgs {
-            overlays = [ overlayGHC (concat.overlay.${system}) ]
-              ++ (categorifier.overlays.${system}) ++ fullOverlays;
-            inherit system;
-            config.allowBroken = true;
-          };
+          mkDevShell = ghcVer:
+            let
+              overlayGHC = final: prev: {
+                haskellPackages = prev.haskell.packages.${ghcVer};
+              };
+              pkgs = import nixpkgs {
+                overlays = [ overlayGHC (concat.overlay.${system}) ]
+                  ++ (categorifier.overlays.${system}) ++ fullOverlays;
+                inherit system;
+                config.allowBroken = true;
+              };
+            in pkgs.haskellPackages.shellFor {
+              packages = ps:
+                builtins.map (name: ps.${name}) categorifierCPackageNames;
+              buildInputs = [
+                pkgs.haskellPackages.cabal-install
+                pkgs.haskell-language-server
+              ];
+              withHoogle = false;
+            };
 
         in {
-          # Default shell invoked by nix develop .#
+          # nix develop .#ghc8107
+          # (or .#ghc921)
           # This is used for building categorifier-c
-          default = pkgs.haskellPackages.shellFor {
-            packages = ps:
-              builtins.map (name: ps.${name}) categorifierCPackageNames;
-            buildInputs = [
-              pkgs.haskellPackages.cabal-install
-              pkgs.haskell-language-server
-            ];
-            withHoogle = false;
-          };
+          "ghc8107" = mkDevShell "ghc8107";
+          "ghc921" = mkDevShell "ghc921";
           # The shell with all batteries included!
-          user-shell = let
-            hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
-              p.cabal-install
-              p.categorifier-c
-              p.categorifier-c-examples
-              p.categorifier-c-hk-classes
-              p.categorifier-c-maker-map
-              p.categorifier-c-recursion
-              p.categorifier-c-unconcat
-              p.categorifier-c-test-lib
-            ]);
-          in pkgs.mkShell {
-            buildInputs = [ hsenv pkgs.haskell-language-server ];
-          };
+          # user-shell = let
+          #   hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
+          #     p.cabal-install
+          #     p.categorifier-c
+          #     p.categorifier-c-examples
+          #     p.categorifier-c-hk-classes
+          #     p.categorifier-c-maker-map
+          #     p.categorifier-c-recursion
+          #     p.categorifier-c-unconcat
+          #     p.categorifier-c-test-lib
+          #   ]);
+          # in pkgs.mkShell {
+          #   buildInputs = [ hsenv pkgs.haskell-language-server ];
+          # };
         };
       });
 }
