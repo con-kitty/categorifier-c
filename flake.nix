@@ -135,10 +135,10 @@
             in pkgs.haskellPackages.shellFor {
               packages = ps:
                 builtins.map (name: ps.${name}) categorifierCPackageNames;
-              buildInputs = [
-                pkgs.haskellPackages.cabal-install
-                pkgs.haskell-language-server
-              ];
+              buildInputs = [ pkgs.haskellPackages.cabal-install ] ++
+                # haskell-language-server on GHC 9.2.1 is broken yet.
+                pkgs.lib.optional (ghcVer != "ghc921")
+                [ pkgs.haskell-language-server ];
               withHoogle = false;
             };
 
@@ -148,7 +148,10 @@
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
             in pkgs.mkShell {
-              buildInputs = [ hsenv pkgs.haskell-language-server ];
+              buildInputs = [ hsenv pkgs.haskellPackages.cabal-install ] ++
+                # haskell-language-server on GHC 9.2.1 is broken yet.
+                pkgs.lib.optional (ghcVer != "ghc921")
+                [ pkgs.haskell-language-server ];
             };
 
         in {
