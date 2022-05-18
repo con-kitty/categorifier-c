@@ -20,7 +20,7 @@
     };
   };
   outputs = { self, nixpkgs, flake-utils, concat, categorifier, connections }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" "x86_64-darwin" ] (system:
+    flake-utils.lib.eachSystem flake-utils.lib.allSystems (system:
       let
         overlay_connection = final: prev: {
           haskellPackages = prev.haskellPackages.override (old: {
@@ -118,17 +118,20 @@
         overlays = fullOverlays;
 
         devShells = let
-          mkDevShell = ghcVer:
+          mkPkgs = ghcVer:
             let
               overlayGHC = final: prev: {
                 haskellPackages = prev.haskell.packages.${ghcVer};
               };
-              pkgs = import nixpkgs {
-                overlays = [ overlayGHC (concat.overlay.${system}) ]
-                  ++ (categorifier.overlays.${system}) ++ fullOverlays;
-                inherit system;
-                config.allowBroken = true;
-              };
+            in import nixpkgs {
+              overlays = [ overlayGHC (concat.overlay.${system}) ]
+                ++ (categorifier.overlays.${system}) ++ fullOverlays;
+              inherit system;
+              config.allowBroken = true;
+            };
+
+          mkDevShell = ghcVer:
+            let pkgs = mkPkgs ghcVer;
             in pkgs.haskellPackages.shellFor {
               packages = ps:
                 builtins.map (name: ps.${name}) categorifierCPackageNames;
@@ -139,6 +142,15 @@
               withHoogle = false;
             };
 
+          mkUserShell = ghcVer:
+            let
+              pkgs = mkPkgs ghcVer;
+              hsenv = pkgs.haskellPackages.ghcWithPackages
+                (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
+            in pkgs.mkShell {
+              buildInputs = [ hsenv pkgs.haskell-language-server ];
+            };
+
         in {
           # nix develop .#ghc8107
           # (or .#ghc921)
@@ -146,20 +158,7 @@
           "ghc8107" = mkDevShell "ghc8107";
           "ghc921" = mkDevShell "ghc921";
           # The shell with all batteries included!
-          # user-shell = let
-          #   hsenv = pkgs.haskellPackages.ghcWithPackages (p: [
-          #     p.cabal-install
-          #     p.categorifier-c
-          #     p.categorifier-c-examples
-          #     p.categorifier-c-hk-classes
-          #     p.categorifier-c-maker-map
-          #     p.categorifier-c-recursion
-          #     p.categorifier-c-unconcat
-          #     p.categorifier-c-test-lib
-          #   ]);
-          # in pkgs.mkShell {
-          #   buildInputs = [ hsenv pkgs.haskell-language-server ];
-          # };
+          "user-shell" = mkUserShell "ghc8107";
         };
       });
 }
