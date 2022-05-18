@@ -40,6 +40,7 @@ import qualified Language.Haskell.TH as TH
 
 cMakerMapFun :: MakerMapFun
 cMakerMapFun
+  _symLookup
   dflags
   logger
   m@Makers {..}
