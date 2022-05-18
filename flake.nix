@@ -18,20 +18,34 @@
       url = "github:cmk/connections/master";
       flake = false;
     };
+    TypeCompose = {
+      url = "github:conal/TypeCompose/daf13efa6e6b37960de98146bab4a061462fc22b";
+      flake = false;
+    };
+    sbv = {
+      url = "github:LeventErkok/sbv/v9.0";
+      flake = false;
+    };
   };
-  outputs = { self, nixpkgs, flake-utils, concat, categorifier, connections }:
+  outputs = { self, nixpkgs, flake-utils, concat, categorifier, connections
+    , TypeCompose, sbv }:
     flake-utils.lib.eachSystem flake-utils.lib.allSystems (system:
       let
-        overlay_connection = final: prev: {
+        overlay_deps = final: prev: {
           haskellPackages = prev.haskellPackages.override (old: {
             overrides =
               final.lib.composeExtensions (old.overrides or (_: _: { }))
               (self: super: {
+                # zliu41's fix for GHC 9.2
+                "TypeCompose" =
+                  self.callCabal2nix "TypeCompose" TypeCompose { };
                 "connections" =
                   self.callCabal2nix "connections" connections { };
                 # test is broken with DBool.
                 "generic-accessors" =
                   haskellLib.dontCheck super.generic-accessors;
+                # sbv-9.0, bypassing checkPhase that takes too long.
+                "sbv" = haskellLib.dontCheck (self.callCabal2nix "sbv" sbv { });
               });
           });
         };
@@ -69,7 +83,7 @@
         # - https://github.com/NixOS/nixpkgs/issues/26561
         # - https://discourse.nixos.org/t/nix-haskell-development-2020/6170
         fullOverlays = [
-          overlay_connection
+          overlay_deps
           (final: prev: {
             haskellPackages = prev.haskellPackages.override (old: {
               overrides =
@@ -135,7 +149,12 @@
             in pkgs.haskellPackages.shellFor {
               packages = ps:
                 builtins.map (name: ps.${name}) categorifierCPackageNames;
-              buildInputs = [ pkgs.haskellPackages.cabal-install ] ++
+              buildInputs =
+                # use nixpkgs default tools
+                [
+                  pkgs.haskell.packages.ghc8107.cabal-install
+                  pkgs.haskell.packages.ghc8107.hlint
+                ] ++
                 # haskell-language-server on GHC 9.2.1 is broken yet.
                 pkgs.lib.optional (ghcVer != "ghc921")
                 [ pkgs.haskell-language-server ];
