@@ -37,6 +37,10 @@
         };
 
         haskellLib = (import nixpkgs { inherit system; }).haskell.lib;
+
+        # random-expressions test misses a CLI option.
+        noCheckPackages = [ "categorifier-c-tests" ];
+
         parseCabalProject = import (categorifier + "/parse-cabal-project.nix");
         categorifierCPackages =
           # found this corner case
@@ -50,7 +54,13 @@
         haskellOverlay = self: super:
           builtins.listToAttrs (builtins.map ({ name, path }: {
             inherit name;
-            value = self.callCabal2nix name (./. + "/${path}") { };
+            value = let
+              p = self.callCabal2nix name (./. + "/${path}") { };
+              p1 = if builtins.elem name noCheckPackages then
+                haskellLib.dontCheck p
+              else
+                p;
+            in p1;
           }) categorifierCPackages);
 
         # see these issues and discussions:
