@@ -11,11 +11,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ghc:
           - "ghc8107"
           - "ghc901"
-          - "ghc921"
+        experimental: [false]
+        include:
+          - ghc: "ghc921"
+            os: ubuntu-latest
+            experimental: true
+          - ghc: "ghcHEAD"
+            os: ubuntu-latest
+            experimental: true
     steps:
     - name: Install nix
       uses: cachix/install-nix-action@v16
@@ -28,7 +36,7 @@ jobs:
         ls ${{ github.workspace }}
     - name: build
       run: |
-        nix build --print-build-logs .#${{ matrix.ghc }}_all
+        nix build --print-build-logs .#${{ matrix.ghc }}_all || ${{ matrix.experimental }}
   hlint:
     runs-on: ubuntu-latest
     steps:
