@@ -34,16 +34,16 @@
         "yaya": "yaya"
       },
       "locked": {
-        "lastModified": 1652850965,
-        "narHash": "sha256-kDctg+zn0mOAQwn9NchXUxXlXf7DhjkGL8F1I7bo9Z4=",
+        "lastModified": 1653222365,
+        "narHash": "sha256-GLVb9yzbpAnsdr+YD0GAGu62gT9BwA4bFipJpYGZ6vA=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "e36a8ce0c619b32de76b67f566736f4ab0d26bb4",
+        "rev": "31ff5439133548e9aad7896eef45c56bc98cd2fb",
         "type": "github"
       },
       "original": {
         "owner": "con-kitty",
-        "ref": "wavewave-flakes-2",
+        "ref": "master",
         "repo": "categorifier",
         "type": "github"
       }

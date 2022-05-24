@@ -9,7 +9,7 @@
       inputs.flake-utlis.follows = "flake-utils";
     };
     categorifier = {
-      url = "github:con-kitty/categorifier/wavewave-flakes-2";
+      url = "github:con-kitty/categorifier/master";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
       inputs.concat.follows = "concat";
@@ -175,9 +175,11 @@
 
         in {
           # nix develop .#ghc8107
-          # (or .#ghc921)
+          # (or .#ghc901 .#ghc921)
           # This is used for building categorifier-c
+          "default" = mkDevShell "ghc901";
           "ghc8107" = mkDevShell "ghc8107";
+          "ghc901" = mkDevShell "ghc901";
           "ghc921" = mkDevShell "ghc921";
           # The shell with all batteries included!
           "user-shell" = mkUserShell "ghc8107";
