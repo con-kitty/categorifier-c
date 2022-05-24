@@ -34,17 +34,17 @@
         "yaya": "yaya"
       },
       "locked": {
-        "lastModified": 1653222365,
-        "narHash": "sha256-GLVb9yzbpAnsdr+YD0GAGu62gT9BwA4bFipJpYGZ6vA=",
+        "lastModified": 1653058511,
+        "narHash": "sha256-6OKzQfBPKw3KV4JjgIldMVviq0L7pAyYi01zYZP89tA=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "31ff5439133548e9aad7896eef45c56bc98cd2fb",
+        "rev": "d48b7bb9c45c95f1d4f2f46641d483cc4f401ca8",
         "type": "github"
       },
       "original": {
         "owner": "con-kitty",
-        "ref": "master",
         "repo": "categorifier",
+        "rev": "d48b7bb9c45c95f1d4f2f46641d483cc4f401ca8",
         "type": "github"
       }
     },
