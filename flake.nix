@@ -143,7 +143,13 @@
               overlayGHC = final: prev: {
                 haskellPackages = let ps = prev.haskell.packages.${ghcVer};
                 in if useClang then
-                  ps.override { stdenv = prev.clangStdenv; }
+                  ps.override {
+                    ghc =
+                      final.buildPackages.haskell.compiler.${ghcVer}.override {
+                        useLLVM = true;
+                      };
+                    stdenv = prev.clangStdenv;
+                  }
                 else
                   ps;
               };
