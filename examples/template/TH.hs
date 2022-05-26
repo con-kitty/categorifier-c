@@ -1,10 +1,33 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeOperators #-}
 
 module TH where
 
--- import Control.Monad (replicateM)
-
+import qualified Categorifier.C.CExpr.Cat as C
+import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
+import qualified Categorifier.C.CExpr.File as CExpr (FunctionText (..))
+import qualified Categorifier.C.CExpr.IO as CExpr (layoutOptions)
+import Categorifier.C.CExpr.Types.Core (CExpr)
+import Categorifier.C.Codegen.FFI.Spec (SBVFunCall)
+import Categorifier.C.Generate (generateCFunction)
+import Categorifier.C.KTypes.C (C)
+import Categorifier.C.KTypes.CExpr.Generate (generateCExprFunction)
+import Categorifier.C.PolyVec (PolyVec, pdevectorize, pvectorize, pvlengths)
+import Categorifier.C.Prim (ArrayCount, Arrays)
+import qualified Categorifier.Common.IO.Exception as Exception
+import Control.Monad ((<=<))
+import Data.Functor.Compose (Compose (..))
 import Data.Int (Int16, Int32, Int64, Int8)
+import Data.Proxy (Proxy (..))
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.Prettyprint.Doc.Render.Text as Prettyprint
+import Data.Vector (Vector)
 import Data.Word (Word16, Word32, Word64, Word8)
 import Foreign.Ptr (Ptr)
 import Language.Haskell.TH.Syntax
@@ -17,16 +40,8 @@ import Language.Haskell.TH.Syntax
     Type (..),
     addForeignSource,
     mkName,
+    runIO,
   )
-
-unitTy :: Type
-unitTy = TupleT 0
-
-ptrTy :: Type -> Type
-ptrTy typ = ConT (mkName "Ptr") `AppT` typ
-
--- ptrUnitTy :: Type
--- ptrUnitTy = ptrTy `AppT` unitTy
 
 arr :: Type -> Type -> Type
 arr t1 t2 = ArrowT `AppT` t1 `AppT` t2
@@ -35,59 +50,42 @@ multiArgs :: [Type] -> Type -> Type
 multiArgs inputArgs output =
   foldr arr output inputArgs
 
-genInputArgSet :: Q [Type]
-genInputArgSet =
-  sequenceA
-    [ -- input
-      [t|Ptr Bool|],
-      [t|Ptr Int8|],
-      [t|Ptr Int16|],
-      [t|Ptr Int32|],
-      [t|Ptr Int64|],
-      [t|Ptr Word8|],
-      [t|Ptr Word16|],
-      [t|Ptr Word32|],
-      [t|Ptr Word64|],
-      [t|Ptr Float|],
-      [t|Ptr Double|],
-      -- output
-      [t|Ptr Bool|],
-      [t|Ptr Int8|],
-      [t|Ptr Int16|],
-      [t|Ptr Int32|],
-      [t|Ptr Int64|],
-      [t|Ptr Word8|],
-      [t|Ptr Word16|],
-      [t|Ptr Word32|],
-      [t|Ptr Word64|],
-      [t|Ptr Float|],
-      [t|Ptr Double|]
-    ]
+arraysFun ::
+  forall i o.
+  (PolyVec CExpr (TargetOb i), PolyVec CExpr (TargetOb o)) =>
+  (i `C.Cat` o) ->
+  Arrays (Compose Vector CExpr) ->
+  IO (Arrays (Compose Vector CExpr))
+arraysFun f =
+  Exception.throwIOLeft . pvectorize . C.lowerCat f <=< Exception.throwIOLeft . pdevectorize
 
---     replicateM
---    22
+inputDims :: forall a. PolyVec C a => Proxy a -> Arrays ArrayCount
+inputDims = pvlengths (Proxy @C)
 
--- replicate 22 (ptrTy unitTy)
-
-myFunction :: Q [Dec]
-myFunction = do
-  addForeignSource
-    LangC
-    "#include <stdio.h>\n\
-    \void test( void ) {\n\
-    \  printf (\"clang version: %d\\n\", __clang_major__);\n\
-    \}\n"
-
-  c_simple_example_sig <-
-    multiArgs <$> genInputArgSet <*> [t|IO ()|]
+embedFunction ::
+  forall i o.
+  (PolyVec CExpr (TargetOb i), PolyVec CExpr (TargetOb o), PolyVec C i) =>
+  Text ->
+  (i `C.Cat` o) ->
+  Q [Dec]
+embedFunction name f = do
+  let cname = "c_" <> name
+  codeC <-
+    runIO $ do
+      x <- generateCExprFunction name (inputDims $ Proxy @i) (arraysFun f)
+      case x of
+        Left e -> error "error"
+        Right (CExpr.FunctionText _ srcText) ->
+          pure $ Prettyprint.renderStrict $ CExpr.layoutOptions srcText
+  -- generateCFunction name f
+  addForeignSource LangC (T.unpack codeC)
+  c_sig <- [t|SBVFunCall|]
   pure $
     [ ForeignD $
-        ImportF CCall Safe "test" (mkName "c_test") (AppT (ConT (mkName "IO")) unitTy),
-      ForeignD $
         ImportF
           CCall
           Safe
-          "simple_example"
-          (mkName "c_simple_example")
-          c_simple_example_sig
+          (T.unpack name)
+          (mkName (T.unpack cname))
+          c_sig
     ]

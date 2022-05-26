@@ -5,7 +5,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module F (fCategorified) where
+module F (wrap_f) where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
@@ -56,5 +56,4 @@ f inp =
       oBool = iDouble inp > 0
     }
 
-fCategorified :: Input `C.Cat` Output
-fCategorified = Categorify.expression f
+$(Categorify.function 'f [t|C.Cat|] [])
