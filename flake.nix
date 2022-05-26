@@ -143,12 +143,31 @@
               overlayGHC = final: prev: {
                 haskellPackages = let ps = prev.haskell.packages.${ghcVer};
                 in if useClang then
-                  ps.override {
+                  let
+                    newLlvmPackages = if ghcVer == "ghc901" then
+                      prev.llvmPackages_9
+                    else
+                      prev.llvmPackages_12;
+                    newStdenv = newLlvmPackages.stdenv;
+                  in ps.override {
                     ghc =
-                      final.buildPackages.haskell.compiler.${ghcVer}.override {
+                      prev.buildPackages.haskell.compiler.${ghcVer}.override {
                         useLLVM = true;
+                        llvmPackages = newLlvmPackages;
+                        targetPackages = prev.targetPackages.extend
+                          (self: super: { stdenv = newStdenv; });
+                        pkgsHostTarget = prev.pkgsHostTarget.extend
+                          (self: super: {
+                            targetPackages = super.targetPackages.extend
+                              (sself: super: { stdenv = newStdenv; });
+                          });
+                        pkgsBuildTarget = prev.pkgsBuildTarget.extend
+                          (self: super: {
+                            targetPackages = super.targetPackages.extend
+                              (sself: super: { stdenv = newStdenv; });
+                          });
                       };
-                    stdenv = prev.clangStdenv;
+                    stdenv = newStdenv;
                   }
                 else
                   ps;
@@ -180,10 +199,20 @@
           mkUserShell = { ghcVer, useClang ? false }:
             let
               pkgs = mkPkgs { inherit ghcVer useClang; };
+              newStdenv = if useClang then
+                let
+                  newLlvmPackages = if ghcVer == "ghc901" then
+                    pkgs.llvmPackages_9
+                  else
+                    pkgs.llvmPackages_12;
+                in newLlvmPackages.stdenv
+              else
+                pkgs.stdenv;
+
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
               mkShell_ = if useClang then
-                pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }
+                pkgs.mkShell.override { stdenv = newStdenv; }
               else
                 pkgs.mkShell;
             in mkShell_ {
