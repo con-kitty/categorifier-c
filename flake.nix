@@ -138,7 +138,7 @@
         overlays = fullOverlays;
 
         devShells = let
-          mkPkgs = ghcVer:
+          mkPkgs = { ghcVer, useClang }:
             let
               overlayGHC = final: prev: {
                 haskellPackages = prev.haskell.packages.${ghcVer};
@@ -150,8 +150,8 @@
               config.allowBroken = true;
             };
 
-          mkDevShell = ghcVer:
-            let pkgs = mkPkgs ghcVer;
+          mkDevShell = { ghcVer, useClang ? false }:
+            let pkgs = mkPkgs { inherit ghcVer useClang; };
             in pkgs.haskellPackages.shellFor {
               packages = ps:
                 builtins.map (name: ps.${name}) categorifierCPackageNames;
@@ -167,9 +167,9 @@
               withHoogle = false;
             };
 
-          mkUserShell = ghcVer:
+          mkUserShell = { ghcVer, useClang ? false }:
             let
-              pkgs = mkPkgs ghcVer;
+              pkgs = mkPkgs { inherit ghcVer useClang; };
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
             in pkgs.mkShell {
@@ -181,16 +181,16 @@
                 [ pkgs.haskell-language-server ];
             };
 
-        in {
+        in rec {
           # nix develop .#ghc8107
           # (or .#ghc901 .#ghc921)
           # This is used for building categorifier-c
-          "default" = mkDevShell "ghc901";
-          "ghc8107" = mkDevShell "ghc8107";
-          "ghc901" = mkDevShell "ghc901";
-          "ghc921" = mkDevShell "ghc921";
+          "default" = ghc901;
+          "ghc8107" = mkDevShell { ghcVer = "ghc8107"; };
+          "ghc901" = mkDevShell { ghcVer = "ghc901"; };
+          "ghc921" = mkDevShell { ghcVer = "ghc921"; };
           # The shell with all batteries included!
-          "user-shell" = mkUserShell "ghc901";
+          "user-shell" = mkUserShell { ghcVer = "ghc901"; };
         };
       });
 }
