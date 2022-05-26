@@ -135,7 +135,11 @@
           mkPkgs = { ghcVer, useClang }:
             let
               overlayGHC = final: prev: {
-                haskellPackages = prev.haskell.packages.${ghcVer};
+                haskellPackages = let ps = prev.haskell.packages.${ghcVer};
+                in if useClang then
+                  ps.override { stdenv = prev.clangStdenv; }
+                else
+                  ps;
               };
             in import nixpkgs {
               overlays = [ overlayGHC (concat.overlay.${system}) ]
@@ -183,6 +187,11 @@
           "ghc921" = mkDevShell { ghcVer = "ghc921"; };
           # The shell with all batteries included!
           "user-shell" = mkUserShell { ghcVer = "ghc901"; };
+          # Experimental user-shell using clangStdenv for everything
+          "user-shell-clang" = mkUserShell {
+            ghcVer = "ghc901";
+            useClang = true;
+          };
         };
       });
 }
