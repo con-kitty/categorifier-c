@@ -185,7 +185,7 @@
           "ghc901" = mkDevShell "ghc901";
           "ghc921" = mkDevShell "ghc921";
           # The shell with all batteries included!
-          "user-shell" = mkUserShell "ghc8107";
+          "user-shell" = mkUserShell "ghc901";
         };
       });
 }
