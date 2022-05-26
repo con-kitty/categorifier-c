@@ -4,26 +4,22 @@
 
 module Main (main) where
 
-import Categorifier.C.Generate (writeCFiles)
-import F (fCategorified)
+import F (wrap_f)
 import Foreign.Marshal.Alloc (alloca)
-import Foreign.Ptr (Ptr, nullPtr)
+import Foreign.Ptr (nullPtr)
 import Foreign.Storable (peek, poke)
 import PyF (fmt)
 import TH
 
-$(myFunction)
+$(embedFunction "simple_example" wrap_f)
 
 main :: IO ()
 main = do
-  writeCFiles "." "simple_example" fCategorified
-  putStrLn
-    "C code insertion using addForeignSource"
-  c_test
+  putStrLn "C code insertion using addForeignSource"
   alloca $ \p_input_int32 -> do
     poke p_input_int32 1
     alloca $ \p_input_double -> do
-      poke p_input_double 1.0
+      poke p_input_double 5.0
       alloca $ \p_output_bool ->
         alloca $ \p_output_uint64 ->
           alloca $ \p_output_float -> do
