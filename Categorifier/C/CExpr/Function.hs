@@ -45,6 +45,7 @@ import Categorifier.C.Graph.Reify
   )
 import Categorifier.C.Prim (Arrays, IsPrimitive)
 import Categorifier.C.Recursion (hembed)
+import Categorifier.Common.IO.Exception (Exception)
 import Control.Monad (unless, (<=<))
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except (ExceptT, except, runExceptT)
@@ -72,6 +73,9 @@ data FunctionGenError = FunctionGenError
   { functionGenErrorName :: Text,
     functionGenErrorInfo :: FunctionGenErrorInfo
   }
+  deriving (Show)
+
+instance Exception FunctionGenError
 
 generateTopLevelFunction' ::
   -- | with self header file included or not
