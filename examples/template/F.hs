@@ -5,7 +5,12 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module F (wrap_f) where
+module F
+  ( Input (..),
+    Output (..),
+    wrap_f,
+  )
+where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
@@ -23,7 +28,7 @@ data Input = Input
   { iInt32 :: C Int32,
     iDouble :: C Double
   }
-  deriving (Generic)
+  deriving (Generic, Show)
 
 deriveHasRep ''Input
 
@@ -38,7 +43,7 @@ data Output = Output
     oFloat :: C Float,
     oBool :: Bool
   }
-  deriving (Generic)
+  deriving (Generic, Show)
 
 deriveHasRep ''Output
 
