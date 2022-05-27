@@ -72,12 +72,11 @@ embedFunction name f = do
   let cname = "c_" <> name
   codeC <-
     runIO $ do
-      x <- generateCExprFunction name (inputDims $ Proxy @i) (arraysFun f)
+      x <- generateCExprFunction False name (inputDims $ Proxy @i) (arraysFun f)
       case x of
         Left e -> error "error"
         Right (CExpr.FunctionText _ srcText) ->
           pure $ Prettyprint.renderStrict $ CExpr.layoutOptions srcText
-  -- generateCFunction name f
   addForeignSource LangC (T.unpack codeC)
   c_sig <- [t|SBVFunCall|]
   pure $
