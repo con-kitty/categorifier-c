@@ -123,7 +123,7 @@ jitCompileInternal options call (Spec inSize outSize) f mbName = do
       soPath = prefix ".so"
   IO.writeFile specSrcPath specC
   IO.writeFile specHdrPath specH
-  generated <- generateCExprFunction True name' inSize f
+  generated <- generateCExprFunction name' inSize f
   srcPath <- case generated of
     Left fge ->
       Exception.throwIOAsExceptionWithCallStack

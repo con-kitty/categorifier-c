@@ -78,12 +78,10 @@ data FunctionGenError = FunctionGenError
 instance Exception FunctionGenError
 
 generateTopLevelFunction' ::
-  -- | with self header file included or not
-  Bool ->
   Text ->
   Set ReadyToGenerate ->
   Either FunctionGenError (FunctionText ann)
-generateTopLevelFunction' withSelfHeader functionName rtg = do
+generateTopLevelFunction' functionName rtg = do
   FunctionText topLevelHeader topLevelSource <-
     fmap mconcat . traverse (first (FunctionGenError functionName) . generateFunctionText) $
       Set.toList rtg
@@ -96,14 +94,11 @@ generateTopLevelFunction' withSelfHeader functionName rtg = do
                 _ -> []
             )
           $ Set.toList rtg
-      headerDoc
-        | withSelfHeader = Doc.pretty (functionName <> ".h") : funcallHeaders
-        | otherwise = funcallHeaders
       userHeaders =
         foldr
           (\inc acc -> acc <> Doc.line <> includeUserHeader inc)
           mempty
-          headerDoc
+          funcallHeaders
       fullHdr = Doc.vcat [spam, cExprHeaders, wrapWithExternC topLevelHeader]
       fullSrc = Doc.vcat [spam, cExprHeaders, userHeaders, topLevelSource]
   pure $ FunctionText fullHdr fullSrc
@@ -119,15 +114,13 @@ generateTopLevelFunction' withSelfHeader functionName rtg = do
 
 generateToplevelFunction ::
   forall ann.
-  -- | with self header file included or not
-  Bool ->
   Text ->
   Arrays (Const Int) ->
   CExprHaskellFunction IO ->
   IO (Either FunctionGenError (FunctionText ann))
-generateToplevelFunction withSelfHeader functionName inputSpec f =
+generateToplevelFunction functionName inputSpec f =
   runExceptT $
-    except . generateTopLevelFunction' withSelfHeader functionName
+    except . generateTopLevelFunction' functionName
       =<< reifyFunctionWithChildren functionName inputSpec f
 
 makeFunctionInputs :: Arrays (Const Int) -> Arrays (Compose Vector CExpr)

@@ -319,7 +319,7 @@ makeCExpr ::
   (Arrays (Compose V.Vector CExpr) -> Arrays (Compose V.Vector CExpr)) ->
   H.PropertyT IO [FilePath]
 makeCExpr PluginTestConfig {..} funName' (Spec inputSizes outputSizes) f = do
-  bodyResult <- H.evalIO $ generateCExprFunction True (Text.pack funName) inputSizes (pure . f)
+  bodyResult <- H.evalIO $ generateCExprFunction (Text.pack funName) inputSizes (pure . f)
   functionBodies <- case bodyResult of
     Right bod -> pure bod
     Left err -> H.annotate (Text.unpack $ CExpr.prettyFunctionGenError err) *> H.failure
