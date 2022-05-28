@@ -23,5 +23,5 @@ dRosenbrock (a, b) (x, y) =
         let a' = realToFrac a
             b' = realToFrac b
          in rosenbrock (a', b') (x', y')
-      [dx, dy] = grad rosenbrock' [x, y]
-   in (dx, dy)
+      [dfdx, dfdy] = grad rosenbrock' [x, y]
+   in (dfdx, dfdy)
