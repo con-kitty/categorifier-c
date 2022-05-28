@@ -76,7 +76,7 @@ embedFunction name f = do
       cnameName = TH.mkName (T.unpack cname)
   codeC <-
     TH.runIO $ do
-      x <- generateCExprFunction False name (inputDims $ Proxy @i) (arraysFun f)
+      x <- generateCExprFunction name (inputDims $ Proxy @i) (arraysFun f)
       case x of
         Left err -> Exception.impureThrow err
         Right (CExpr.FunctionText _ srcText) ->

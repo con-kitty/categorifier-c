@@ -62,7 +62,7 @@ generateCFunction' funName inputSizes =
     ( \(CExpr.FunctionText headerText srcText) ->
         pure [(funName <> ".h", render headerText), (funName <> ".c", render srcText)]
     )
-    <=< generateCExprFunction True funName inputSizes
+    <=< generateCExprFunction funName inputSizes
   where
     render = Prettyprint.renderStrict . CExpr.layoutOptions
 
