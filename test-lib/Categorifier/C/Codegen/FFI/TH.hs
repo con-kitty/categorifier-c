@@ -8,7 +8,7 @@
 -- Data.Text.Prettyprint.Doc.Render.Text is deprecated.
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 
-module TH (embedFunction) where
+module Categorifier.C.Codegen.FFI.TH (embedFunction) where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)

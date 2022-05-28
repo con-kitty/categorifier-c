@@ -17,6 +17,7 @@ library
       Categorifier.C.Codegen.FFI.Call
       Categorifier.C.Codegen.FFI.Foreign
       Categorifier.C.Codegen.FFI.Spec
+      Categorifier.C.Codegen.FFI.TH
       Categorifier.C.KGen.KGen
       Categorifier.C.KGen.TH
       Categorifier.C.KGenGenerate.FFI.Bindings
@@ -51,6 +52,7 @@ library
     , haskell-src-exts
     , hedgehog
     , lens
+    , prettyprinter
     , process
     , sbv
     , serialise
