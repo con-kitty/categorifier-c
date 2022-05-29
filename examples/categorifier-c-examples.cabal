@@ -300,11 +300,14 @@ executable grad-descent
       -fplugin-opt Categorifier:hierarchy:Categorifier.Hierarchy.UnconCat.hierarchy
       -fplugin-opt Categorifier:hierarchy:Categorifier.Hierarchy.ConCat.functionHierarchy
       -fplugin-opt Categorifier:hierarchy:Categorifier.Hierarchy.ConCatExtensions.hierarchy
+      -fplugin-opt Categorifier:maker-map:Categorifier.Core.MakerMap.baseMakerMapFun
+      -fplugin-opt Categorifier:maker-map:Categorifier.C.MakerMap.cMakerMapFun
   build-depends:
       base
     , ghc-prim
     , concat-classes
     , categorifier-c
+    , categorifier-c-maker-map
     , categorifier-c-test-lib
     , categorifier-category
     , categorifier-client
