@@ -1,5 +1,6 @@
 {-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 {-# LANGUAGE TupleSections #-}
 
 module Categorifier.C.UnconCat
@@ -8,6 +9,9 @@ module Categorifier.C.UnconCat
   )
 where
 
+import qualified Categorifier.C.CExpr.Cat
+import qualified Categorifier.C.CExpr.Cat.TargetOb
+import qualified Categorifier.C.CExpr.Types.Core
 import Categorifier.Core.MakerMap (splitNameString)
 import Categorifier.Core.Makers (Makers (..))
 import qualified Categorifier.Core.PrimOp as PrimOp
@@ -28,9 +32,9 @@ import Data.Tuple.Extra (fst3)
 
 tryAutoInterpret :: Lookup AutoInterpreter
 tryAutoInterpret = do
-  catId <- findId "Categorifier.C.CExpr.Cat" "cat"
-  cexprTyCon <- findTyCon "Categorifier.C.CExpr.Types.Core" "CExpr"
-  targetObTyCon <- findTyCon "Categorifier.C.CExpr.Cat.TargetOb" "TargetOb"
+  catId <- findId 'Categorifier.C.CExpr.Cat.cat
+  cexprTyCon <- findTyCon ''Categorifier.C.CExpr.Types.Core.CExpr
+  targetObTyCon <- findTyCon ''Categorifier.C.CExpr.Cat.TargetOb.TargetOb
   pure $ \buildDictionary cat nativeFunTy target args -> runMaybeT $ do
     let canAutoInterpret = case Plugins.splitTyConApp_maybe cat of
           Just (tc, _) ->

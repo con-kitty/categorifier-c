@@ -22,6 +22,7 @@ library
   build-depends:
       barbies
     , base
+    , categorifier-c
     , categorifier-ghc
     , categorifier-plugin
     , extra
