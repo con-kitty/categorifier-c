@@ -52,6 +52,7 @@ library
     , haskell-src-exts
     , hedgehog
     , lens
+    , lift-type
     , prettyprinter
     , process
     , sbv
