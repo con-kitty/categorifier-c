@@ -42,39 +42,23 @@ import Data.Reflection (Reifies)
 import Data.Word (Word64)
 import GHC.Generics (Generic)
 import Numeric.AD (grad)
-import Numeric.AD.Internal.Reverse (Tape)
-import Numeric.AD.Mode.Reverse (Reverse)
+import Numeric.AD.Internal.Reverse (Reverse (Lift), Tape)
 
-rosenbrock :: RealFrac a => (a, a) -> (a, a) -> a
-rosenbrock (a, b) (x, y) = (a - x) ^ 2 + b * (y - x ^ 2) ^ 2
-
-dRosenbrock :: forall a. RealFrac a => (a, a) -> (a, a) -> (a, a)
-dRosenbrock (a, b) (x, y) =
-  let rosenbrock' :: forall s. Reifies s Tape => [Reverse s a] -> Reverse s a
-      rosenbrock' [x', y'] =
-        let a' = realToFrac a
-            b' = realToFrac b
-         in rosenbrock (a', b') (x', y')
-      [dfdx, dfdy] = grad rosenbrock' [x, y]
-   in (dfdx, dfdy)
-
------------
-
-{-
-data Param = Param
-  { paramA :: C Double,
-    paramB :: C Double
+data Param f = Param
+  { paramA :: f Double,
+    paramB :: f Double
   }
-  deriving (Generic, Show)
+  deriving (Generic)
+
+deriving instance Show (Param C)
 
 deriveHasRep ''Param
 
-instance CGeneric Param
+instance CGeneric (Param f)
 
-instance GArrays C Param
+instance GArrays f (Param f)
 
-type instance TargetOb Param = TargetOb (CG.Rep Param ())
--}
+type instance TargetOb (Param f) = Param (TargetObTC1 f)
 
 data XY f = XY
   { xyX :: f Double,
@@ -92,80 +76,79 @@ instance GArrays f (XY f)
 
 type instance TargetOb (XY f) = XY (TargetObTC1 f)
 
-dummy :: (KType1 f) => XY f -> XY f
-dummy (XY x y) =
-  let f [x', y'] = x' * x' + y' * y'
-      [dfdx, dfdy] = grad f [x, y]
-   in XY dfdx dfdy
-
---  $(Categorify.separately 'dummy [t|C.Cat|] [pure [t|C|]])
-
-$(Categorify.separately 'dummy [t|C.Cat|] [pure [t|C|]])
-
--- wrap_dummy :: KType1 f => C.Cat (XY f) (XY f)
--- wrap_dummy :: C.Cat (XY C) (XY C)
--- wrap_dummy :: XY C -> XY C
--- wrap_dummy = dummy -- Categorify.expression dummy
-
--- instance Category.NativeCat (->) "F.dummy" (XY C) (XY C) where
---   nativeK = wrap_dummy
-
--- dummy_ :: XY C -> XY C
--- dummy_ = kFunctionCall (Proxy @C) "dummy" dummy
-
--- $(Categorify.separately 'dummy_ [t|C.Cat|] [])
-
--- if x > 0 then x + 5 else 42
-
--- kFunctionCall (Proxy @C) "g" $
-
--- type instance TargetOb (XY C) = TargetOb (CG.Rep (XY C) ())
-
--- type instance TargetOb (XY C) = Float
-
-{-
-data Input = Input
-  { iParam :: Param,
-    iCoord :: XY
+data Input f = Input
+  { iParam :: Param f,
+    iCoord :: XY f
   }
-  deriving (Generic, Show)
+  deriving (Generic)
+
+deriving instance Show (Input C)
 
 deriveHasRep ''Input
 
-instance CGeneric Input
+instance CGeneric (Input f)
 
-instance GArrays C Input
+instance GArrays f (Input f)
 
-type instance TargetOb Input = TargetOb (CG.Rep Input ())
+type instance TargetOb (Input f) = Input (TargetObTC1 f)
 
-newtype Output = Output
-  {oF :: C Double}
-  deriving (Generic, Show)
+newtype Output f = Output
+  {oF :: f Double}
+  deriving (Generic)
+
+deriving instance Show (Output C)
 
 deriveHasRep ''Output
 
-instance CGeneric Output
+instance CGeneric (Output f)
 
-instance GArrays C Output
+instance GArrays f (Output f)
 
-type instance TargetOb Output = TargetOb (CG.Rep Output ())
+type instance TargetOb (Output f) = Output (TargetObTC1 f)
 
-rosenbrockF :: Input -> Output
+rosenbrock :: Num a => (a, a) -> (a, a) -> a
+rosenbrock (a, b) (x, y) = (a - x) ^ 2 + b * (y - x ^ 2) ^ 2
+
+dRosenbrock :: forall a. Num a => (a, a) -> (a, a) -> (a, a)
+dRosenbrock (a, b) (x, y) =
+  let rosenbrock' :: forall s. Reifies s Tape => [Reverse s a] -> Reverse s a
+      rosenbrock' [x', y'] =
+        let a' = Lift a
+            b' = Lift b
+         in rosenbrock (a', b') (x', y')
+      [dfdx, dfdy] = grad rosenbrock' [x, y]
+   in (dfdx, dfdy)
+
+rosenbrockF :: KType1 f => Input f -> Output f
 rosenbrockF (Input (Param a b) (XY x y)) = Output $ rosenbrock (a, b) (x, y)
 
---------------------------------------
+dRosenbrockF :: forall f. (KType1 f) => Input f -> XY f
+dRosenbrockF (Input (Param a b) (XY x y)) =
+  let (dfdx, dfdy) = dRosenbrock (a, b) (x, y)
+   in XY dfdx dfdy
 
-dRosenbrock_ {- Param -> -} :: (KType f) -> XY f -> XY f
-dRosenbrock_ {- (Param a b) -} (XY x y) =
-  let rosenbrock' :: forall s. Reifies s Tape => [Reverse s (C Double)] -> Reverse s (C Double)
-      rosenbrock' [x', y'] = x' + y'
-      {- let a' = 1 -- realToFrac a
-            b' = 10 -- realToFrac b
-         in rosenbrock (a', b') (x', y') -}
+$(Categorify.separately 'rosenbrockF [t|C.Cat|] [pure [t|C|]])
+
+$(Categorify.separately 'dRosenbrockF [t|C.Cat|] [pure [t|C|]])
+
+{-
+        let rosenbrock' :: forall s. Reifies s Tape => [Reverse s a] -> Reverse s a
+            rosenbrock' [x', y'] =
+              let a' = Lift a
+                  b' = Lift b
+               in rosenbrock (a', b') (x', y')
+            [dfdx, dfdy] = grad rosenbrock' [x, y]
+         in (dfdx, dfdy)
+-}
+{-
+  let rosenbrock' :: forall s. Reifies s Tape => [Reverse s (f Double)] -> Reverse s (f Double)
+      rosenbrock' [x', y'] =
+        let a' = realToFrac a
+            b' = realToFrac b
+         in rosenbrock (a', b') (x', y')
       [dfdx, dfdy] = grad rosenbrock' [x, y]
    in XY dfdx dfdy
 -}
-
 -- dummy_ :: XY C -> XY C
 -- dummy_ xy = kFunctionCall (Proxy @C) "dummy" dummy xy
 

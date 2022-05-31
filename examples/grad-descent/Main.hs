@@ -9,12 +9,12 @@ import Categorifier.C.Codegen.FFI.ArraysCC (fromArraysCC)
 import Categorifier.C.Codegen.FFI.Spec (SBVFunCall)
 import Categorifier.C.Codegen.FFI.TH (embedFunction, embedFunctionCTemp)
 import Categorifier.C.Generate (writeCFiles)
-import Categorifier.C.KTypes.C (C)
+import Categorifier.C.KTypes.C (C (unsafeC))
+import Categorifier.C.KTypes.KLiteral (kliteral)
 import Data.List (iterate)
 import Data.Proxy (Proxy (..))
 import F
-
-{-  ( Input (..),
+  ( Input (..),
     Output (..),
     Param (..),
     XY (..),
@@ -23,51 +23,50 @@ import F
     wrap_dRosenbrockF,
     wrap_rosenbrockF,
   )
--}
-{-
-$(embedFunction "rosenbrock" wrap_rosenbrockF)
 
-$(embedFunction "dRosenbrock" wrap_dRosenbrockF)
--}
+$(embedFunctionCTemp "rosenbrockF" wrap_rosenbrockF)
 
-$(embedFunctionCTemp "dummy" wrap_dummy)
-
-{-
-foreign import ccall safe "dummy" c_dummy :: SBVFunCall
-
-hs_dummy :: XY C -> IO (XY C)
-hs_dummy input = fromArraysCC (Proxy @(XY C -> XY C)) c_dummy input
--}
+$(embedFunctionCTemp "dRosenbrockF" wrap_dRosenbrockF)
 
 gamma :: Double
 gamma = 0.01
 
 step ::
-  ((Double, Double) -> Double) ->
-  ((Double, Double) -> (Double, Double)) ->
+  ((Double, Double) -> IO Double) ->
+  ((Double, Double) -> IO (Double, Double)) ->
   (Double, Double) ->
-  (Double, Double)
-step f df (x0, y0) =
-  let (dfdx, dfdy) = df (x0, y0)
-      (x1, y1) = (x0 - gamma * dfdx, y0 - gamma * dfdy)
-   in (x1, y1)
+  IO (Double, Double)
+step f df (x0, y0) = do
+  (dfdx, dfdy) <- df (x0, y0)
+  let (x1, y1) = (x0 - gamma * dfdx, y0 - gamma * dfdy)
+  pure (x1, y1)
+
+iterateNM :: (Monad m) => Int -> (a -> m a) -> a -> m [a]
+iterateNM n f x0 = go n f x0 id
+  where
+    go k f x acc
+      | k > 0 = do
+        y <- f x
+        go (k - 1) f y (acc . (y :))
+      | otherwise = pure (acc [])
 
 main :: IO ()
 main = do
-  {-
-    writeCFiles "/tmp" "dRosenbrock" wrap_dRosenbrockF
+  let (x0, y0) = (0.1, 0.4)
+  -- pure haskell
+  putStrLn "pure haskell"
+  let f = pure . rosenbrock (1, 10)
+      df = pure . dRosenbrock (1, 10)
+  histH <- iterateNM 10 (step f df) (x0, y0)
+  mapM_ print histH
 
-    let f = rosenbrock (1, 10)
-        df = dRosenbrock (1, 10)
-        hist = take 10 {- 1500 -} $ iterate (step f df) (0.1, 0.4)
-    mapM_ print hist
-
-    z <- hs_rosenbrock (Input (Param 1 10) (XY 0.1 0.4))
-    let z' = f (0.1, 0.4)
-    print (z, z')
-
-    out3 <- hs_dRosenbrock (XY 0.1 0.4)
-    print out3
-  -}
-  out3 <- hs_dummy (XY 0.1 0.4)
-  print out3
+  -- C
+  putStrLn "codegen C"
+  let g (x, y) = do
+        Output z <- hs_rosenbrockF (Input (Param 1 10) (XY (kliteral x) (kliteral y)))
+        pure (unsafeC z)
+      dg (x, y) = do
+        XY x' y' <- hs_dRosenbrockF (Input (Param 1 10) (XY (kliteral x) (kliteral y)))
+        pure (unsafeC x', unsafeC y')
+  histC <- iterateNM 10 (step g dg) (x0, y0)
+  mapM_ print histC
