@@ -45,6 +45,7 @@ import Categorifier.C.Graph.Reify
   )
 import Categorifier.C.Prim (Arrays, IsPrimitive)
 import Categorifier.C.Recursion (hembed)
+import Categorifier.Common.IO.Exception (Exception)
 import Control.Monad (unless, (<=<))
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except (ExceptT, except, runExceptT)
@@ -72,9 +73,14 @@ data FunctionGenError = FunctionGenError
   { functionGenErrorName :: Text,
     functionGenErrorInfo :: FunctionGenErrorInfo
   }
+  deriving (Show)
+
+instance Exception FunctionGenError
 
 generateTopLevelFunction' ::
-  Text -> Set ReadyToGenerate -> Either FunctionGenError (FunctionText ann)
+  Text ->
+  Set ReadyToGenerate ->
+  Either FunctionGenError (FunctionText ann)
 generateTopLevelFunction' functionName rtg = do
   FunctionText topLevelHeader topLevelSource <-
     fmap mconcat . traverse (first (FunctionGenError functionName) . generateFunctionText) $
@@ -92,7 +98,7 @@ generateTopLevelFunction' functionName rtg = do
         foldr
           (\inc acc -> acc <> Doc.line <> includeUserHeader inc)
           mempty
-          (Doc.pretty (functionName <> ".h") : funcallHeaders)
+          funcallHeaders
       fullHdr = Doc.vcat [spam, cExprHeaders, wrapWithExternC topLevelHeader]
       fullSrc = Doc.vcat [spam, cExprHeaders, userHeaders, topLevelSource]
   pure $ FunctionText fullHdr fullSrc
