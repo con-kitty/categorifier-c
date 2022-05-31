@@ -87,10 +87,6 @@ executable separate-categorification
       G
   ghc-options:
       -O0
-      -fforce-recomp
-      -ddump-simpl
-      -ddump-splices
-      -dsuppress-all
       -fexpose-all-unfoldings
       -fmax-simplifier-iterations=0
       -fno-ignore-interface-pragmas
