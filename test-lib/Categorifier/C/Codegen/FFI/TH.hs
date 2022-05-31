@@ -41,10 +41,9 @@ import Language.Haskell.TH.Syntax
     Pat (VarP),
     Q,
     Safety (Safe),
-    Type (..),
   )
 import qualified Language.Haskell.TH.Syntax as TH
-import qualified Type.Reflection as TR
+import qualified LiftType
 
 arraysFun ::
   forall i o.
@@ -57,12 +56,6 @@ arraysFun f =
 
 inputDims :: forall a. PolyVec C a => Proxy a -> Arrays ArrayCount
 inputDims = pvlengths (Proxy @C)
-
-getTypeName :: forall t. (Typeable t) => Proxy t -> String
-getTypeName p =
-  let tRep = TR.someTypeRep p -- (Proxy @t)
-      tCon = TR.someTypeRepTyCon tRep
-   in TR.tyConName tCon
 
 embedFunction ::
   forall i o.
@@ -85,9 +78,9 @@ embedFunction name f = do
   cfunFfi <-
     ForeignD . ImportF CCall Safe (T.unpack name) cnameName <$> [t|SBVFunCall|]
   -- generate high-level haskell
-  let inputTy = ConT (TH.mkName (getTypeName (Proxy @i)))
-      outputTy = ConT (TH.mkName (getTypeName (Proxy @o)))
-      funName = TH.mkName (T.unpack ("hs_" <> name))
+  inputTy <- LiftType.liftTypeQ @i
+  outputTy <- LiftType.liftTypeQ @o
+  let funName = TH.mkName (T.unpack ("hs_" <> name))
   hsfunSig <-
     SigD funName <$> [t|$(pure inputTy) -> IO $(pure outputTy)|]
   body <-
