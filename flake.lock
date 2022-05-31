@@ -28,23 +28,24 @@
         "ghc-lib-parser-ex": "ghc-lib-parser-ex",
         "ghc-typelits-natnormalise": "ghc-typelits-natnormalise",
         "hlint": "hlint",
+        "linear-base": "linear-base",
         "nixpkgs": [
           "nixpkgs"
         ],
         "yaya": "yaya"
       },
       "locked": {
-        "lastModified": 1653058511,
-        "narHash": "sha256-6OKzQfBPKw3KV4JjgIldMVviq0L7pAyYi01zYZP89tA=",
+        "lastModified": 1653608765,
+        "narHash": "sha256-zVaFK3OBn0twJmn95vEvOUeDiAHZZ6iz1F3EWL+ypfk=",
         "owner": "con-kitty",
         "repo": "categorifier",
-        "rev": "d48b7bb9c45c95f1d4f2f46641d483cc4f401ca8",
+        "rev": "289b980b56bf1f4cbd1ac6940ee671bbdc7513ab",
         "type": "github"
       },
       "original": {
         "owner": "con-kitty",
+        "ref": "master",
         "repo": "categorifier",
-        "rev": "d48b7bb9c45c95f1d4f2f46641d483cc4f401ca8",
         "type": "github"
       }
     },
@@ -160,6 +161,23 @@
         "owner": "ndmitchell",
         "ref": "v3.4",
         "repo": "hlint",
+        "type": "github"
+      }
+    },
+    "linear-base": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1648538481,
+        "narHash": "sha256-QceHuD9zA8fOoZ0AjIfUNGv5mQvj0sq0PAG3eXk1WuY=",
+        "owner": "tweag",
+        "repo": "linear-base",
+        "rev": "a3cb079b2425207620dc3bf899f74d052a66dde0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tweag",
+        "ref": "v0.2.0",
+        "repo": "linear-base",
         "type": "github"
       }
     },

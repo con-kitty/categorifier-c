@@ -9,10 +9,7 @@
       inputs.flake-utlis.follows = "flake-utils";
     };
     categorifier = {
-      #url = "github:con-kitty/categorifier/master";
-      url =
-        # pull request categorifier#66
-        "github:con-kitty/categorifier/d48b7bb9c45c95f1d4f2f46641d483cc4f401ca8";
+      url = "github:con-kitty/categorifier/master";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
       inputs.concat.follows = "concat";
