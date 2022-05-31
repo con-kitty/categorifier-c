@@ -8,4 +8,4 @@ import F (fCategorified)
 -- This generates /tmp/multiple_c_functions.c, which contains two
 -- C functions: `multiple_c_functions` (the main function), and `g`.
 main :: IO ()
-main = writeCFiles "." "multiple_c_functions" fCategorified
+main = writeCFiles "/tmp" "multiple_c_functions" fCategorified
