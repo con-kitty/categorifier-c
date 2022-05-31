@@ -8,11 +8,7 @@
 -- Data.Text.Prettyprint.Doc.Render.Text is deprecated.
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 
-module Categorifier.C.Codegen.FFI.TH
-  ( embedFunction,
-    embedFunctionCTemp,
-  )
-where
+module Categorifier.C.Codegen.FFI.TH (embedFunction) where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
@@ -85,39 +81,6 @@ embedFunction name f = do
   -- generate high-level haskell
   inputTy <- LiftType.liftTypeQ @i
   outputTy <- LiftType.liftTypeQ @o
-  let funName = TH.mkName (T.unpack ("hs_" <> name))
-  hsfunSig <-
-    SigD funName <$> [t|$(pure inputTy) -> IO $(pure outputTy)|]
-  body <-
-    [|fromArraysCC (Proxy @($(pure inputTy) -> $(pure outputTy))) $(pure (VarE cnameName)) input|]
-  let hsfunDef = FunD funName [Clause [VarP (TH.mkName "input")] (NormalB body) []]
-  --
-  pure [cfunFfi, hsfunSig, hsfunDef]
-
--- temporary
-embedFunctionCTemp ::
-  forall i o.
-  (Typeable i, Typeable o, PolyVec CExpr (TargetOb i), PolyVec CExpr (TargetOb o), PolyVec C i) =>
-  Text ->
-  (i `C.Cat` o) ->
-  Q [Dec]
-embedFunctionCTemp name f = do
-  -- generate C FFI
-  let cname = "c_" <> name
-      cnameName = TH.mkName (T.unpack cname)
-  codeC <-
-    TH.runIO $ do
-      x <- generateCExprFunction name (inputDims $ Proxy @i) (arraysFun f)
-      case x of
-        Left err -> Exception.impureThrow err
-        Right (CExpr.FunctionText _ srcText) ->
-          pure $ Prettyprint.renderStrict $ CExpr.layoutOptions srcText
-  TH.addForeignSource LangC (T.unpack codeC)
-  cfunFfi <-
-    ForeignD . ImportF CCall Safe (T.unpack name) cnameName <$> [t|SBVFunCall|]
-  -- generate high-level haskell
-  inputTy <- AppT (ConT (TH.mkName (getTypeName (Proxy @i)))) <$> [t|C|] -- for now
-  outputTy <- AppT (ConT (TH.mkName (getTypeName (Proxy @o)))) <$> [t|C|] -- for now
   let funName = TH.mkName (T.unpack ("hs_" <> name))
   hsfunSig <-
     SigD funName <$> [t|$(pure inputTy) -> IO $(pure outputTy)|]

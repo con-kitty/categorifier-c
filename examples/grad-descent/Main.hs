@@ -7,7 +7,7 @@ module Main where
 
 import Categorifier.C.Codegen.FFI.ArraysCC (fromArraysCC)
 import Categorifier.C.Codegen.FFI.Spec (SBVFunCall)
-import Categorifier.C.Codegen.FFI.TH (embedFunction, embedFunctionCTemp)
+import Categorifier.C.Codegen.FFI.TH (embedFunction)
 import Categorifier.C.Generate (writeCFiles)
 import Categorifier.C.KTypes.C (C (unsafeC))
 import Categorifier.C.KTypes.KLiteral (kliteral)
@@ -24,9 +24,9 @@ import F
     wrap_rosenbrockF,
   )
 
-$(embedFunctionCTemp "rosenbrockF" wrap_rosenbrockF)
+$(embedFunction "rosenbrockF" wrap_rosenbrockF)
 
-$(embedFunctionCTemp "dRosenbrockF" wrap_dRosenbrockF)
+$(embedFunction "dRosenbrockF" wrap_dRosenbrockF)
 
 gamma :: Double
 gamma = 0.01
