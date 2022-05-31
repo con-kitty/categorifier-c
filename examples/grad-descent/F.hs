@@ -12,9 +12,8 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module F where
-
-{-  ( Input (..),
+module F
+  ( Input (..),
     Output (..),
     Param (..),
     XY (..),
@@ -22,7 +21,8 @@ module F where
     dRosenbrock,
     wrap_rosenbrockF,
     wrap_dRosenbrockF,
-  ) -}
+  )
+where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb, TargetObTC1)
@@ -130,48 +130,3 @@ dRosenbrockF (Input (Param a b) (XY x y)) =
 $(Categorify.separately 'rosenbrockF [t|C.Cat|] [pure [t|C|]])
 
 $(Categorify.separately 'dRosenbrockF [t|C.Cat|] [pure [t|C|]])
-
-{-
-        let rosenbrock' :: forall s. Reifies s Tape => [Reverse s a] -> Reverse s a
-            rosenbrock' [x', y'] =
-              let a' = Lift a
-                  b' = Lift b
-               in rosenbrock (a', b') (x', y')
-            [dfdx, dfdy] = grad rosenbrock' [x, y]
-         in (dfdx, dfdy)
--}
-{-
-  let rosenbrock' :: forall s. Reifies s Tape => [Reverse s (f Double)] -> Reverse s (f Double)
-      rosenbrock' [x', y'] =
-        let a' = realToFrac a
-            b' = realToFrac b
-         in rosenbrock (a', b') (x', y')
-      [dfdx, dfdy] = grad rosenbrock' [x, y]
-   in XY dfdx dfdy
--}
--- dummy_ :: XY C -> XY C
--- dummy_ xy = kFunctionCall (Proxy @C) "dummy" dummy xy
-
-{-
-dRosenbrockF {- Param -> -} ::
-  XY -> XY
-dRosenbrockF (XY x y) =
-  let p = Param 1 10
-   in -- x' = gg x
-      -- kFunctionCall (Proxy @C) "dRosenbrock_c" dummy (XY x y)
-
-      -- dummy 2 (XY x y)
-      -- kFunctionCall (Proxy @C) "dRosenbrock_c" dRosenbrock_ (XY x y)
--}
-
-{- dummydRosenbrock_ p -}
-
---  $(Categorify.function 'rosenbrockF [t|C.Cat|] [])
-
---  $(Categorify.function 'dRosenbrockF [t|C.Cat|] [])
-
---  $(Categorify.function 'dummy_ [t|C.Cat|] [])
-
---  $(Categorify.separately 'dRosenbrock_ [t|C.Cat|] [])
-
--- wrap_dRosenbrockF = id
