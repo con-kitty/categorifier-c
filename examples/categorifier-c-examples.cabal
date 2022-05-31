@@ -302,13 +302,18 @@ executable grad-descent
       -fplugin-opt Categorifier:hierarchy:Categorifier.Hierarchy.ConCatExtensions.hierarchy
       -fplugin-opt Categorifier:maker-map:Categorifier.Core.MakerMap.baseMakerMapFun
       -fplugin-opt Categorifier:maker-map:Categorifier.C.MakerMap.cMakerMapFun
+      -fplugin-opt Categorifier:autointerpreter:Categorifier.C.UnconCat.tryAutoInterpret
+      -optc-Wno-implicit-function-declaration
+      -fprint-potential-instances
   build-depends:
       base
     , ghc-prim
     , concat-classes
     , categorifier-c
+    , categorifier-c-hk-classes
     , categorifier-c-maker-map
     , categorifier-c-test-lib
+    , categorifier-c-unconcat
     , categorifier-category
     , categorifier-client
     , categorifier-concat-extensions-category
