@@ -5,14 +5,10 @@
 
 module Main where
 
-import Categorifier.C.Codegen.FFI.ArraysCC (fromArraysCC)
-import Categorifier.C.Codegen.FFI.Spec (SBVFunCall)
 import Categorifier.C.Codegen.FFI.TH (embedFunction)
-import Categorifier.C.Generate (writeCFiles)
 import Categorifier.C.KTypes.C (C (unsafeC))
 import Categorifier.C.KTypes.KLiteral (kliteral)
-import Data.List (iterate)
-import Data.Proxy (Proxy (..))
+import Data.Foldable (traverse_)
 import F
   ( Input (..),
     Output (..),
@@ -36,18 +32,18 @@ step ::
   ((Double, Double) -> IO (Double, Double)) ->
   (Double, Double) ->
   IO (Double, Double)
-step f df (x0, y0) = do
+step _f df (x0, y0) = do
   (dfdx, dfdy) <- df (x0, y0)
   let (x1, y1) = (x0 - gamma * dfdx, y0 - gamma * dfdy)
   pure (x1, y1)
 
 iterateNM :: (Monad m) => Int -> (a -> m a) -> a -> m [a]
-iterateNM n f x0 = go n f x0 id
+iterateNM n f x0 = go n x0 id
   where
-    go k f x acc
+    go k x acc
       | k > 0 = do
-          y <- f x
-          go (k - 1) f y (acc . (y :))
+        y <- f x
+        go (k - 1) y (acc . (y :))
       | otherwise = pure (acc [])
 
 main :: IO ()
