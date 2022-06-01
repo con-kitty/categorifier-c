@@ -46,8 +46,8 @@ iterateNM n f x0 = go n f x0 id
   where
     go k f x acc
       | k > 0 = do
-        y <- f x
-        go (k - 1) f y (acc . (y :))
+          y <- f x
+          go (k - 1) f y (acc . (y :))
       | otherwise = pure (acc [])
 
 main :: IO ()
@@ -58,7 +58,7 @@ main = do
   let f = pure . rosenbrock (1, 10)
       df = pure . dRosenbrock (1, 10)
   histH <- iterateNM 10 (step f df) (x0, y0)
-  mapM_ print histH
+  traverse_ print histH
 
   -- C
   putStrLn "codegen C"
@@ -69,4 +69,4 @@ main = do
         XY x' y' <- hs_dRosenbrockF (Input (Param 1 10) (XY (kliteral x) (kliteral y)))
         pure (unsafeC x', unsafeC y')
   histC <- iterateNM 10 (step g dg) (x0, y0)
-  mapM_ print histC
+  traverse_ print histC
