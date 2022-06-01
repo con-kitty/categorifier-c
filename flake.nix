@@ -35,18 +35,24 @@
           haskellPackages = prev.haskellPackages.override (old: {
             overrides =
               final.lib.composeExtensions (old.overrides or (_: _: { }))
-              (self: super: {
-                # zliu41's fix for GHC 9.2
-                "TypeCompose" =
-                  self.callCabal2nix "TypeCompose" TypeCompose { };
-                "connections" =
-                  self.callCabal2nix "connections" connections { };
-                # test is broken with DBool.
-                "generic-accessors" =
-                  haskellLib.dontCheck super.generic-accessors;
-                # sbv-9.0, bypassing checkPhase that takes too long.
-                "sbv" = haskellLib.dontCheck (self.callCabal2nix "sbv" sbv { });
-              });
+              (self: super:
+                {
+                  # zliu41's fix for GHC 9.2
+                  "TypeCompose" =
+                    self.callCabal2nix "TypeCompose" TypeCompose { };
+                  "connections" =
+                    self.callCabal2nix "connections" connections { };
+                  # test is broken with DBool.
+                  "generic-accessors" =
+                    haskellLib.dontCheck super.generic-accessors;
+                  # sbv-9.0, bypassing checkPhase that takes too long.
+                  "sbv" =
+                    haskellLib.dontCheck (self.callCabal2nix "sbv" sbv { });
+                } // (prev.lib.optionalAttrs
+                  (prev.haskellPackages.ghc.version == "9.2.1") {
+                    # due to random, hashable on GHC-9.2.1
+                    "linear" = haskellLib.doJailbreak super.linear_1_21_7;
+                  }));
           });
         };
 
@@ -167,7 +173,9 @@
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
             in pkgs.mkShell {
-              buildInputs = [ hsenv pkgs.haskellPackages.cabal-install ] ++
+              buildInputs =
+                # use nixpkgs default tools
+                [ hsenv pkgs.haskellPackages.ghc8107.cabal-install ] ++
                 # haskell-language-server on GHC 9.2.1 is broken yet.
                 pkgs.lib.optional (ghcVer != "ghc921")
                 [ pkgs.haskell-language-server ];
