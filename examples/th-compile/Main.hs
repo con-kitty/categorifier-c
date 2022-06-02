@@ -5,7 +5,7 @@
 module Main (main) where
 
 import Categorifier.C.Codegen.FFI.TH (embedFunction)
-import F (Input (..), Output (..), wrap_f)
+import F (Input (..), wrap_f)
 
 $(embedFunction "simple_example" wrap_f)
 
