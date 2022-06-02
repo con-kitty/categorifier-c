@@ -176,10 +176,12 @@
               pkgs = mkPkgs { inherit ghcVer useClang; };
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
-            in pkgs.mkShell {
-              buildInputs =
-                # use nixpkgs default tools
-                [ hsenv pkgs.haskellPackages.ghc8107.cabal-install ] ++
+              mkShell_ = if useClang then
+                pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }
+              else
+                pkgs.mkShell;
+            in mkShell_ {
+              buildInputs = [ hsenv pkgs.haskellPackages.cabal-install ] ++
                 # haskell-language-server on GHC 9.2.1 is broken yet.
                 pkgs.lib.optional (ghcVer != "ghc921")
                 [ pkgs.haskell-language-server ];
