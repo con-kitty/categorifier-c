@@ -29,6 +29,7 @@ where
 
 import qualified Barbies
 import Categorifier.C.Barbies (type (&+&))
+import Categorifier.C.CExpr.Function (FunctionGenMode (Standard))
 import qualified Categorifier.C.CExpr.IO as CExpr (emitCFunction, prettyFunctionGenError)
 import Categorifier.C.CExpr.Types.Core (CExpr)
 import Categorifier.C.Codegen.FFI.Call (callSBVCFunctionInPlaceV, callSBVCFunctionStorable)
@@ -123,7 +124,7 @@ jitCompileInternal options call (Spec inSize outSize) f mbName = do
       soPath = prefix ".so"
   IO.writeFile specSrcPath specC
   IO.writeFile specHdrPath specH
-  generated <- generateCExprFunction name' inSize f
+  generated <- generateCExprFunction Standard name' inSize f
   srcPath <- case generated of
     Left fge ->
       Exception.throwIOAsExceptionWithCallStack

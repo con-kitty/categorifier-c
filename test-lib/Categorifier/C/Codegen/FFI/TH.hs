@@ -13,6 +13,7 @@ module Categorifier.C.Codegen.FFI.TH (embedFunction) where
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
 import qualified Categorifier.C.CExpr.File as CExpr (FunctionText (..))
+import Categorifier.C.CExpr.Function (FunctionGenMode (AllInOne))
 import qualified Categorifier.C.CExpr.IO as CExpr (layoutOptions)
 import Categorifier.C.CExpr.Types.Core (CExpr)
 import Categorifier.C.Codegen.FFI.ArraysCC (fromArraysCC)
@@ -69,7 +70,7 @@ embedFunction name f = do
       cnameName = TH.mkName (T.unpack cname)
   codeC <-
     TH.runIO $ do
-      x <- generateCExprFunction name (inputDims $ Proxy @i) (arraysFun f)
+      x <- generateCExprFunction AllInOne name (inputDims $ Proxy @i) (arraysFun f)
       case x of
         Left err -> Exception.impureThrow err
         Right (CExpr.FunctionText _ srcText) ->

@@ -13,6 +13,7 @@ where
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
 import qualified Categorifier.C.CExpr.File as CExpr (FunctionText (..))
+import Categorifier.C.CExpr.Function (FunctionGenMode (Standard))
 import qualified Categorifier.C.CExpr.IO as CExpr (layoutOptions, prettyFunctionGenError)
 import Categorifier.C.CExpr.Types.Core (CExpr)
 import Categorifier.C.CTypes.ArrayLengths (showMismatches)
@@ -62,7 +63,7 @@ generateCFunction' funName inputSizes =
     ( \(CExpr.FunctionText headerText srcText) ->
         pure [(funName <> ".h", render headerText), (funName <> ".c", render srcText)]
     )
-    <=< generateCExprFunction funName inputSizes
+    <=< generateCExprFunction Standard funName inputSizes
   where
     render = Prettyprint.renderStrict . CExpr.layoutOptions
 
