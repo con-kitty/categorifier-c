@@ -84,6 +84,10 @@ data FunctionGenErrorInfo
   = BogusInputNodes (Arrays (Compose IntMap (CExprF (Const Int))))
   | InvalidGraph GraphFailure
 
+instance Show FunctionGenErrorInfo where
+  show BogusInputNodes {} = "BogusInputNodes"
+  show InvalidGraph {} = "GraphFailure"
+
 --  | AssignmentError GenError
 
 data FunctionText ann = FunctionText

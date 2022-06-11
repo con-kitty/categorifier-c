@@ -14,6 +14,7 @@ module Categorifier.C.CExpr.Function
     reifyFunctionWithChildren',
     FunctionGenError (..),
     FunctionGenErrorInfo (..),
+    FunctionGenMode (..),
     FunctionSet (..),
   )
 where
@@ -45,6 +46,7 @@ import Categorifier.C.Graph.Reify
   )
 import Categorifier.C.Prim (Arrays, IsPrimitive)
 import Categorifier.C.Recursion (hembed)
+import Categorifier.Common.IO.Exception (Exception)
 import Control.Monad (unless, (<=<))
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Except (ExceptT, except, runExceptT)
@@ -63,19 +65,36 @@ import Data.List.Extra (nubOrd)
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Text (Text)
-import qualified Data.Text.Prettyprint.Doc as Doc (line, pretty, vcat)
+import qualified Data.Text.Prettyprint.Doc as Doc
+  ( emptyDoc,
+    line,
+    pretty,
+    vcat,
+  )
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
 import PyF (fmt)
+
+data FunctionGenMode
+  = -- | separate header code and C source code
+    Standard
+  | -- | generated code is piled into a single source
+    AllInOne
 
 data FunctionGenError = FunctionGenError
   { functionGenErrorName :: Text,
     functionGenErrorInfo :: FunctionGenErrorInfo
   }
+  deriving (Show)
+
+instance Exception FunctionGenError
 
 generateTopLevelFunction' ::
-  Text -> Set ReadyToGenerate -> Either FunctionGenError (FunctionText ann)
-generateTopLevelFunction' functionName rtg = do
+  FunctionGenMode ->
+  Text ->
+  Set ReadyToGenerate ->
+  Either FunctionGenError (FunctionText ann)
+generateTopLevelFunction' mode functionName rtg = do
   FunctionText topLevelHeader topLevelSource <-
     fmap mconcat . traverse (first (FunctionGenError functionName) . generateFunctionText) $
       Set.toList rtg
@@ -89,11 +108,18 @@ generateTopLevelFunction' functionName rtg = do
             )
           $ Set.toList rtg
       userHeaders =
-        foldr
-          (\inc acc -> acc <> Doc.line <> includeUserHeader inc)
-          mempty
-          (Doc.pretty (functionName <> ".h") : funcallHeaders)
-      fullHdr = Doc.vcat [spam, cExprHeaders, wrapWithExternC topLevelHeader]
+        let headerList =
+              case mode of
+                Standard -> Doc.pretty (functionName <> ".h") : funcallHeaders
+                AllInOne -> funcallHeaders
+         in foldr
+              (\inc acc -> acc <> Doc.line <> includeUserHeader inc)
+              mempty
+              headerList
+      fullHdr =
+        case mode of
+          Standard -> Doc.vcat [spam, cExprHeaders, wrapWithExternC topLevelHeader]
+          AllInOne -> Doc.emptyDoc
       fullSrc = Doc.vcat [spam, cExprHeaders, userHeaders, topLevelSource]
   pure $ FunctionText fullHdr fullSrc
   where
@@ -108,13 +134,14 @@ generateTopLevelFunction' functionName rtg = do
 
 generateToplevelFunction ::
   forall ann.
+  FunctionGenMode ->
   Text ->
   Arrays (Const Int) ->
   CExprHaskellFunction IO ->
   IO (Either FunctionGenError (FunctionText ann))
-generateToplevelFunction functionName inputSpec f =
+generateToplevelFunction mode functionName inputSpec f =
   runExceptT $
-    except . generateTopLevelFunction' functionName
+    except . generateTopLevelFunction' mode functionName
       =<< reifyFunctionWithChildren functionName inputSpec f
 
 makeFunctionInputs :: Arrays (Const Int) -> Arrays (Compose Vector CExpr)
