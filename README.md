@@ -119,9 +119,9 @@ An example can be found at [examples/multiple-c-functions](examples/multiple-c-f
 Compiling large functions is slow and memory intensive in most compiled languages.
 The same holds true for categorifying large function using categorifier, which is also both
 slow and memory intensive. It is thus often desirable to categorify a large function in
-smaller chunks. To do so, use `Categorifier.Categorify.separately` to categorify
-the subparts. Each call to `separately` creates a `Categorifier.Category.NativeCat`
-instance. For example, calling `separately` on function `f :: InputF -> OutputF` in
+smaller chunks. To do so, use `Categorifier.Categorify.function` to categorify
+the subparts. Each call to `function` creates a `Categorifier.Category.NativeCat`
+instance. For example, calling `function` on function `f :: InputF -> OutputF` in
 module `M` produces `instance NativeCat C.Cat "M.f" InputF OutputF`, which contains
 a method `nativeK :: C.Cat InputF OutputF`. Then, if the plugin encounters `M.f`, it
 does not need to inline it, but can directly replace it with `nativeK`.
