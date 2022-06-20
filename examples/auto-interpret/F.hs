@@ -6,7 +6,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module F (fCategorified, g) where
+module F (wrap_f, g) where
 
 import qualified Categorifier.C.CExpr.Cat as C
 import Categorifier.C.CExpr.Cat.TargetOb (TargetOb)
@@ -85,5 +85,4 @@ g x = unsafePerformIO $ do
   putStrLn "In the body of g"
   pure $ kIfThenElse (x .> 0) (kFromIntegral x + 5) 42
 
-fCategorified :: Input `C.Cat` Output
-fCategorified = Categorify.expression f
+Categorify.functionOnly 'f [t|C.Cat|] []

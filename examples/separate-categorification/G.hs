@@ -15,4 +15,4 @@ import Data.Word (Word64)
 g :: C Int32 -> C Word64
 g x = if odd x then fromIntegral x + 5 else 42
 
-Categorify.separately 'g [t|C.Cat|] []
+Categorify.function 'g [t|C.Cat|] []

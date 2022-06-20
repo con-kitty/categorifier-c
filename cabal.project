@@ -1,73 +1,73 @@
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: client
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: common
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: duoids
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: ghc
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: th
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: integrations/concat/integration
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: integrations/concat-extensions/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: integrations/concat-extensions/integration
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: integrations/unconcat/category
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: integrations/unconcat/integration
 
 source-repository-package
   type: git
   location: https://github.com/con-kitty/categorifier.git
-  tag: 289b980b56bf1f4cbd1ac6940ee671bbdc7513ab
+  tag: cbb691fe6ce5a13e23b2a121c3cbe79a6436e10e
   subdir: plugin
 
 source-repository-package
