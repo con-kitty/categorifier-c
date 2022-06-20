@@ -5,8 +5,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
--- Data.Text.Prettyprint.Doc.Render.Text is deprecated.
-{-# OPTIONS_GHC -fno-warn-deprecations #-}
 
 module Categorifier.C.Codegen.FFI.TH (embedFunction) where
 
@@ -28,7 +26,6 @@ import Data.Functor.Compose (Compose (..))
 import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.Prettyprint.Doc.Render.Text as Prettyprint
 import Data.Typeable (Typeable)
 import Data.Vector (Vector)
 import Language.Haskell.TH.Syntax
@@ -45,6 +42,7 @@ import Language.Haskell.TH.Syntax
   )
 import qualified Language.Haskell.TH.Syntax as TH
 import qualified LiftType
+import qualified Prettyprinter.Render.Text as Prettyprint
 
 arraysFun ::
   forall i o.

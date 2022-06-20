@@ -3,8 +3,6 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- | Top-level interface to generating code with statically typed expression functors
 module Categorifier.C.CExpr.Function
@@ -65,14 +63,9 @@ import Data.List.Extra (nubOrd)
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Text (Text)
-import qualified Data.Text.Prettyprint.Doc as Doc
-  ( emptyDoc,
-    line,
-    pretty,
-    vcat,
-  )
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
+import qualified Prettyprinter as Doc
 import PyF (fmt)
 
 data FunctionGenMode

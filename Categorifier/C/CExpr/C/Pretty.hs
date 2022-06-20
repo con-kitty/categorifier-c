@@ -1,7 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeFamilies #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- | C-code emission from CExpr graphs -- this module contains the low-level functionality for turning
 -- AST fragments into pretty-printer fragments.
@@ -19,8 +17,8 @@ module Categorifier.C.CExpr.C.Pretty
   )
 where
 
-import Data.Text.Prettyprint.Doc (Doc, (<+>))
-import qualified Data.Text.Prettyprint.Doc as Doc
+import Prettyprinter (Doc, (<+>))
+import qualified Prettyprinter as Doc
 
 {- First we can define all the pure helper functions -}
 

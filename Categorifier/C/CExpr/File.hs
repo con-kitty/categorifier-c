@@ -2,8 +2,6 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- | File I/O with CExpr-generated code.
 module Categorifier.C.CExpr.File
@@ -48,10 +46,10 @@ import Data.List (sortOn)
 import Data.Ord (comparing)
 import Data.Semigroup (All (..))
 import Data.Text (Text)
-import Data.Text.Prettyprint.Doc (Doc, (<+>))
-import qualified Data.Text.Prettyprint.Doc as Doc (angles, dquotes, line, pretty)
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
+import Prettyprinter (Doc, (<+>))
+import qualified Prettyprinter as Doc
 
 data ReadyToGenerate = ReadyToGenerate
   { readyToGenerateInputSpec :: Arrays (Const Int),

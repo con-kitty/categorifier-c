@@ -1,8 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ViewPatterns #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 module Categorifier.C.CExpr.IO
   ( emitCFunction,
@@ -20,14 +18,9 @@ import Data.Functor (($>))
 import qualified Data.List.NonEmpty as NonEmpty
 import Data.Text (Text)
 import qualified Data.Text as Text
-import Data.Text.Prettyprint.Doc (Doc)
-import qualified Data.Text.Prettyprint.Doc as Doc
-  ( LayoutOptions (..),
-    PageWidth (..),
-    SimpleDocStream,
-    layoutSmart,
-  )
-import qualified Data.Text.Prettyprint.Doc.Render.Text as Doc
+import Prettyprinter (Doc)
+import qualified Prettyprinter as Doc
+import qualified Prettyprinter.Render.Text as Doc
 import PyF (fmt)
 import System.IO (IOMode (WriteMode), withFile)
 

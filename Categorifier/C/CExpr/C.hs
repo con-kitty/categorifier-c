@@ -2,8 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- | C-code emission from CExpr graphs -- this module contains the low-level functionality
 -- for turning AST fragments into pretty-printer fragments.
@@ -78,10 +76,10 @@ import Data.Foldable (toList)
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
-import Data.Text.Prettyprint.Doc (Doc, (<+>))
-import qualified Data.Text.Prettyprint.Doc as Doc
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
+import Prettyprinter (Doc, (<+>))
+import qualified Prettyprinter as Doc
 
 encloseSepIndent :: Int -> Doc ann -> Doc ann -> Doc ann -> [Doc ann] -> Doc ann
 encloseSepIndent _ l r _ [] = l <> r
