@@ -1,9 +1,11 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module F
   ( Input (..),
@@ -61,4 +63,4 @@ f inp =
       oBool = iDouble inp > 0
     }
 
-$(Categorify.function 'f [t|C.Cat|] [])
+Categorify.function 'f [t|C.Cat|] []

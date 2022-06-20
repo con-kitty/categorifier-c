@@ -2,8 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE UndecidableInstances #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 -- The assignment monad
 module Categorifier.C.CExpr.C.Assignment
@@ -18,9 +16,9 @@ where
 import Categorifier.C.CExpr.Types (CExprType)
 import Categorifier.C.CExpr.Types.Core (CExprF, FunctionCall)
 import Data.Functor.Classes (Show1)
-import Data.Text.Prettyprint.Doc (Doc)
-import qualified Data.Text.Prettyprint.Doc as Doc
 import GHC.Generics (Generic)
+import Prettyprinter (Doc)
+import qualified Prettyprinter as Doc
 
 -- | This is a counter for generating unique variable names.
 type AssignVar = Int
