@@ -57,7 +57,7 @@ import Categorifier.Category
     RepCat (..),
     UnsafeCoerceCat (..),
   )
-import Categorifier.Client (HasRep (..))
+import Categorifier.Client (HasRep (..), Rep)
 import Categorifier.Common.IO.Exception (Exception, impureThrow)
 import Categorifier.ConCatExtensions
   ( ApplicativeCat (..),
@@ -868,27 +868,27 @@ instance ToTargetOb (Data.Constraint.Dict c) where
 -- constraint. They are not supposed to be used by `categorifyLambda` to handle non-standard
 -- data types, because they would obviously result in infinite loops.
 
-instance HasRep (a, b) where
-  type Rep (a, b) = (a, b)
+type instance Rep (a, b) = (a, b)
 
+instance HasRep (a, b) where
   abst = id
   {-# INLINE abst #-}
 
   repr = id
   {-# INLINE repr #-}
+
+type instance Rep (Either a b) = Either a b
 
 instance HasRep (Either a b) where
-  type Rep (Either a b) = Either a b
-
   abst = id
   {-# INLINE abst #-}
 
   repr = id
   {-# INLINE repr #-}
 
-instance HasRep () where
-  type Rep () = ()
+type instance Rep () = ()
 
+instance HasRep () where
   abst = id
   {-# INLINE abst #-}
 

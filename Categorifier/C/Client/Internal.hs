@@ -12,7 +12,7 @@ where
 
 import Categorifier.C.KTypes.C (C)
 import Categorifier.C.PolyVec (PolyVec, zeroValue)
-import Categorifier.Client (HasRep (..))
+import Categorifier.Client (HasRep (..), Rep)
 import qualified Categorifier.Common.IO.Exception as Exception
 import Categorifier.TH (TyVarBndr, tyVarBndrName, pattern KindedTV, pattern PlainTV)
 import Control.Monad ((<=<))
@@ -71,7 +71,7 @@ deriveHasRep' = \case
 
     hasRep :: TH.Name -> [TyVarBndr ()] -> TH.Cxt -> [TH.Con] -> Either DeriveCallFailure [TH.DecQ]
     hasRep typ vars ctx =
-      fmap (fmap (uncurry (sums vars)) . groupSort) . traverse (processCon (applyType typ vars) ctx)
+      fmap (uncurry (sums vars) <=< groupSort) . traverse (processCon (applyType typ vars) ctx)
 
     processCon ::
       TH.Type ->
@@ -96,22 +96,25 @@ deriveHasRep' = \case
           $ listToMaybe names
 
     sums ::
-      [TyVarBndr ()] -> TH.Type -> [(TH.TypeQ, (TH.PatQ, TH.ExpQ), (TH.PatQ, TH.ExpQ))] -> TH.DecQ
+      [TyVarBndr ()] -> TH.Type -> [(TH.TypeQ, (TH.PatQ, TH.ExpQ), (TH.PatQ, TH.ExpQ))] -> [TH.DecQ]
     sums vars type0 cons =
       maybe
         ( ( \(t, a, r) ->
-              hasRepInstD
-                (pure type0)
-                []
-                t
-                (reverse (evalState (buildClauses pure pure $ pure a) (0 :: Word8)))
-                (evalState (buildClauses pure pure $ pure r) (0 :: Word8))
+              [ repInstD (pure type0) t,
+                hasRepInstD
+                  (pure type0)
+                  []
+                  (reverse (evalState (buildClauses pure pure $ pure a) (0 :: Word8)))
+                  (evalState (buildClauses pure pure $ pure r) (0 :: Word8))
+              ]
           )
             $ head cons
         )
         ( \size ->
             ( \(t, a, r) ->
-                hasRepInstD (pure type0) vars t (reverse (evalState a 0)) (evalState r (0 :: Word8))
+                [ repInstD (pure type0) t,
+                  hasRepInstD (pure type0) vars (reverse (evalState a 0)) (evalState r (0 :: Word8))
+                ]
             )
               ( [t|
                   ($size, $(mkNestedPairs (\x y -> [t|($x, $y)|]) [t|()|] =<< traverse fst3 cons))
@@ -175,15 +178,17 @@ deriveHasRep' = \case
         . bitraverse (fmap (fmap pure) . patFn) (fmap (fmap (fmap TH.NormalB)) . expFn)
         . unzip
 
-    hasRepInstD :: TH.TypeQ -> [TyVarBndr ()] -> TH.TypeQ -> [TH.ClauseQ] -> [TH.ClauseQ] -> TH.DecQ
-    hasRepInstD type0 vars repTy abstClauses reprClauses =
+    repInstD :: TH.TypeQ -> TH.TypeQ -> TH.DecQ
+    repInstD type0 = TH.tySynInstD . TH.tySynEqn Nothing [t|Rep $type0|]
+
+    hasRepInstD :: TH.TypeQ -> [TyVarBndr ()] -> [TH.ClauseQ] -> [TH.ClauseQ] -> TH.DecQ
+    hasRepInstD type0 vars abstClauses reprClauses =
       TH.instanceD
         ( sequenceA $
             mapMaybe (fmap (\var -> [t|PolyVec C $(pure $ TH.VarT var)|]) . nameOfProperBinder) vars
         )
         [t|HasRep $type0|]
-        [ TH.tySynInstD $ TH.tySynEqn Nothing [t|Rep $type0|] repTy,
-          TH.funD 'abst abstClauses,
+        [ TH.funD 'abst abstClauses,
           TH.pragInlD 'abst TH.Inline TH.FunLike TH.AllPhases,
           TH.funD 'repr reprClauses,
           TH.pragInlD 'repr TH.Inline TH.FunLike TH.AllPhases
