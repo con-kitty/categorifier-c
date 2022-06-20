@@ -39,8 +39,8 @@ import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.IO as Text
-import qualified Data.Text.Prettyprint.Doc.Render.Text as Prettyprint
 import Data.Vector (Vector)
+import qualified Prettyprinter.Render.Text as Prettyprint
 import PyF (fmt)
 import System.FilePath ((</>))
 

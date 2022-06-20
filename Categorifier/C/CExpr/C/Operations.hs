@@ -2,8 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE TypeFamilies #-}
--- Data.Text.Prettyprint.Doc is deprecated in prettyprinter-1.7
-{-# OPTIONS_GHC -Wno-deprecations #-}
 
 module Categorifier.C.CExpr.C.Operations
   ( genBoolBinOp,
@@ -80,10 +78,10 @@ import Data.Bool (bool)
 import Data.Int (Int16, Int32, Int64, Int8)
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
-import Data.Text.Prettyprint.Doc (Doc, (<+>))
-import qualified Data.Text.Prettyprint.Doc as Doc
 import Numeric (showHFloat)
 import qualified Numeric (showHex)
+import Prettyprinter (Doc, (<+>))
+import qualified Prettyprinter as Doc
 
 genIntBinOp ::
   forall a ann.
