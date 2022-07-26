@@ -7,4 +7,4 @@ import F (fCategorified)
 
 -- This generates /tmp/separate_categorification.c
 main :: IO ()
-main = writeCFiles "/tmp" "separate_categorification" fCategorified
+main = writeCFiles "." "separate_categorification" fCategorified
