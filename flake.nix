@@ -138,10 +138,39 @@
         overlays = fullOverlays;
 
         devShells = let
-          mkPkgs = ghcVer:
+          mkPkgs = { ghcVer, useClang }:
             let
               overlayGHC = final: prev: {
-                haskellPackages = prev.haskell.packages.${ghcVer};
+                haskellPackages = let ps = prev.haskell.packages.${ghcVer};
+                in if useClang then
+                  let
+                    newLlvmPackages = if ghcVer == "ghc901" then
+                      prev.llvmPackages_9
+                    else
+                      prev.llvmPackages_12;
+                    newStdenv = newLlvmPackages.stdenv;
+                  in ps.override {
+                    ghc =
+                      prev.buildPackages.haskell.compiler.${ghcVer}.override {
+                        useLLVM = true;
+                        llvmPackages = newLlvmPackages;
+                        targetPackages = prev.targetPackages.extend
+                          (self: super: { stdenv = newStdenv; });
+                        pkgsHostTarget = prev.pkgsHostTarget.extend
+                          (self: super: {
+                            targetPackages = super.targetPackages.extend
+                              (sself: super: { stdenv = newStdenv; });
+                          });
+                        pkgsBuildTarget = prev.pkgsBuildTarget.extend
+                          (self: super: {
+                            targetPackages = super.targetPackages.extend
+                              (sself: super: { stdenv = newStdenv; });
+                          });
+                      };
+                    stdenv = newStdenv;
+                  }
+                else
+                  ps;
               };
             in import nixpkgs {
               overlays = [ overlayGHC (concat.overlay.${system}) ]
@@ -150,8 +179,8 @@
               config.allowBroken = true;
             };
 
-          mkDevShell = ghcVer:
-            let pkgs = mkPkgs ghcVer;
+          mkDevShell = { ghcVer, useClang ? false }:
+            let pkgs = mkPkgs { inherit ghcVer useClang; };
             in pkgs.haskellPackages.shellFor {
               packages = ps:
                 builtins.map (name: ps.${name}) categorifierCPackageNames;
@@ -167,30 +196,47 @@
               withHoogle = false;
             };
 
-          mkUserShell = ghcVer:
+          mkUserShell = { ghcVer, useClang ? false }:
             let
-              pkgs = mkPkgs ghcVer;
+              pkgs = mkPkgs { inherit ghcVer useClang; };
+              newStdenv = if useClang then
+                let
+                  newLlvmPackages = if ghcVer == "ghc901" then
+                    pkgs.llvmPackages_9
+                  else
+                    pkgs.llvmPackages_12;
+                in newLlvmPackages.stdenv
+              else
+                pkgs.stdenv;
+
               hsenv = pkgs.haskellPackages.ghcWithPackages
                 (ps: builtins.map (name: ps.${name}) categorifierCPackageNames);
-            in pkgs.mkShell {
-              buildInputs =
-                # use nixpkgs default tools
-                [ hsenv pkgs.haskellPackages.ghc8107.cabal-install ] ++
+              mkShell_ = if useClang then
+                pkgs.mkShell.override { stdenv = newStdenv; }
+              else
+                pkgs.mkShell;
+            in mkShell_ {
+              buildInputs = [ hsenv pkgs.haskellPackages.cabal-install ] ++
                 # haskell-language-server on GHC 9.2.1 is broken yet.
                 pkgs.lib.optional (ghcVer != "ghc921")
                 [ pkgs.haskell-language-server ];
             };
 
-        in {
+        in rec {
           # nix develop .#ghc8107
           # (or .#ghc901 .#ghc921)
           # This is used for building categorifier-c
-          "default" = mkDevShell "ghc901";
-          "ghc8107" = mkDevShell "ghc8107";
-          "ghc901" = mkDevShell "ghc901";
-          "ghc921" = mkDevShell "ghc921";
+          "default" = ghc901;
+          "ghc8107" = mkDevShell { ghcVer = "ghc8107"; };
+          "ghc901" = mkDevShell { ghcVer = "ghc901"; };
+          "ghc921" = mkDevShell { ghcVer = "ghc921"; };
           # The shell with all batteries included!
-          "user-shell" = mkUserShell "ghc901";
+          "user-shell" = mkUserShell { ghcVer = "ghc901"; };
+          # Experimental user-shell using clangStdenv for everything
+          "user-shell-clang" = mkUserShell {
+            ghcVer = "ghc901";
+            useClang = true;
+          };
         };
       });
 }
