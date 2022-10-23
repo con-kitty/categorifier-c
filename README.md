@@ -114,11 +114,11 @@ functions can be very slow.
 
 An example can be found at [examples/multiple-c-functions](examples/multiple-c-functions).
 
-## Separate categorification
+## Separate Categorification
 
 Compiling large functions is slow and memory intensive in most compiled languages.
-The same holds true for categorifying large function using categorifier, which is also both
-slow and memory intensive. It is thus often desirable to categorify a large function in
+The same holds true for categorifying large function using categorifier. It is
+thus often desirable to categorify a large function in
 smaller chunks. To do so, use `Categorifier.Categorify.function` to categorify
 the subparts. Each call to `function` creates a `Categorifier.Category.NativeCat`
 instance. For example, calling `function` on function `f :: InputF -> OutputF` in
@@ -127,6 +127,56 @@ a method `nativeK :: C.Cat InputF OutputF`. Then, if the plugin encounters `M.f`
 does not need to inline it, but can directly replace it with `nativeK`.
 
 An example can be found at [examples/separate-categorification](examples/separate-categorification).
+
+## Automatic Interpretation
+
+The Categorifier plugin takes as input a [function that attempts to automatically interpret Haskell functions](https://github.com/con-kitty/categorifier/blob/bdecff7019e3862c49a8360d7640710902bb1e58/plugin/Categorifier/Core/Categorify.hs#L113).
+Recall that Categorifier transforms a Haskell function of type `A -> B` (i.e., an arrow in the Hask category)
+into an arrow in the target category, i.e., ``A `k` B`` for some `k`. If both `A -> B` and ``A `k` B`` are
+instantiations of the same polymorphic function, then no work is needed to categorify it.
+This is called automatic interpretation.
+
+When using categorifier-c, `k ~ Categorifier.C.CExpr.Cat.Cat`. `Cat` is a newtype wrapper, and ``A `Cat` B``
+is isomorphic to `TargetOb A -> TargetOb B`. Thus a function `A -> B` can be auto-interpreted if `A -> B`
+and `TargetOb A -> TargetOb B` are the instantiations of the same polymorphic function.
+
+An example can be found at [examples/auto-interpret](examples/auto-interpret). In this example, the type of
+function `F.g` is `g :: KType1 f => f Int32 -> f Word64`. We need to categorify `g @C`, i.e., `C Int 32 -> C Int64`,
+into
+
+```haskell
+TargetOb (C Int32) -> TargetOb (C Int64)
+~ CExpr Int32 -> CExpr Int64
+```
+
+Both `C` and `CExpr` have `KType1` instances, which means what we need is simply `g @CExpr`. Because
+`g @C` and `g @CExpr` are instantiations of the same polymorphic function `g`, no compilation
+is needed. The body of `g` contains IO actions and `unsafePerformIO`, which Categorifier can't normally compile,
+but in this case it doesn't matter, because `g` does not need to be inlined.
+
+Another example of a function that can be automatically interpreted is
+
+```haskell
+Linear.Vector.^+^ :: Num a => f a -> f a -> f a
+```
+
+Since `TargetOb (Linear.V2.V2 a) = Linear.V2.V2 (TargetOb a)`, the result of categorifying `(^+^) @V2 @(C Int64)`
+is simply `(^+^) @V2 @(CExpr Int64)`, and again, no compilation is needed.
+
+To enable automatic interpretation, we need to pass an auto-interpreter corresponding to the target category
+to the Categorifier plugin. An auto-interpret for the `Categorifier.C.CExpr.Cat.Cat` category is
+`Categorifier.C.UnconCat.tryAutoInterpret`. To use this auto-interpreter, add the following GHC option:
+
+```
+-fplugin-opt Categorifier:autointerpreter:Categorifier.C.UnconCat.tryAutoInterpret
+```
+
+Automatic interpretation and the aforementioned separate categorification share a similar idea, but serve
+different purposes. Automatic interpretation is done automatically for eligible functions, does not require
+Categorifier to compile the body of the functions, and can be applied to non-exported functions.
+Separate categorization is more widely applicable - it does not require
+`A -> B` and ``A `k` B`` to be instantiations of the same polymorphic function, but one needs to
+explicitly categorify each subpart, and thus it cannot be used on non-exported functions.
 
 ## Extending MakerMap
 
@@ -141,4 +191,3 @@ Coming soon
 There are compatible [direnv](https://direnv.net/) and [Nix](https://nixos.org/manual/nix/stable/) environments in the repo to make it easy to build, test, etc. everything with consistent versions to help replicate issues.
 
 This repo is all formatted using [Ormolu](https://github.com/tweag/ormolu). Currently CI runs Ormolu 0.4.0.0, which can be installed by `cabal install ormolu-0.4.0.0`. See the [usage notes](https://github.com/tweag/ormolu#usage) for how to best integrate it with your workflow. But don't let Ormolu get in the way of contributing - CI will catch the formatting, and we can help clean up anything.
-
