@@ -43,42 +43,38 @@ The readers are encouraged to refer to the [examples](examples) to follow along 
 To be able to compile a haskell function `f :: Input -> Output` into a C function, the
 following conditions must be met:
 
-- `f` is monomorphic
-- `Input` and `Output` are supported types
+- `f` is monomorphic (or a polymorphic function whose type variables are all instantiated)
+- `Input` and `Output` have the following instances:
+  - `Categorifier.C.CExpr.Cat.TargetOb.TargetOb`
+  - `Categorifier.C.CTypes.CGeneric.Class.CGeneric`
+  - `Categorifier.C.CTypes.GArrays.GArrays`
+  - `Categorifier.Client.HasRep`
+  - `GHC.Generics.Generic`
 
-A supported type is defined as one of the following:
+Currently, these instances can be defined for the following types:
 
-- A primitive type. All primitive types except `Bool` need to be wrapped in `Categorifier.C.KTypes.C`.
+- Primitive types. All primitive types except `Bool` need to be wrapped in `Categorifier.C.KTypes.C`.
   Specifically, the primitive types are `Bool`, `C Int8`, `C Int16`, `C Int32`,
   `C Int64`, `C Word8`, `C Word16`, `C Word32`, `C Word64`, `C Float`, and `C Double`.
   - The `C` here is a newtype wrapper. The reason most primitive types need to be wrapped is
     because some of their default Haskell instances behave differently than the corresponding
     C functions. As an example, in Haksell, `min @Double 0.0 (-0.0) == 0.0`, while in C,
     `fmin(0.0, -0.0) == -0.0`.
-- A product type where each field is a supported type
-- An enum type (i.e., a sum type whose data constructors are all nullary) represented by `KEnum`.
-- A `Maybe` type represented by `KMaybe`. See [examples/sum-types](examples/sum-types) for an
-  example of using `KEnum` and `KMaybe`.
+- Product types where each field is a type that has the above instances.
+- Enum types (i.e., sum types whose data constructors are all nullary) represented by `KEnum`.
+- `Maybe a` types represented by `KMaybe`, where `a` has the above instances.
 
-`Input` and `Output` are allowed to be instantiations of polymorphic types, for example
-`Data.Semigroup.Product (C Int32)`.
+See [examples/sum-types](examples/sum-types) for an example of using `KEnum` and `KMaybe`.
+
+At present, the above instances (except `HasRep` and `TargetOb`) cannot be written for
+arbitrary sum types. Supporting non-recursive sum types is work-in-progress, while supporting
+recursive sum types such as lists would require much greater effort.
 
 The internal types involved in the definition of `f` are not subject to these constraints.
-For example, the body of `f` is free to call another function which consumes or
-produces lists, or is polymorphic.
-
-### Required Instances
-
-The `Input` and `Output` types should also have the following type class and
-type family instances:
-
-- `Categorifier.C.CExpr.Cat.TargetOb.TargetOb`
-- `Categorifier.C.CTypes.CGeneric.Class.CGeneric`
-- `Categorifier.C.CTypes.GArrays.GArrays`
-- `Categorifier.Client.HasRep`
-- `GHC.Generics.Generic`
-
-The internal types usually only need `HasRep` and `TargetOb` instances.
+For example, the body of `f` may use lists or other sum types which don't have all of the above
+instances. There are still some constraints though: the internal types are generally required to
+have at least `HasRep` and `TargetOb` instances defined; and types used in branches
+(e.g., `T` in `if b then x else y :: T`) need to have `ConCat.Category.IfCat` instances.
 
 <!-- TODO: explain the following:
 - How to write TargetOb instances
