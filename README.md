@@ -178,9 +178,10 @@ explicitly categorify each subpart, and thus it cannot be used on non-exported f
 
 Coming soon
 
-## Calling External C Functions
+## Calling External C/C++ Functions
 
-Coming soon
+It is possible to generate C code that calls external C/C++ functions.
+See [examples/external-c-functions](examples/external-c-functions).
 
 ## Contributing
 
